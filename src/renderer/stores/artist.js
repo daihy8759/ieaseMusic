@@ -1,5 +1,6 @@
-import { observable, action } from 'mobx';
+import { getArtist } from 'api/artist';
 import axios from 'axios';
+import { action, observable } from 'mobx';
 
 class Artist {
     @observable loading = true;
@@ -21,10 +22,7 @@ class Artist {
     @action
     getArtist = async id => {
         this.loading = true;
-
-        const response = await axios.get(`/api/artist/${id}`);
-        const { data } = response;
-
+        const data = await getArtist(id);
         if (data) {
             this.profile = data.profile;
             this.playlist = data.playlist;

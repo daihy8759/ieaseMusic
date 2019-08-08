@@ -33,12 +33,12 @@ class Player {
     @action
     getDetail = async (type, id) => {
         const detail = await getPlayListDetail(type, id);
-        const pallet = await helper.getPallet(detail.meta.cover);
-
-        detail.meta.pallet = pallet;
-
-        this.songs.replace(detail.songs);
-        this.meta = detail.meta;
+        if (detail && detail.meta) {
+            const pallet = await helper.getPallet(detail.meta.cover);
+            detail.meta.pallet = pallet;
+            this.meta = detail.meta;
+            this.songs.replace(detail.songs);
+        }
     };
 
     @action

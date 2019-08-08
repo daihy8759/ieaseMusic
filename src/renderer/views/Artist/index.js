@@ -112,7 +112,7 @@ class Artist extends Component {
     componentWillUnmount = () => sine.hide();
 
     renderSongs() {
-        const { classes, playlist, sameToPlaying, song, isPlaying, play } = this.props;
+        const { classes, playlist, sameToPlaying, song, isPlaying } = this.props;
 
         return (
             <ul className={classes.songs}>
@@ -124,9 +124,13 @@ class Artist extends Component {
                             })}
                             key={e.id}
                             onClick={async () => {
-                                await play(e.id);
+                                await this.props.play(e.id);
                             }}>
-                            {isPlaying(e.id) ? <i className="ion-ios-pause" /> : <i className="ion-ios-play" />}
+                            {isPlaying(e.id) ? (
+                                <i className="remixicon-pause-fill" />
+                            ) : (
+                                <i className="remixicon-play-fill" />
+                            )}
 
                             <span data-index>{index}</span>
 
@@ -242,7 +246,11 @@ class Artist extends Component {
                             onClick={async () => {
                                 await play();
                             }}>
-                            {isPlaying() ? <i className="ion-ios-pause" /> : <i className="ion-ios-play" />}
+                            {isPlaying() ? (
+                                <i className="remixicon-pause-fill" />
+                            ) : (
+                                <i className="remixicon-play-fill" />
+                            )}
                         </div>
 
                         <canvas ref={this.canvasRef} />
