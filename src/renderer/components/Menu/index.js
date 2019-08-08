@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import FadeImage from 'components/FadeImage';
 import { remote } from 'electron';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -14,7 +14,6 @@ import MenuClasses from './classes';
     logout: stores.me.logout,
     close: () => stores.menu.toggle(false)
 }))
-@observer
 class Menu extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.show === true) {

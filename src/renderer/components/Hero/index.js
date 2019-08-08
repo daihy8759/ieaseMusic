@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import Indicator from 'components/Indicator';
 import ProgressImage from 'components/ProgressImage';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -16,7 +16,6 @@ import HeroClasses from './classes';
     comments: stores.comments.total,
     showShare: stores.share.toggle
 }))
-@observer
 class Hero extends Component {
     render() {
         const { classes, song, isLiked, unlike, like, comments, showShare, location } = this.props;

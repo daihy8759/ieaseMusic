@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import VolumeUpDownClasses from './classes';
@@ -7,7 +7,6 @@ import VolumeUpDownClasses from './classes';
 @inject(stores => ({
     isMuted: () => stores.preferences.volume === 0
 }))
-@observer
 class VolumeUpDown extends Component {
     state = {
         // true: up, false: down

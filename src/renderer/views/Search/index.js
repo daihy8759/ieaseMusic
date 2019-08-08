@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -25,7 +25,6 @@ import SearchClasses from './classes';
     getUsers: stores.search.getUsers,
     loadmoreUsers: stores.search.loadmoreUsers
 }))
-@observer
 class Search extends Component {
     loadmore(e) {
         const container = this.list;

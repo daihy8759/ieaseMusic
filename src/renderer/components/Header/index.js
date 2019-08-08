@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { inject, observer } from 'mobx-react';
-import injectSheet from 'react-jss';
 import classnames from 'classnames';
+import { inject } from 'mobx-react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import injectSheet from 'react-jss';
 import HeaderClasses from './classes';
 
 @inject(stores => ({
@@ -13,7 +13,6 @@ import HeaderClasses from './classes';
     showMenu: () => stores.menu.toggle(true),
     showPlaying: () => stores.playing.toggle(true)
 }))
-@observer
 class Header extends Component {
     static propTypes = {
         transparent: PropTypes.bool,

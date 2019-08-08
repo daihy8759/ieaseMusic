@@ -4,7 +4,7 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
 import delegate from 'delegate';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -61,7 +61,6 @@ import ArtistClasses from './classes';
     },
     hasLogin: stores.me.hasLogin
 }))
-@observer
 class Artist extends Component {
     state = {
         renderTabContent: this.renderSongs.bind(this)

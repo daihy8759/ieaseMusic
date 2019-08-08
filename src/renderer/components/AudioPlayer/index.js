@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React from 'react';
 import helper from 'utils/helper';
 
@@ -15,7 +15,6 @@ import helper from 'utils/helper';
     autoPlay: stores.preferences.autoPlay,
     lyrics: stores.lyrics.list
 }))
-@observer
 class AudioPlayer extends React.Component {
     passed = 0;
 

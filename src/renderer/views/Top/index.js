@@ -4,7 +4,7 @@ import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -15,7 +15,6 @@ import TopClasses from './classes';
     list: stores.top.list,
     getList: stores.top.getList
 }))
-@observer
 class Top extends Component {
     componentWillMount() {
         const { getList } = this.props;

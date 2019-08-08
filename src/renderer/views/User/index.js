@@ -3,7 +3,7 @@ import Controller from 'components/Controller';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -24,7 +24,6 @@ import UserClasses from './classes';
         return controller.playing && controller.playlist.id === id;
     }
 }))
-@observer
 class User extends Component {
     state = {
         hovered: false

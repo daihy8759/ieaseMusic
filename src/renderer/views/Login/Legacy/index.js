@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,6 @@ import LegacyClasses from './classes';
     login: stores.me.login,
     logining: stores.me.logining
 }))
-@observer
 class Legacy extends Component {
     state = {
         showError: false

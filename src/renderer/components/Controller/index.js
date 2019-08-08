@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { inject, observer } from 'mobx-react';
-import injectSheet from 'react-jss';
 import classnames from 'classnames';
 import ProgressImage from 'components/ProgressImage';
-import helper from 'utils/helper';
+import { inject } from 'mobx-react';
+import React, { Component } from 'react';
+import injectSheet from 'react-jss';
+import { Link } from 'react-router-dom';
+import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import colors from 'utils/colors';
-import { PLAYER_LOOP, PLAYER_SHUFFLE, PLAYER_REPEAT } from 'stores/controller';
+import helper from 'utils/helper';
 import ControllerClasses from './classes';
 
 @inject(stores => ({
@@ -29,7 +29,6 @@ import ControllerClasses from './classes';
     hasLogin: stores.me.hasLogin,
     comments: stores.comments.total
 }))
-@observer
 class Controller extends Component {
     seek(e) {
         const percent = e.clientX / window.innerWidth;

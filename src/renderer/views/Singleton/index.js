@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import colors from 'utils/colors';
@@ -15,7 +15,6 @@ import SingletonClasses from './classes';
     isLiked: stores.me.isLiked,
     playing: stores.controller.playing
 }))
-@observer
 class Singleton extends Component {
     componentWillReceiveProps(nextProps) {
         const { classes } = this.props;

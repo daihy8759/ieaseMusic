@@ -4,7 +4,7 @@ import FadeImage from 'components/FadeImage';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
@@ -35,7 +35,6 @@ import FMClasses from './classes';
         return controller.playing && controller.playlist.id === fm.playlist.id;
     }
 }))
-@observer
 class FM extends Component {
     componentWillMount() {
         const { getFM } = this.props;

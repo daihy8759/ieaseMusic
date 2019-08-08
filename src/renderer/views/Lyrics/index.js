@@ -2,7 +2,7 @@ import Header from 'components/Header';
 import Hero from 'components/Hero';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import LyricsClasses from './classes';
@@ -13,7 +13,6 @@ import LyricsClasses from './classes';
     lyrics: stores.lyrics.list,
     song: stores.controller.song
 }))
-@observer
 class Lyrics extends Component {
     componentWillMount() {
         const { getLyrics } = this.props;
