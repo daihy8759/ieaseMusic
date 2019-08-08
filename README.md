@@ -2,6 +2,10 @@
 
 > Built by Electron, React, MobX, JSS
 
+# screenshots
+
+![PREVIEW](./screenshots/player.png)
+
 # Feature
 
 -   from https://github.com/trazyn/ieaseMusic
