@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
-import CSSTransition from 'react-transition-group/CSSTransitionGroup';
+import { CSSTransition } from 'react-transition-group';
 import './index.css';
 
 function on(el, events, fn) {
@@ -32,7 +32,9 @@ class TransitionPortal extends Component {
 
     componentDidUpdate() {
         const { children } = this.props;
-        ReactDOM.render(<CSSTransition {...this.props}>{children}</CSSTransition>, this.ele);
+        if (children) {
+            ReactDOM.render(<CSSTransition {...this.props}>{children}</CSSTransition>, this.ele);
+        }
     }
 
     componentWillUnmount() {
@@ -49,7 +51,7 @@ class ModalBody extends PureComponent {
         const { className, children } = this.props;
 
         return (
-            <CSSTransition transitionName="fade" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
+            <CSSTransition classNames="fade" timeout={{ enter: 1000, exit: 1000 }}>
                 <div className={classnames('Modal-body', className)}>{children}</div>
             </CSSTransition>
         );
@@ -93,7 +95,7 @@ class Modal extends Component {
     renderOverlay() {
         const { show, onCancel } = this.props;
         if (!show) {
-            return;
+            return <div />;
         }
 
         return <div className="Modal-overlay" onClick={onCancel} />;
@@ -102,7 +104,7 @@ class Modal extends Component {
     renderBody() {
         const { show, children } = this.props;
         if (!show) {
-            return;
+            return <div />;
         }
 
         return <div className="Modal-content">{children}</div>;
@@ -114,11 +116,11 @@ class Modal extends Component {
 
         return (
             <div>
-                <CSSTransition transitionName="Modal-overlay" transitionEnterTimeout={200} transitionLeaveTimeout={200}>
+                <CSSTransition classNames="Modal-overlay" timeout={{ enter: 200, exit: 200 }}>
                     {this.renderOverlay()}
                 </CSSTransition>
 
-                <TransitionPortal transitionName="Modal-body" transitionEnterTimeout={200} transitionLeaveTimeout={140}>
+                <TransitionPortal classNames="Modal-body" timeout={{ enter: 200, exit: 140 }}>
                     {this.renderBody()}
                 </TransitionPortal>
             </div>

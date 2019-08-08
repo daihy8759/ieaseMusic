@@ -49,11 +49,11 @@
         "qrcode-js": "^0.0.2",
         "random-useragent": "^0.3.1",
         "react": "^16.8.5",
-        "react-addons-css-transition-group": "^15.6.2",
         "react-dom": "^16.8.5",
         "react-event-listener": "^0.6.6",
         "react-jss": "^8.6.1",
         "react-router-dom": "^5.0.0",
+        "react-transition-group": "^4.2.2",
         "remixicon": "^1.3.1",
         "simple-lastfm": "^1.0.5",
         "uuid": "^3.3.2"

@@ -27,13 +27,13 @@
     visibility: visible;
 }
 
-.Modal-overlay-leave {
+.Modal-overlay-exit {
     opacity: 1;
     visibility: visible;
     transition: 0.3s;
 }
 
-.Modal-overlay-leave.Modal-overlay-leave-active {
+.Modal-overlay-exit.Modal-overlay-exit-active {
     opacity: 0;
     visibility: hidden;
 }
@@ -49,13 +49,13 @@
     opacity: 1;
 }
 
-.Modal-body-leave {
+.Modal-body-exit {
     transform: translate(-50%, -50%);
     opacity: 1;
     transition: 0.3s;
 }
 
-.Modal-body-leave.Modal-body-leave-active {
+.Modal-body-exit.Modal-body-exit-active {
     transform: translate(-50%, -60%);
     opacity: 0;
 }

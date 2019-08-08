@@ -38,7 +38,7 @@ class UpNext extends Component {
                         <i className={classes.mask} />
                         <i
                             role="presentation"
-                            className={classnames('ion-ios-play', classes.play)}
+                            className={classnames('remixicon-play-fill', classes.play)}
                             onClick={e => {
                                 this.close();
                                 controller.play(song.id);
