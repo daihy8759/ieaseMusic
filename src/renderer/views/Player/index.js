@@ -268,9 +268,9 @@ class Player extends Component {
 
                             <p className={classes.author}>
                                 <span>
-                                    {meta.author.map(e => {
+                                    {meta.author.map((e, index) => {
                                         return (
-                                            <Link key={e.name} to={e.link}>
+                                            <Link key={e.name + index} to={e.link}>
                                                 {e.name}
                                             </Link>
                                         );
@@ -305,9 +305,9 @@ class Player extends Component {
                                 </div>
                             </div>
 
-                            {recommend.map(e => {
+                            {recommend.map((e, index) => {
                                 return (
-                                    <Link className="clearfix" key={e.link} to={e.link}>
+                                    <Link className="clearfix" key={e.link + index} to={e.link}>
                                         <ProgressImage
                                             {...{
                                                 height: 260 / 3,
