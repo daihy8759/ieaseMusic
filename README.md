@@ -7,6 +7,7 @@
 -   from https://github.com/trazyn/ieaseMusic
 -   移除 express 服务
 -   调整目录结构
+-   使用 remixicon 图标
 
 # Issue
 
