@@ -1,0 +1,6 @@
+yarn-error.log
+yarn.lock
+node_modules
+dist
+release
+.vscode

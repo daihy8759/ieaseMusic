@@ -1,0 +1,97 @@
+{
+    "name": "ieaseMusic",
+    "version": "1.0.0",
+    "main": "./dist/main.js",
+    "author": "daihy",
+    "license": "MIT",
+    "private": false,
+    "scripts": {
+        "start-renderer-dev": "webpack-dev-server --config webpack/webpack.renderer.dev.config.js",
+        "start-main-dev": "webpack --config webpack/webpack.main.config.js && electron ./dist/main.js",
+        "dev": "cross-env START_HOT=1 npm run start-renderer-dev",
+        "build-main": "webpack --config webpack/webpack.main.prod.config.js",
+        "build-renderer": "webpack --config webpack/webpack.renderer.prod.config.js",
+        "build-all": "npm run build-main && npm run build-renderer",
+        "build": "npm run build-all && electron-builder",
+        "lint:fix": "prettier --write src/**/*.js"
+    },
+    "build": {
+        "productName": "ieaseMusic-desktop",
+        "appId": "com.github.daihy8759",
+        "mac": {
+            "category": "com.github.daihy8759"
+        },
+        "directories": {
+            "output": "release"
+        },
+        "files": [
+            "dist/"
+        ],
+        "win": {
+            "target": "nsis"
+        }
+    },
+    "dependencies": {
+        "axios": "^0.19.0",
+        "big-integer": "^1.6.44",
+        "classnames": "^2.2.6",
+        "crypto-js": "^3.1.9-1",
+        "date-fns": "^2.0.0-beta.4",
+        "delegate": "^3.2.0",
+        "electron-json-storage": "^4.1.6",
+        "electron-window-state": "^5.0.3",
+        "han": "^0.0.7",
+        "libphonenumber-js": "^1.7.22",
+        "mobx": "^5.13.0",
+        "mobx-react": "^6.1.1",
+        "perdido": "^2.0.1",
+        "prop-types": "^15.7.2",
+        "qrcode-js": "^0.0.2",
+        "random-useragent": "^0.3.1",
+        "react": "^16.8.5",
+        "react-addons-css-transition-group": "^15.6.2",
+        "react-dom": "^16.8.5",
+        "react-event-listener": "^0.6.6",
+        "react-jss": "^8.6.1",
+        "react-router-dom": "^5.0.0",
+        "remixicon": "^1.3.1",
+        "simple-lastfm": "^1.0.5",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.4.0",
+        "@babel/plugin-proposal-class-properties": "^7.4.0",
+        "@babel/plugin-proposal-decorators": "^7.4.0",
+        "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+        "@babel/preset-react": "^7.0.0",
+        "@hot-loader/react-dom": "^16.8.6",
+        "babel-eslint": "^10.0.2",
+        "babel-loader": "^8.0.5",
+        "cross-env": "^5.2.0",
+        "css-loader": "^2.1.1",
+        "electron": "^5.0.8",
+        "electron-builder": "^20.39.0",
+        "electron-devtools-installer": "^2.2.4",
+        "eslint": "^6.1.0",
+        "eslint-config-airbnb": "^17.1.0",
+        "eslint-config-prettier": "^6.0.0",
+        "eslint-loader": "^2.1.2",
+        "eslint-plugin-import": "^2.18.2",
+        "eslint-plugin-jsx-a11y": "^6.2.3",
+        "eslint-plugin-prettier": "^3.1.0",
+        "eslint-plugin-react": "^7.12.4",
+        "file-loader": "^4.1.0",
+        "html-webpack-plugin": "^3.2.0",
+        "image-webpack-loader": "^5.0.0",
+        "mini-css-extract-plugin": "^0.8.0",
+        "optimize-css-assets-webpack-plugin": "^5.0.3",
+        "prettier": "^1.18.2",
+        "react-hot-loader": "^4.12.10",
+        "style-loader": "^0.23.1",
+        "url-loader": "^2.1.0",
+        "webpack": "^4.39.1",
+        "webpack-cli": "^3.3.0",
+        "webpack-dev-server": "^3.7.2",
+        "webpack-merge": "^4.2.1"
+    }
+}
