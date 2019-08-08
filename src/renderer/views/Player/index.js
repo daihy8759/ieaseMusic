@@ -151,9 +151,9 @@ class Player extends Component {
             content.push(
                 <div className={classes.users} key="users">
                     <h3>Listening history</h3>
-                    {users.map(e => {
+                    {users.map((e, index) => {
                         return (
-                            <Link className="clearfix tooltip" data-text={e.name} key={e.name} to={e.link}>
+                            <Link className="clearfix tooltip" data-text={e.name} key={e.name + index} to={e.link}>
                                 <FadeImage src={e.avatar} title={e.name} />
                             </Link>
                         );
@@ -165,9 +165,9 @@ class Player extends Component {
         content.push(
             <div className={classes.artists} key="artists">
                 <h3>Similar artist</h3>
-                {artists.slice(0, content.length ? 5 : 10).map(e => {
+                {artists.slice(0, content.length ? 5 : 10).map((e, index) => {
                     return (
-                        <Link className="clearfix tooltip" data-text={e.name} key={e.name} to={e.link}>
+                        <Link className="clearfix tooltip" data-text={e.name} key={e.name + index} to={e.link}>
                             <FadeImage src={e.avatar} title={e.name} />
                         </Link>
                     );
