@@ -13,21 +13,16 @@ class PlayerStatus extends Component {
         this.containerRef = React.createRef();
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { playing } = this.props;
-        if (nextProps.playing !== playing) {
-            // Force show the animation
-            this.animationDone();
-        }
-    }
-
     componentWillUpdate() {
         this.animationDone();
     }
 
-    componentDidUpdate() {
-        const { classes } = this.props;
+    componentDidUpdate(prevProps) {
+        const { classes, playing } = this.props;
         this.containerRef.current.classList.add(classes.animated);
+        if (prevProps.playing !== playing) {
+            this.animationDone();
+        }
     }
 
     animationDone() {

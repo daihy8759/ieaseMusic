@@ -89,7 +89,7 @@ class Comments extends Component {
                             })}
                             data-text={`${helper.humanNumber(item.likedCount)} liked`}
                             onClick={ev => thumbsup(item.commentId, !item.liked)}>
-                            <i className="ion-thumbsup" />
+                            <i className="remixicon-thumb-up-fill" />
                         </span>
 
                         {formatDistance(item.time, new Date())}

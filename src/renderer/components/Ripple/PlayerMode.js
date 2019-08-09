@@ -31,13 +31,13 @@ class PlayerMode extends Component {
     renderIndicator(mode) {
         switch (mode) {
             case PLAYER_SHUFFLE:
-                return <i className="ion-ios-shuffle-strong" />;
+                return <i className="remixicon-shuffle-fill" />;
 
             case PLAYER_REPEAT:
-                return <i className="ion-ios-infinite" />;
+                return <i className="remixicon-order-play-fill" />;
 
             case PLAYER_LOOP:
-                return <i className="ion-ios-loop-strong" />;
+                return <i className="remixicon-repeat-fill" />;
 
             default:
                 return <></>;

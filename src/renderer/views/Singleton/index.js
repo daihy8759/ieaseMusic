@@ -16,15 +16,18 @@ import SingletonClasses from './classes';
     playing: stores.controller.playing
 }))
 class Singleton extends Component {
-    componentWillReceiveProps(nextProps) {
-        const { classes } = this.props;
+    componentDidUpdate(prevProps) {
+        const { classes, playing } = this.props;
+        if (prevProps.playing === playing) {
+            return;
+        }
         let ele = this.circle;
 
         if (!ele) return;
 
         ele = ele.firstElementChild;
 
-        if (nextProps.playing) {
+        if (playing) {
             ele.classList.remove(classes.pause);
         } else {
             ele.classList.add(classes.pause);

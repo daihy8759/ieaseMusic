@@ -19,16 +19,8 @@ import PlayingClasses from './classes';
 }))
 @observer
 class Playing extends Component {
-    componentWillReceiveProps(nextProps) {
-        const { filtered } = this.props;
-        // When filter result has been changed, reset the list viewport
-        if (filtered.length !== nextProps.filtered.length) {
-            this.list.scrollTop = 0;
-        }
-    }
-
-    componentDidUpdate() {
-        const { show, song } = this.props;
+    componentDidUpdate(prevProps) {
+        const { show, song, filtered } = this.props;
 
         if (show) {
             const playing = Array.from(this.list.querySelectorAll('[data-id]')).find(e => e.dataset.id === song.id);
@@ -36,6 +28,9 @@ class Playing extends Component {
             if (playing) {
                 playing.scrollIntoView();
             }
+        }
+        if (filtered.length !== prevProps.filtered.length) {
+            this.list.scrollTop = 0;
         }
     }
 

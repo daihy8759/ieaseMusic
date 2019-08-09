@@ -29,18 +29,18 @@ class User extends Component {
         hovered: false
     };
 
+    componentDidUpdate(prevProps) {
+        const { match, getUser } = this.props;
+
+        if (prevProps.match.params.id !== match.params.id) {
+            getUser(match.params.id);
+        }
+    }
+
     componentWillMount = () => {
         const { getUser, match } = this.props;
         getUser(match.params.id);
     };
-
-    componentWillReceiveProps(nextProps) {
-        const { match } = this.props;
-
-        if (nextProps.match.params.id !== match.params.id) {
-            nextProps.getUser(nextProps.match.params.id);
-        }
-    }
 
     renderList() {
         const { classes, playlists, isPlaying } = this.props;

@@ -20,12 +20,12 @@ class FadeImage extends Component {
         this.image = React.createRef();
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps) {
         const ele = this.image.current;
-        const { src } = this.props;
+        const { src, classes } = this.props;
 
-        if (ele && src !== nextProps.src) {
-            ele.classList.add(nextProps.classes.fadein);
+        if (ele && src !== prevProps.src) {
+            ele.classList.add(classes.fadein);
         }
     }
 

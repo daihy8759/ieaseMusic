@@ -38,26 +38,16 @@ class AudioPlayer extends React.Component {
         player.volume = volume;
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps) {
         const { autoPlay, play, song, playing } = this.props;
-        if (nextProps.playing !== playing) {
-            try {
-                if (
-                    !this.player.src &&
-                    // Avoid init player duplicate play
-                    !autoPlay
-                ) {
-                    play();
-                } else {
-                    this.setupPlay(nextProps.playing);
-                }
-            } catch (ex) {
-                // Anti warnning
+        if (prevProps.playing !== playing) {
+            if (!this.player.src && !autoPlay) {
+                play();
+            } else {
+                this.setupPlay(playing);
             }
         }
-
-        if (song.id !== nextProps.song.id) {
-            // Re-calculations the buffering progress
+        if (song.id !== prevProps.song.id) {
             this.bufferedDone = false;
         }
     }

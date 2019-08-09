@@ -189,8 +189,8 @@ class Controller extends Component {
                             <i
                                 className={classnames({
                                     'remixicon-shuffle-fill': mode === PLAYER_SHUFFLE,
-                                    'remixicon-repeat-2-fill': mode === PLAYER_REPEAT,
-                                    'remixicon-repeat-one-fill': mode === PLAYER_LOOP
+                                    'remixicon-order-play-fill': mode === PLAYER_REPEAT,
+                                    'remixicon-repeat-fill': mode === PLAYER_LOOP
                                 })}
                                 onClick={changeMode}
                             />

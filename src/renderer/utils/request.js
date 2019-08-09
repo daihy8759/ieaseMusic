@@ -8,18 +8,18 @@ const request = (method, path, data, crypto = 'weapi') => {
     let cryptoReq = {};
     let url = `https://${host}${path}`;
     switch (crypto) {
-        case 'weapi':
-            cryptoReq = weapi(data);
-            break;
         case 'linuxApi':
             cryptoReq = linuxApi({
                 method,
                 url: url.replace(/\w*api/, 'api'),
                 params: data
             });
-            url = 'https://music.163.com/api/linux/forward';
+            url = `https://${host}/api/linux/forward`;
+            break;
+        case 'eapi':
             break;
         default:
+            cryptoReq = weapi(data);
             break;
     }
     const options = {
@@ -37,11 +37,11 @@ const request = (method, path, data, crypto = 'weapi') => {
 };
 
 const post = (path, data, crypto) => {
-    return request('post', path, data, crypto);
+    return request('POST', path, data, crypto);
 };
 
 const get = (path, data) => {
-    return request('get', path, data);
+    return request('GET', path, data);
 };
 
 export { request, post, get };

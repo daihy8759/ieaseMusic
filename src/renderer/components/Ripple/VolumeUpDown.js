@@ -55,7 +55,7 @@ class VolumeUpDown extends Component {
         if (isMuted()) {
             return (
                 <i
-                    className="ion-ios-volume-low"
+                    className="remixicon-volume-down-fill"
                     style={{
                         fontSize: 32
                     }}
@@ -64,9 +64,9 @@ class VolumeUpDown extends Component {
         }
         const { direction } = this.state;
         if (direction) {
-            return <i className="ion-volume-medium" />;
+            return <i className="remixicon-volume-up-fill" />;
         }
-        return <i className="ion-volume-low" />;
+        return <i className="remixicon-volume-down-fill" />;
     }
 
     render() {

@@ -1,6 +1,14 @@
 import bigInt from 'big-integer';
 import CryptoJS from 'crypto-js';
 
+const {
+    MD5,
+    AES,
+    mode: { CBC, ECB },
+    enc: { Utf8, Base64, Hex },
+    pad: { Pkcs7 }
+} = CryptoJS;
+
 const MODULUS =
     '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea' +
     '8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f' +
@@ -9,6 +17,7 @@ const MODULUS =
 const NONCE = '0CoJUm6Qyw8W8jud';
 const PUBLIC_KEY = '010001';
 const LINUX_API_KEY = 'rFgB&h#%2?^eDg:Q';
+const IV = Utf8.parse('0102030405060708');
 
 function createSecretKey(size) {
     const keys = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -21,14 +30,17 @@ function createSecretKey(size) {
     return key;
 }
 
-function aesEncrypt(text, secKey) {
-    const newSecKey = CryptoJS.enc.Utf8.parse(secKey);
-    const iv = CryptoJS.enc.Utf8.parse('0102030405060708');
-    return CryptoJS.AES.encrypt(text, newSecKey, {
+function aesEncrypt(text, secKey, mode, iv = '', enc = 'base64') {
+    const newSecKey = Utf8.parse(secKey);
+    const encrypted = AES.encrypt(text, newSecKey, {
         iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
+        mode,
+        padding: Pkcs7
     }).toString();
+    if (enc === 'hex') {
+        return Base64.parse(encrypted).toString(Hex);
+    }
+    return encrypted;
 }
 
 function zFill(str, size) {
@@ -51,7 +63,7 @@ function rsaEncrypt(text, pubKey, modulus) {
 const weapi = data => {
     const text = JSON.stringify(data);
     const secKey = createSecretKey(16);
-    const encText = aesEncrypt(aesEncrypt(text, NONCE), secKey);
+    const encText = aesEncrypt(aesEncrypt(text, NONCE, CBC, IV), secKey, CBC, IV);
     const encSecKey = rsaEncrypt(secKey, PUBLIC_KEY, MODULUS);
     return { params: encText, encSecKey };
 };
@@ -59,13 +71,13 @@ const weapi = data => {
 const linuxApi = data => {
     const text = JSON.stringify(data);
     return {
-        eparams: aesEncrypt(text, LINUX_API_KEY)
+        eparams: aesEncrypt(text, LINUX_API_KEY, ECB, '', 'hex').toUpperCase()
     };
 };
 const eapi = data => {};
 
 function md5(text) {
-    return CryptoJS.MD5(text).toString();
+    return MD5(text).toString();
 }
 
 export default { weapi, linuxApi, md5 };

@@ -21,15 +21,10 @@ import PlaylistClasses from './classes';
     }
 }))
 class Playlist extends Component {
-    componentWillMount() {
+    componentDidUpdate(prevProps) {
         const { match, getList } = this.props;
-        getList(encodeURIComponent(match.params.type));
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { match } = this.props;
-        if (match.params.type !== nextProps.match.params.type) {
-            nextProps.getList(encodeURIComponent(nextProps.match.params.type));
+        if (match.params.type !== prevProps.match.params.type) {
+            getList(encodeURIComponent(match.params.type));
         }
     }
 

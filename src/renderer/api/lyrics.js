@@ -1,6 +1,9 @@
 import lyric from './common/lyric';
 
 async function getLyric(id) {
+    if (!id) {
+        return;
+    }
     const result = {};
     try {
         const res = await lyric({ id });

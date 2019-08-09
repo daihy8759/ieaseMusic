@@ -17,10 +17,10 @@ class ProgressImage extends Component {
         fallback: 'https://source.unsplash.com/random'
     };
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps) {
         const { container } = this;
         const { src, classes } = this.props;
-        if (container && nextProps.src !== src) {
+        if (container && prevProps.src !== src) {
             // Immediate render the new image
             container.classList.remove(classes.loaded);
         }

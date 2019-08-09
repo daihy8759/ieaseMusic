@@ -95,22 +95,18 @@ import Search from './Search';
     hasLogin: stores.me.hasLogin
 }))
 class Player extends Component {
-    componentWillMount = () => this.load(this.props);
-
-    componentWillReceiveProps(nextProps) {
-        const { song, match } = this.props;
-        if (nextProps.match.params.id !== match.params.id) {
-            this.load(nextProps);
-            return;
-        }
-
-        if (nextProps.song.id !== song.id) {
-            nextProps.getRelated(nextProps.song);
-        }
+    componentDidMount() {
+        this.load();
     }
 
-    componentDidUpdate() {
-        const { classes, searching } = this.props;
+    componentDidUpdate(prevProps) {
+        const { classes, searching, song, match } = this.props;
+        if (prevProps.match.params.id !== match.params.id) {
+            this.load();
+        }
+        if (prevProps.song.id !== song.id) {
+            this.getRelated(song);
+        }
         const ele = searching ? this.searching : this.list;
         if (!ele) {
             return;
@@ -123,7 +119,7 @@ class Player extends Component {
         }
     }
 
-    async load(props) {
+    load = async () => {
         const {
             showLoading,
             hideLoading,
@@ -131,13 +127,13 @@ class Player extends Component {
             getRelated,
             match: { params },
             song
-        } = props;
+        } = this.props;
 
         showLoading();
         await getList(params);
         await getRelated(song);
         hideLoading();
-    }
+    };
 
     renderPeople() {
         const { classes, hasLogin, users, artists } = this.props;

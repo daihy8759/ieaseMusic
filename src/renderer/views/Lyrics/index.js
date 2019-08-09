@@ -19,9 +19,9 @@ class Lyrics extends Component {
         getLyrics();
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps) {
         const { song, getLyrics } = this.props;
-        if (song.id !== nextProps.song.id) {
+        if (song.id !== prevProps.song.id) {
             getLyrics();
         }
     }

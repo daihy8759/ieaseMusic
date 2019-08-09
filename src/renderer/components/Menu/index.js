@@ -15,8 +15,9 @@ import MenuClasses from './classes';
     close: () => stores.menu.toggle(false)
 }))
 class Menu extends Component {
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.show === true) {
+    componentDidUpdate(prevProps) {
+        const { show } = this.props;
+        if (prevProps !== show && show === true) {
             setTimeout(() => {
                 this.container.focus();
             });

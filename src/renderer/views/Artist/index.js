@@ -89,16 +89,9 @@ class Artist extends Component {
         sine.show(this.canvasRef.current);
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { match } = this.props;
-        if (nextProps.match.params.id !== match.params.id) {
-            nextProps.getArtist(nextProps.match.params.id);
-        }
-    }
-
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         const { list } = this;
-        const { classes } = this.props;
+        const { classes, match } = this.props;
 
         if (list) {
             const playing = list.querySelector(`.${classes.playing}`);
@@ -106,6 +99,9 @@ class Artist extends Component {
             if (playing) {
                 playing.scrollIntoViewIfNeeded();
             }
+        }
+        if (prevProps.match.params.id !== match.params.id) {
+            this.getArtist(match.params.id);
         }
     }
 
