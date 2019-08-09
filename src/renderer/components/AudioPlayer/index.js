@@ -91,16 +91,16 @@ class AudioPlayer extends React.Component {
             const key = helper.getLyricsKey(currentTime * 1000, lyrics);
 
             if (key) {
-                let playing = ele.querySelectorAll('[playing]');
+                let playing = newEle.querySelectorAll('[playing]');
 
                 Array.from(playing).forEach(e => e.removeAttribute('playing'));
 
-                playing = ele.querySelector(`[data-times='${key}']`);
+                playing = newEle.querySelector(`[data-times='${key}']`);
 
                 if (!playing.getAttribute('playing')) {
                     playing.setAttribute('playing', true);
 
-                    if (ele.querySelector('section').getAttribute('scrolling')) {
+                    if (newEle.querySelector('section').getAttribute('scrolling')) {
                         // Enhancement #317
                         return;
                     }

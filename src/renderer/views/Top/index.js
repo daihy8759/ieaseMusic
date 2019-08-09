@@ -85,14 +85,7 @@ class Top extends Component {
                     }}
                 />
 
-                <ul
-                    className={classes.list}
-                    onWheel={e => {
-                        e.currentTarget.scrollLeft -= e.deltaY * 5;
-                        e.preventDefault();
-                    }}>
-                    {this.renderList()}
-                </ul>
+                <ul className={classes.list}>{this.renderList()}</ul>
 
                 <Controller />
             </div>
