@@ -1,7 +1,7 @@
 import { Modal, ModalBody } from 'components/Modal';
 import { shell } from 'electron';
 import { inject, observer } from 'mobx-react';
-import qrcode from 'qrcode-js';
+import QRCode from 'qrcode';
 import React, { Component } from 'react';
 import injectSheet, { ThemeProvider } from 'react-jss';
 import theme from '../../theme';
@@ -75,7 +75,7 @@ class Share extends Component {
                             alt=""
                             ref={ele => {
                                 if (!ele) return;
-                                const base64 = qrcode.toDataURL(url);
+                                const base64 = QRCode.toDataURL(url);
                                 ele.src = base64;
                             }}
                         />
