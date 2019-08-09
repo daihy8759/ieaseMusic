@@ -105,7 +105,7 @@ class Player extends Component {
             this.load();
         }
         if (prevProps.song.id !== song.id) {
-            this.getRelated(song);
+            this.props.getRelated(song);
         }
         const ele = searching ? this.searching : this.list;
         if (!ele) {
