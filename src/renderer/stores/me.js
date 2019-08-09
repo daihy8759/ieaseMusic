@@ -2,7 +2,10 @@ import { loginWithPhone, loginRefresh } from 'api/login';
 import { action, observable } from 'mobx';
 import helper from 'utils/helper';
 import storage from 'utils/storage';
+import QRCodeApi from 'api/qrcode';
 import home from './home';
+
+const { generate, polling } = QRCodeApi;
 
 class Me {
     @observable initialized = false;
@@ -32,27 +35,40 @@ class Me {
         this.initialized = true;
     };
 
-    // @action
-    // generate = async (type) {
-    //     canceledGenerate && canceledGenerate();
-    //     canceledWaiting && canceledWaiting();
+    @action
+    generate = async type => {
+        const data = await generate(type);
 
-    //     var response = await axios.get(
-    //         `/api/qrcode/generate/${type}`,
-    //         {
-    //             cancelToken: new CancelToken(c => {
-    //                 canceledGenerate = c;
-    //             })
-    //         }
-    //     );
+        if (data.success === false) {
+            window.alert('Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.');
+            return;
+        }
 
-    //     if (response.data.success === false) {
-    //         window.alert('Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.');
-    //         return;
-    //     }
+        this.qrcode = {
+            ...data,
+            type
+        };
+    };
 
-    //     this.qrcode = response.data;
-    // }
+    waiting = async done => {
+        const { ticket, state, type } = this.qrcode;
+        const data = await polling({
+            ticket,
+            state,
+            type
+        });
+        if (data.success === false) {
+            window.alert('Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.');
+            return;
+        }
+
+        // this.profile = await getProfile();
+        // await storage.set('profile', this.profile);
+        // await this.init();
+        // await home.load();
+        // done();
+        // this.logining = false;
+    };
 
     @action
     login = async (phone, password) => {

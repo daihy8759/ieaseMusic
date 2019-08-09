@@ -1,3 +1,4 @@
+import qrcodePlaceholder from 'assets/qrcode-placeholder.png';
 import FadeImage from 'components/FadeImage';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
@@ -64,7 +65,7 @@ class QRCode extends Component {
                         {qrcode.url ? (
                             <FadeImage className={classes.qrcode} src={qrcode.url} />
                         ) : (
-                            <img alt="" className={classes.qrcode} src="assets/qrcode-placeholder.png" />
+                            <img alt="" className={classes.qrcode} src={qrcodePlaceholder} />
                         )}
                     </div>
 
