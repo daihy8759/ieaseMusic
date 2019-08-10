@@ -1,4 +1,5 @@
 import { observable, action } from 'mobx';
+import searchByType from 'api/search';
 import axios from 'axios';
 
 class Search {
@@ -37,9 +38,7 @@ class Search {
     getPlaylists = async keyword => {
         this.loading = true;
 
-        const response = await axios.get(`/api/search/1000/0/${keyword}`);
-        const { data } = response;
-
+        const data = await searchByType('1000', keyword);
         this.playlists = data.playlists;
         this.nextHref4playlists = data.nextHref;
         this.loading = false;

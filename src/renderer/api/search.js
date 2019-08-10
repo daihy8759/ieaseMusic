@@ -1,15 +1,16 @@
 import search from './common/search';
-
+//TODO: nextHref
 async function getPlaylists(keywords, offset = 0) {
+    let playlists = [];
     try {
-        const res = search({
+        const res = await search({
             offset,
             keywords,
             limit: 30,
             type: 1000
         });
         if (res.data.code === 200) {
-            return res.data.result.playlists.map(e => {
+            playlists = res.data.result.playlists.map(e => {
                 const { creator } = e;
                 return {
                     id: e.id,
@@ -30,7 +31,10 @@ async function getPlaylists(keywords, offset = 0) {
     } catch (e) {
         console.error(e);
     }
-    return [];
+    return {
+        playlists,
+        nextHref: playlists.length === 30 ? `/api/search/1000/${offset + 30}/${keywords}` : ''
+    };
 }
 
 async function getAlbums(keywords, offset = 0) {

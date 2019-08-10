@@ -100,7 +100,7 @@ class Search extends Component {
                             <span className={styles.star}>
                                 {helper.humanNumber(e.star)}
 
-                                <i className="ion-ios-star" />
+                                <i className="remixicon-star-fill" />
                             </span>
 
                             <span className={styles.played}>{helper.humanNumber(e.played)} Played</span>

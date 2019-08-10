@@ -57,10 +57,12 @@ class Header extends Component {
         }
 
         if (subscribed) {
-            return <i className={classnames('ion-android-star', styles.subscribed)} onClick={e => subscribe(false)} />;
+            return (
+                <i className={classnames('remixicon-star-fill', styles.subscribed)} onClick={e => subscribe(false)} />
+            );
         }
 
-        return <i className="ion-android-star" onClick={e => subscribe(true)} />;
+        return <i className="remixicon-star-fill" onClick={e => subscribe(true)} />;
     }
 
     renderMenu() {
