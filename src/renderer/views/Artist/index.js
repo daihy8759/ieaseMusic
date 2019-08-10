@@ -178,9 +178,8 @@ class Artist extends Component {
                     })}
                 </section>
             );
-        } else {
-            return <section className={styles.nothing}>Nothing ...</section>;
         }
+        return <section className={styles.nothing}>Nothing ...</section>;
     }
 
     renderArtists() {
