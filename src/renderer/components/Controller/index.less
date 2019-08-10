@@ -48,7 +48,7 @@
 
         & .playing:after {
             bottom: 16px;
-            opacity: 1px;
+            opacity: 1;
             visibility: visible;
         }
     }
@@ -155,10 +155,9 @@
             display: inline-block;
             margin: 0 5px;
         }
-    }
-
-    & a:last-child:after {
-        content: none;
+        &:last-child:after {
+            content: none;
+        }
     }
 }
 
