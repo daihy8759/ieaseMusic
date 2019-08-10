@@ -14,6 +14,7 @@ import search from './search';
 import share from './share';
 import top from './top';
 import upnext from './upnext';
+import user from './user';
 
 export default {
     me,
@@ -31,5 +32,6 @@ export default {
     search,
     artist,
     playlist,
+    user,
     fm
 };

@@ -16,7 +16,12 @@ import styles from './index.less';
     playlists: stores.user.playlists,
     follow: stores.user.follow,
     controller: stores.controller,
-    isme: () => stores.user.profile.id === stores.me.profile.userId.toString(),
+    isme: () => {
+        if (!stores.me.profile.userId) {
+            return false;
+        }
+        return stores.user.profile.id === stores.me.profile.userId;
+    },
     isPlaying: id => {
         const { controller } = stores;
 
