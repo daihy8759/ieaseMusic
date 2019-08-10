@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* https://codepen.io/isuttell/pen/OPVELL?q=wave&limit=all&type=type-pens */
 
 /**

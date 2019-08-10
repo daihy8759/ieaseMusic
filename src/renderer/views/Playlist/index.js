@@ -5,10 +5,9 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import PlaylistClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.playlist.loading,
@@ -21,39 +20,48 @@ import PlaylistClasses from './classes';
     }
 }))
 class Playlist extends Component {
+    componentDidMount() {
+        this.loadList();
+    }
+
     componentDidUpdate(prevProps) {
-        const { match, getList } = this.props;
+        const { match } = this.props;
         if (match.params.type !== prevProps.match.params.type) {
-            getList(encodeURIComponent(match.params.type));
+            this.loadList();
         }
     }
 
-    async loadmore(e) {
+    loadList = () => {
+        const { match, getList } = this.props;
+        getList(match.params.type);
+    };
+
+    async loadmore() {
         const container = this.list;
-        const { classes, loadmore } = this.props;
+        const { loadmore } = this.props;
 
         // Drop the duplicate invoke
-        if (container.classList.contains(classes.loadmore)) {
+        if (container.classList.contains(styles.loadmore)) {
             return;
         }
 
         if (container.scrollTop + container.offsetHeight + 50 > container.scrollHeight) {
             // Mark as loading
-            container.classList.add(classes.loadmore);
+            container.classList.add(styles.loadmore);
 
             await loadmore();
-            container.classList.remove(classes.loadmore);
+            container.classList.remove(styles.loadmore);
         }
     }
 
     renderList() {
-        const { classes, list, isPlaying } = this.props;
+        const { list, isPlaying } = this.props;
 
         return list.map((e, index) => {
             return (
                 <article
-                    className={classnames(classes.item, {
-                        [classes.playing]: isPlaying(e.id)
+                    className={classnames(styles.item, {
+                        [styles.playing]: isPlaying(e.id)
                     })}
                     key={index}>
                     <Link to={e.link}>
@@ -66,7 +74,7 @@ class Playlist extends Component {
                         />
                     </Link>
 
-                    <aside className={classes.info}>
+                    <aside className={styles.info}>
                         <p title={e.name}>{e.name}</p>
                         <p>
                             <Link to={e.user.link}>{e.user.name}</Link>
@@ -80,7 +88,6 @@ class Playlist extends Component {
 
     render() {
         const {
-            classes,
             loading,
             types,
             match: { params },
@@ -88,7 +95,7 @@ class Playlist extends Component {
         } = this.props;
 
         return (
-            <div className={classes.container} data-type={encodeURIComponent(params.type)}>
+            <div className={styles.container} data-type={encodeURIComponent(params.type)}>
                 <Header
                     {...{
                         transparent: true,
@@ -96,18 +103,17 @@ class Playlist extends Component {
                     }}
                 />
 
-                <div className={classes.inner}>
+                <div className={styles.inner}>
                     <Loader show={loading} />
 
-                    <ul className={classes.navs}>
+                    <ul className={styles.navs}>
                         {types.map(e => {
                             const selected = params.type === e.name;
-
                             return (
                                 <li
                                     key={e.name}
-                                    className={classnames(classes.nav, {
-                                        [classes.selected]: selected
+                                    className={classnames(styles.nav, {
+                                        [styles.selected]: selected
                                     })}>
                                     {selected ? (
                                         <Link to={`/playlist/${encodeURIComponent(e.name)}`}>
@@ -122,11 +128,11 @@ class Playlist extends Component {
                     </ul>
 
                     <section
-                        className={classes.list}
+                        className={styles.list}
                         ref={ele => {
                             this.list = ele;
                         }}
-                        onScroll={e => this.loadmore()}>
+                        onScroll={() => this.loadmore()}>
                         {this.renderList()}
                     </section>
 
@@ -137,4 +143,4 @@ class Playlist extends Component {
     }
 }
 
-export default injectSheet(PlaylistClasses)(Playlist);
+export default Playlist;

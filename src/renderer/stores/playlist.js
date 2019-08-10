@@ -1,5 +1,5 @@
-import { observable, action } from 'mobx';
-import axios from 'axios';
+import getPlayList from 'api/playlist';
+import { action, observable } from 'mobx';
 
 class Playlist {
     @observable loading = true;
@@ -265,15 +265,19 @@ class Playlist {
         }
     ];
 
+    @observable type = '全部';
+
+    @observable nextOffset = 0;
+
     @action
     getList = async (type = '全部') => {
         this.loading = true;
 
-        const response = await axios.get(`/api/playlist/${type}`);
-        const { data } = response;
-
-        this.list = data.playlists;
-        this.nextHref = data.nextHref;
+        const data = await getPlayList(type);
+        const { playList, nextOffset } = data;
+        this.list = playList;
+        this.type = type;
+        this.nextOffset = nextOffset;
 
         this.loading = false;
     };
@@ -281,15 +285,14 @@ class Playlist {
     // Scroll to load more data
     @action
     loadmore = async () => {
-        if (!this.nextHref) {
+        if (!this.nextOffset) {
             return;
         }
-
-        const response = await axios.get(this.nextHref);
-        const { data } = response;
-
-        this.list.push(...data.playlists);
-        this.nextHref = data.nextHref;
+        const { type, nextOffset } = this;
+        const data = await getPlayList(type, nextOffset);
+        const { playList, nextOffset: offset } = data;
+        this.list.push(...playList);
+        this.nextOffset = offset;
     };
 
     @action toggle(show = !this.show) {
