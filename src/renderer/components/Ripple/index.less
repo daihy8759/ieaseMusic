@@ -1,0 +1,47 @@
+@animationName: ~'animation-`Math.round(Math.random() * 1.0e8)`';
+
+.container {
+    position: fixed;
+    right: 50%;
+    top: 50%;
+    width: 64px;
+    height: 64px;
+    line-height: 64px;
+    border-radius: 64px;
+    margin-right: -32px;
+    margin-top: -32px;
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    background: #000;
+    box-shadow: 0 30px 80px 0 rgba(97, 45, 45, 0.25);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.animated {
+    animation-name: @animationName;
+    animation-duration: 800ms;
+    animation-iteration-count: 1;
+}
+
+@keyframes @animationName {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+        visibility: hidden;
+    }
+
+    40% {
+        opacity: 1;
+        transform: scale(1);
+        visibility: visible;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.2);
+        visibility: hidden;
+    }
+}

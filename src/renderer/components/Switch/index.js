@@ -1,18 +1,17 @@
 import React, { PureComponent } from 'react';
-import injectSheet from 'react-jss';
-import SwitchClasses from './classes';
+import styles from './index.less';
 
 class Switch extends PureComponent {
     render() {
-        const { classes, id, defaultChecked, onChange } = this.props;
+        const { id, defaultChecked, onChange } = this.props;
 
         return (
-            <span className={classes.container}>
+            <span className={styles.container}>
                 <input defaultChecked={defaultChecked} id={id} type="checkbox" onChange={onChange} />
-                <span className={classes.fake} />
+                <span className={styles.fake} />
             </span>
         );
     }
 }
 
-export default injectSheet(SwitchClasses)(Switch);
+export default Switch;

@@ -4,10 +4,9 @@ import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import SearchClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.search.loading,
@@ -39,21 +38,19 @@ class Search extends Component {
     }
 
     highlight(ele) {
-        const { classes } = this.props;
         const eles = ele.parentElement.children;
 
         Array.from(eles).forEach(e => {
-            e.classList.remove(classes.selected);
+            e.classList.remove(styles.selected);
         });
 
-        ele.classList.add(classes.selected);
+        ele.classList.add(styles.selected);
     }
 
     selected(ele, state) {
-        const { classes } = this.props;
         const keywords = this.search.value.trim();
 
-        if (ele.classList.contains(classes.selected)) {
+        if (ele.classList.contains(styles.selected)) {
             return;
         }
 
@@ -75,11 +72,11 @@ class Search extends Component {
     }
 
     renderPlaylist() {
-        const { classes, playlists } = this.props;
+        const { playlists } = this.props;
 
         if (playlists.length === 0) {
             return (
-                <div className={classes.placeholder}>
+                <div className={styles.placeholder}>
                     <span>Nothing ...</span>
                 </div>
             );
@@ -87,7 +84,7 @@ class Search extends Component {
 
         return playlists.map(e => {
             return (
-                <Link className={classes.row} key={e.link} onClick={() => this.reset()} to={e.link}>
+                <Link className={styles.row} key={e.link} onClick={() => this.reset()} to={e.link}>
                     <ProgressImage
                         {...{
                             src: e.cover,
@@ -100,16 +97,16 @@ class Search extends Component {
                         <span>{e.name}</span>
 
                         <div>
-                            <span className={classes.star}>
+                            <span className={styles.star}>
                                 {helper.humanNumber(e.star)}
 
                                 <i className="ion-ios-star" />
                             </span>
 
-                            <span className={classes.played}>{helper.humanNumber(e.played)} Played</span>
+                            <span className={styles.played}>{helper.humanNumber(e.played)} Played</span>
                         </div>
 
-                        <span className={classes.tracks}>{e.size} Tracks</span>
+                        <span className={styles.tracks}>{e.size} Tracks</span>
                     </aside>
                 </Link>
             );
@@ -117,11 +114,11 @@ class Search extends Component {
     }
 
     renderAlbums() {
-        const { classes, albums } = this.props;
+        const { albums } = this.props;
 
         if (albums.length === 0) {
             return (
-                <div className={classes.placeholder}>
+                <div className={styles.placeholder}>
                     <span>Nothing ...</span>
                 </div>
             );
@@ -129,7 +126,7 @@ class Search extends Component {
 
         return albums.map(e => {
             return (
-                <Link className={classes.row} key={e.link} onClick={() => this.reset()} to={e.link}>
+                <Link className={styles.row} key={e.link} onClick={() => this.reset()} to={e.link}>
                     <ProgressImage
                         {...{
                             src: e.cover,
@@ -143,7 +140,7 @@ class Search extends Component {
 
                         <span>{e.artist.name}</span>
 
-                        <span className={classes.publish}>{format(e.publishTime, 'L')}</span>
+                        <span className={styles.publish}>{format(e.publishTime, 'L')}</span>
                     </aside>
                 </Link>
             );
@@ -151,11 +148,11 @@ class Search extends Component {
     }
 
     renderArtists() {
-        const { classes, artists, follow } = this.props;
+        const { artists, follow } = this.props;
 
         if (artists.length === 0) {
             return (
-                <div className={classes.placeholder}>
+                <div className={styles.placeholder}>
                     <span>Nothing ...</span>
                 </div>
             );
@@ -163,7 +160,7 @@ class Search extends Component {
 
         return artists.map(e => {
             return (
-                <div className={classes.artist} key={e.link}>
+                <div className={styles.artist} key={e.link}>
                     <Link onClick={() => this.reset()} to={e.link}>
                         <ProgressImage
                             {...{
@@ -189,13 +186,13 @@ class Search extends Component {
                             })}
                             onClick={async ev => {
                                 const { target } = ev;
-                                const followed = target.classList.contains(classes.liked);
+                                const followed = target.classList.contains(styles.liked);
 
                                 if (await follow(followed, e.id)) {
                                     if (followed) {
-                                        target.classList.remove(classes.liked);
+                                        target.classList.remove(styles.liked);
                                     } else {
-                                        target.classList.add(classes.liked);
+                                        target.classList.add(styles.liked);
                                     }
                                 }
                             }}
@@ -207,11 +204,11 @@ class Search extends Component {
     }
 
     renderUsers() {
-        const { classes, users } = this.props;
+        const { users } = this.props;
 
         if (users.length === 0) {
             return (
-                <div className={classes.placeholder}>
+                <div className={styles.placeholder}>
                     <span>Nothing ...</span>
                 </div>
             );
@@ -219,7 +216,7 @@ class Search extends Component {
 
         return users.map(e => {
             return (
-                <div className={classes.user} key={e.link}>
+                <div className={styles.user} key={e.link}>
                     <Link onClick={() => this.reset()} to={e.link}>
                         <ProgressImage
                             {...{
@@ -230,7 +227,7 @@ class Search extends Component {
                         />
                     </Link>
 
-                    <span className={classes.username}>{e.name}</span>
+                    <span className={styles.username}>{e.name}</span>
                 </div>
             );
         });
@@ -238,7 +235,6 @@ class Search extends Component {
 
     render() {
         const {
-            classes,
             loading,
             getPlaylists,
             loadmorePlaylists,
@@ -251,7 +247,7 @@ class Search extends Component {
         } = this.props;
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Header
                     {...{
                         transparent: true,
@@ -273,7 +269,7 @@ class Search extends Component {
 
                     <nav>
                         <span
-                            className={classes.selected}
+                            className={styles.selected}
                             onClick={e =>
                                 this.selected(e.target, {
                                     search: getPlaylists,
@@ -316,13 +312,13 @@ class Search extends Component {
                     </nav>
 
                     <section
-                        className={classes.list}
+                        className={styles.list}
                         onScroll={e => this.loadmore(e)}
                         ref={ele => {
                             this.list = ele;
                         }}>
                         {loading ? (
-                            <div className={classes.placeholder}>
+                            <div className={styles.placeholder}>
                                 <span>Loading ...</span>
                             </div>
                         ) : (
@@ -335,4 +331,4 @@ class Search extends Component {
     }
 }
 
-export default injectSheet(SearchClasses)(Search);
+export default Search;

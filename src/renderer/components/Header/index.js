@@ -2,8 +2,7 @@ import classnames from 'classnames';
 import { inject } from 'mobx-react';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
-import HeaderClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     song: stores.controller.song,
@@ -31,13 +30,13 @@ class Header extends Component {
     goBack = () => window.history.back();
 
     renderBack() {
-        const { classes, showBack } = this.props;
+        const { showBack } = this.props;
 
         if (!showBack) {
             return false;
         }
 
-        return <span className={classes.backward} onClick={e => this.goBack()} />;
+        return <span className={styles.backward} onClick={e => this.goBack()} />;
     }
 
     renderPlaylist() {
@@ -51,14 +50,14 @@ class Header extends Component {
     }
 
     renderFav() {
-        const { hasLogin, showFav, subscribed, subscribe, classes } = this.props;
+        const { hasLogin, showFav, subscribed, subscribe } = this.props;
 
         if (!showFav || !hasLogin()) {
             return false;
         }
 
         if (subscribed) {
-            return <i className={classnames('ion-android-star', classes.subscribed)} onClick={e => subscribe(false)} />;
+            return <i className={classnames('ion-android-star', styles.subscribed)} onClick={e => subscribe(false)} />;
         }
 
         return <i className="ion-android-star" onClick={e => subscribe(true)} />;
@@ -70,10 +69,10 @@ class Header extends Component {
     }
 
     render() {
-        const { classes, song, transparent, className } = this.props;
+        const { song, transparent, className } = this.props;
 
         return (
-            <header className={classnames(classes.container, className)}>
+            <header className={classnames(styles.container, className)}>
                 {song.id && transparent === false ? (
                     <figure
                         style={{
@@ -111,7 +110,7 @@ class Header extends Component {
 
                 <section
                     className={classnames({
-                        [classes.transparent]: transparent
+                        [styles.transparent]: transparent
                     })}>
                     {this.renderBack()}
 
@@ -126,4 +125,4 @@ class Header extends Component {
     }
 }
 
-export default injectSheet(HeaderClasses)(Header);
+export default Header;

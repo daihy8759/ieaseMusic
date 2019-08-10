@@ -16,29 +16,32 @@
         color: inherit !important;
     }
 
-    & nav a:after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        height: 20px;
-        width: 0;
-        background: @color-dribbble;
-        transform: translateY(10px);
-        opacity: 0;
-        transition: 0.2s ease-out;
-        z-index: -1;
-    }
+    nav {
+        a {
+            &:after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 20px;
+                width: 0;
+                background: @color-dribbble;
+                transform: translateY(10px);
+                opacity: 0;
+                transition: 0.2s ease-out;
+                z-index: -1;
+            }
+        }
 
-    & nav a:hover:after,
-    & nav .playing:after {
-        opacity: 1;
-        width: 110%;
-    }
-
-    & nav p {
-        margin: 0;
-        margin-bottom: 24px;
+        a:hover:after,
+        .playing:after {
+            opacity: 1;
+            width: 110%;
+        }
+        p {
+            margin: 0;
+            margin-bottom: 24px;
+        }
     }
 }
 

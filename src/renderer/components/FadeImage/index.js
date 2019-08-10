@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import injectSheet from 'react-jss';
 import classnames from 'classnames';
-import FadeImageClasses from './classes';
+import styles from './index.less';
 
 class FadeImage extends Component {
     static propTypes = {
@@ -22,10 +21,10 @@ class FadeImage extends Component {
 
     componentDidUpdate(prevProps) {
         const ele = this.image.current;
-        const { src, classes } = this.props;
+        const { src } = this.props;
 
         if (ele && src !== prevProps.src) {
-            ele.classList.add(classes.fadein);
+            ele.classList.add(styles.fadein);
         }
     }
 
@@ -36,13 +35,13 @@ class FadeImage extends Component {
 
     handleLoad(e) {
         const {
-            classes: { fadein }
+            styles: { fadein }
         } = this.props;
         e.target.classList.remove(fadein);
     }
 
     render() {
-        const { classes, className, src } = this.props;
+        const { className, src } = this.props;
 
         if (!src) return false;
 
@@ -51,7 +50,7 @@ class FadeImage extends Component {
                 ref={this.image}
                 src={src}
                 alt=""
-                className={classnames(classes.fade, classes.fadein, className)}
+                className={classnames(styles.fade, styles.fadein, className)}
                 onLoad={e => this.handleLoad(e)}
                 onError={e => this.handleError(e)}
             />
@@ -59,4 +58,4 @@ class FadeImage extends Component {
     }
 }
 
-export default injectSheet(FadeImageClasses)(FadeImage);
+export default FadeImage;

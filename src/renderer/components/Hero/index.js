@@ -3,10 +3,9 @@ import Indicator from 'components/Indicator';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import HeroClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     like: stores.me.like,
@@ -18,12 +17,12 @@ import HeroClasses from './classes';
 }))
 class Hero extends Component {
     render() {
-        const { classes, song, isLiked, unlike, like, comments, showShare, location } = this.props;
+        const { song, isLiked, unlike, like, comments, showShare, location } = this.props;
         const { pathname } = location;
         const liked = isLiked(song.id);
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <ProgressImage
                     {...{
                         height: window.innerHeight,
@@ -34,7 +33,7 @@ class Hero extends Component {
 
                 <a
                     href=""
-                    className={classes.share}
+                    className={styles.share}
                     onClick={e => {
                         e.preventDefault();
                         showShare(true);
@@ -45,7 +44,7 @@ class Hero extends Component {
                 <summary>
                     <i
                         className={classnames('ion-ios-heart', {
-                            [classes.liked]: liked
+                            [styles.liked]: liked
                         })}
                         onClick={e => (liked ? unlike(song) : like(song))}
                         style={{
@@ -54,9 +53,9 @@ class Hero extends Component {
                         }}
                     />
 
-                    <span className={classes.badge}>{helper.getRate(song)}</span>
+                    <span className={styles.badge}>{helper.getRate(song)}</span>
 
-                    <span className={classes.badge}>
+                    <span className={styles.badge}>
                         {pathname === '/comments' ? `${helper.humanNumber(comments)} Comments` : 'Lyrics'}
                     </span>
                 </summary>
@@ -64,7 +63,7 @@ class Hero extends Component {
                 <nav>
                     <article
                         className={classnames({
-                            [classes.active]: pathname === '/lyrics'
+                            [styles.active]: pathname === '/lyrics'
                         })}>
                         <Link to={`/${pathname === '/comments' ? 'lyrics' : 'comments'}`}>
                             {pathname === '/comments' ? 'Lyrics' : `${helper.humanNumber(comments)} Comments`}
@@ -86,7 +85,7 @@ class Hero extends Component {
                 <footer>
                     <h3>{song.name}</h3>
 
-                    <p className={classes.author}>
+                    <p className={styles.author}>
                         {song.artists.map((e, index) => {
                             // Show the artist
                             return (
@@ -102,4 +101,4 @@ class Hero extends Component {
     }
 }
 
-export default injectSheet(HeroClasses)(Hero);
+export default Hero;

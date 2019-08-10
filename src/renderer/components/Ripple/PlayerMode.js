@@ -1,13 +1,11 @@
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
-import PlayerModeClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     mode: stores.controller.mode
 }))
-@observer
 class PlayerMode extends Component {
     constructor(props) {
         super(props);
@@ -19,13 +17,11 @@ class PlayerMode extends Component {
     }
 
     componentDidUpdate() {
-        const { classes } = this.props;
-        this.containerRef.current.classList.add(classes.animated);
+        this.containerRef.current.classList.add(styles.animated);
     }
 
     animationDone() {
-        const { classes } = this.props;
-        this.containerRef.current.classList.remove(classes.animated);
+        this.containerRef.current.classList.remove(styles.animated);
     }
 
     renderIndicator(mode) {
@@ -45,14 +41,14 @@ class PlayerMode extends Component {
     }
 
     render() {
-        const { classes, mode } = this.props;
+        const { mode } = this.props;
 
         return (
-            <div className={classes.container} onAnimationEnd={() => this.animationDone()} ref={this.containerRef}>
+            <div className={styles.container} onAnimationEnd={() => this.animationDone()} ref={this.containerRef}>
                 {this.renderIndicator(mode)}
             </div>
         );
     }
 }
 
-export default injectSheet(PlayerModeClasses)(PlayerMode);
+export default PlayerMode;

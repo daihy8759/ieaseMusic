@@ -3,9 +3,7 @@ import { Modal, ModalBody } from 'components/Modal';
 import ProgressImage from 'components/ProgressImage';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet, { ThemeProvider } from 'react-jss';
-import theme from '../../theme';
-import UpNextClasses from './classes';
+import styles from './index.less';
 
 @inject('upnext', 'controller')
 @observer
@@ -16,29 +14,23 @@ class UpNext extends Component {
     }
 
     renderContent() {
-        const { classes, upnext, controller } = this.props;
+        const { upnext, controller } = this.props;
         const { song } = upnext;
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <h2>Up Next</h2>
 
                 <p>
-                    {song.name} - {song.artists.map((e, index) => e.name).join()}
+                    {song.name} - {song.artists.map(e => e.name).join()}
                 </p>
 
-                <figure className={classes.circle} data-percent="75">
-                    <div
-                        style={{
-                            height: 140,
-                            width: 140,
-                            borderRadius: 140,
-                            overflow: 'hidden'
-                        }}>
-                        <i className={classes.mask} />
+                <figure className={styles.circle} data-percent="75">
+                    <div>
+                        <i className={styles.mask} />
                         <i
                             role="presentation"
-                            className={classnames('remixicon-play-fill', classes.play)}
+                            className={classnames('remixicon-play-fill', styles.play)}
                             onClick={e => {
                                 this.close();
                                 controller.play(song.id);
@@ -47,7 +39,7 @@ class UpNext extends Component {
 
                         <ProgressImage
                             {...{
-                                className: classes.cover,
+                                className: styles.cover,
                                 height: 140,
                                 width: 140,
                                 src: song.album.cover
@@ -55,9 +47,9 @@ class UpNext extends Component {
                         />
                     </div>
 
-                    <svg className={classes.svg} width="140" height="140">
+                    <svg className={styles.svg} width="140" height="140">
                         <circle
-                            className={classes.outter}
+                            className={styles.outter}
                             onAnimationEnd={e => {
                                 if (!upnext.show) {
                                     return;
@@ -88,16 +80,14 @@ class UpNext extends Component {
     }
 
     render() {
-        const { classes, upnext } = this.props;
+        const { upnext } = this.props;
 
         return (
             <Modal show={upnext.show}>
-                <ModalBody className={classes.modal}>
-                    <ThemeProvider theme={theme}>{this.renderContent()}</ThemeProvider>
-                </ModalBody>
+                <ModalBody className={styles.modal}>{this.renderContent()}</ModalBody>
             </Modal>
         );
     }
 }
 
-export default injectSheet(UpNextClasses)(UpNext);
+export default UpNext;

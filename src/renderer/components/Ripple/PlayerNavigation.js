@@ -1,7 +1,6 @@
 import { ipcRenderer } from 'electron';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
-import PlayerNavigationClasses from './classes';
+import styles from './index.less';
 
 class PlayerNavigation extends Component {
     state = {
@@ -39,26 +38,23 @@ class PlayerNavigation extends Component {
     }
 
     componentDidUpdate() {
-        const { classes } = this.props;
-        this.containerRef.current.classList.add(classes.animated);
+        this.containerRef.current.classList.add(styles.animated);
     }
 
     animationDone() {
         this.shouldUpdate = false;
-        const { classes } = this.props;
-        this.containerRef.current.classList.remove(classes.animated);
+        this.containerRef.current.classList.remove(styles.animated);
     }
 
     render() {
-        const { classes } = this.props;
         const { direction } = this.state;
 
         return (
-            <div className={classes.container} onAnimationEnd={() => this.animationDone()} ref={this.containerRef}>
+            <div className={styles.container} onAnimationEnd={() => this.animationDone()} ref={this.containerRef}>
                 {direction ? <i className="remixicon-rewind-fill" /> : <i className="remixicon-speed-fill" />}
             </div>
         );
     }
 }
 
-export default injectSheet(PlayerNavigationClasses)(PlayerNavigation);
+export default PlayerNavigation;

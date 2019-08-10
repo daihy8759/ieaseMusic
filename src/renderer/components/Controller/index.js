@@ -2,12 +2,11 @@ import classnames from 'classnames';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import ControllerClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     song: stores.controller.song,
@@ -42,7 +41,6 @@ class Controller extends Component {
 
     render() {
         const {
-            classes,
             song,
             mode,
             prev,
@@ -66,7 +64,7 @@ class Controller extends Component {
 
         return (
             <div
-                className={classes.container}
+                className={styles.container}
                 ref={ele => {
                     if (!ele) return;
 
@@ -106,9 +104,9 @@ class Controller extends Component {
                 ) : (
                     false
                 )}
-                <div id="progress" className={classes.bar} onClick={e => this.seek(e)}>
-                    <div className={classes.playing} />
-                    <div className={classes.buffering} />
+                <div id="progress" className={styles.bar} onClick={e => this.seek(e)}>
+                    <div className={styles.playing} />
+                    <div className={styles.buffering} />
                 </div>
                 <section>
                     {/* Click the cover show the player screen */}
@@ -136,19 +134,19 @@ class Controller extends Component {
                                 style: {
                                     filter: `drop-shadow(3mm 2mm 4mm ${colors.randomColor()})`
                                 },
-                                className: classes.cover
+                                className: styles.cover
                             }}
                         />
                     </Link>
 
                     <aside>
-                        <div className={classes.info}>
-                            <p className={classes.title} title={song.name}>
+                        <div className={styles.info}>
+                            <p className={styles.title} title={song.name}>
                                 {/* Click the song name show the album screen */}
                                 <Link to={song.album.link}>{song.name}</Link>
                             </p>
 
-                            <p className={classes.author}>
+                            <p className={styles.author}>
                                 {song.artists.map((e, index) => {
                                     // Show the artist
                                     return (
@@ -160,27 +158,27 @@ class Controller extends Component {
                             </p>
                         </div>
 
-                        <div className={classes.action}>
+                        <div className={styles.action}>
                             {song.data && song.data.isFlac ? (
-                                <span className={classes.highquality} title="High Quality Music">
+                                <span className={styles.highquality} title="High Quality Music">
                                     SQ
                                 </span>
                             ) : (
                                 false
                             )}
 
-                            <Link className={classes.text} to="/lyrics">
+                            <Link className={styles.text} to="/lyrics">
                                 LRC
                             </Link>
 
-                            <Link className={classes.text} to="/comments">
+                            <Link className={styles.text} to="/comments">
                                 {helper.humanNumber(comments)} Comments
                             </Link>
 
                             {hasLogin() && (
                                 <i
                                     className={classnames('remixicon-heart-2-fill', {
-                                        [classes.liked]: liked
+                                        [styles.liked]: liked
                                     })}
                                     onClick={e => (liked ? unlike(song) : like(song))}
                                 />
@@ -195,10 +193,10 @@ class Controller extends Component {
                                 onClick={changeMode}
                             />
 
-                            <div className={classes.controls}>
+                            <div className={styles.controls}>
                                 <i className="remixicon-rewind-fill" onClick={prev} />
 
-                                <span className={classes.toggle} onClick={toggle}>
+                                <span className={styles.toggle} onClick={toggle}>
                                     {playing ? (
                                         <i className="remixicon-pause-fill" />
                                     ) : (
@@ -226,4 +224,4 @@ class Controller extends Component {
     }
 }
 
-export default injectSheet(ControllerClasses)(Controller);
+export default Controller;

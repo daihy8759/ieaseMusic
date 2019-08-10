@@ -1,8 +1,7 @@
 import { ipcRenderer } from 'electron';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
-import VolumeUpDownClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     isMuted: () => stores.preferences.volume === 0
@@ -37,17 +36,11 @@ class VolumeUpDown extends Component {
     }
 
     componentDidUpdate() {
-        const {
-            classes: { animated }
-        } = this.props;
-        this.container.current.classList.add(animated);
+        this.container.current.classList.add(styles.animated);
     }
 
     animationDone() {
-        const {
-            classes: { animated }
-        } = this.props;
-        this.container.current.classList.remove(animated);
+        this.container.current.classList.remove(styles.animated);
     }
 
     renderVolume() {
@@ -70,14 +63,12 @@ class VolumeUpDown extends Component {
     }
 
     render() {
-        const { classes } = this.props;
-
         return (
-            <div className={classes.container} onAnimationEnd={() => this.animationDone()} ref={this.container}>
+            <div className={styles.container} onAnimationEnd={() => this.animationDone()} ref={this.container}>
                 {this.renderVolume()}
             </div>
         );
     }
 }
 
-export default injectSheet(VolumeUpDownClasses)(VolumeUpDown);
+export default VolumeUpDown;
