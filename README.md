@@ -1,6 +1,6 @@
 # ieaseMusic
 
-> Built by Electron, React, MobX, JSS
+> Built by Electron, React, MobX, Less
 
 # screenshots
 
