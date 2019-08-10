@@ -95,6 +95,7 @@
 }
 
 .item {
+    width: calc(99.99% * 1 / 2 - (10px - 10px * 1 / 2));
     display: flex;
     margin-bottom: 12px;
     justify-content: flex-start;
@@ -112,6 +113,21 @@
 
     &.playing figure {
         box-shadow: 0 0 24px 0 @color-primary;
+    }
+
+    &:nth-child(n) {
+        float: left;
+        clear: none;
+        margin-right: 10px;
+    }
+
+    &:nth-child(2n + 1) {
+        clear: left;
+    }
+
+    &:nth-child(2n) {
+        float: right;
+        margin-right: 0;
     }
 
     p {
