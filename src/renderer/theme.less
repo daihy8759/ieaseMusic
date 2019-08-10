@@ -1,0 +1,25 @@
+@color-primary: #6496f0;
+@color-sunflower: #ffce54;
+@color-grape: #e0245e;
+@color-coral: #ff6470;
+@color-mint: #48cfad;
+@color-dribbble: #ea4c89;
+@color-twitter: #55acee;
+@color-google: #5090fb;
+@colors: @color-primary, @color-sunflower, @color-grape, @color-coral, @color-mint, @color-dribbble, @color-twitter,
+    @color-google;
+@length: length(@colors);
+@randomColorInt: `Math.ceil(Math.random() * (@{length})) `;
+@randomColor: extract(@colors, @randomColorInt);
+@gradients: 'linear-gradient(to right, #0099f7, #f11712)', 'linear-gradient(to bottom, #834d9b, #d04ed6)',
+    'linear-gradient(to left, #4da0b0, #d39d38)', 'linear-gradient(to left, #5614b0, #dbd65c)',
+    'linear-gradient(to right, #114357, #f29492)', 'linear-gradient(to right, #fd746c, #ff9068)',
+    'linear-gradient(to left, #6a3093, #a044ff)', 'linear-gradient(to left, #b24592, #f15f79)',
+    'linear-gradient(to top, #403a3e, #be5869)', 'linear-gradient(to right, #c2e59c, #64b3f4)',
+    'linear-gradient(to right, #00c9ff, #92fe9d)', 'linear-gradient(to right, #e53935, #e35d5b)',
+    'linear-gradient(to right, #fc00ff, #00dbde)', 'linear-gradient(to right, #7b4397, #dc2430)';
+@gradientsLength: length(@gradients);
+@randomGradientInt: `Math.ceil(Math.random() * (@{gradientsLength})) `;
+@randomGradient: extract(@gradients, @randomGradientInt);
+@google-font: Roboto;
+@primary-font: HelveticaNeue-UltraLight;

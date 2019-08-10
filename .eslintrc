@@ -12,6 +12,7 @@
         "no-unused-vars": 0,
         "no-plusplus": 0,
         // TODO:
+        "no-bitwise": 0,
         "react/no-find-dom-node": 0,
         "react/destructuring-assignment": 0,
         "import/prefer-default-export": 0,

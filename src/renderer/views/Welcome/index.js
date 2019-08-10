@@ -8,24 +8,23 @@ import formatDistance from 'date-fns/formatDistance';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import WelcomeClasses from './classes';
+import styles from './index.less';
 
-const Status = injectSheet(WelcomeClasses)(props => {
-    const { classes, playing } = props;
+const Status = props => {
+    const { playing } = props;
 
     if (!playing) {
         return false;
     }
 
     return (
-        <div className={classes.status}>
+        <div className={styles.status}>
             <Indicator />
         </div>
     );
-});
+};
 
 @inject('me', 'controller', 'preferences', 'home')
 @observer
@@ -48,17 +47,16 @@ class Welcome extends Component {
 
     renderProfile() {
         const {
-            classes,
             me: { profile }
         } = this.props;
         const link = `/user/${profile.userId}`;
         return (
-            <article className={classes.profile}>
+            <article className={styles.profile}>
                 <Link className="clearfix" to={link}>
                     <FadeImage src={profile.avatarUrl} />
                 </Link>
 
-                <div className={classes.info}>
+                <div className={styles.info}>
                     <p title={profile.nickname}>
                         <Link to={link}>{profile.nickname}</Link>
                     </p>
@@ -69,24 +67,24 @@ class Welcome extends Component {
     }
 
     renderFavorite(favorite = {}) {
-        const { classes, controller } = this.props;
+        const { controller } = this.props;
 
         if (favorite.size === 0) {
             return false;
         }
 
         return (
-            <Link className={classes.clearfix} to={favorite.link || '#'}>
+            <Link className={styles.clearfix} to={favorite.link || '#'}>
                 <Status playing={controller.playlist.id === favorite.id} />
 
-                <div className={classes.hovered}>
+                <div className={styles.hovered}>
                     <i className="remixicon-arrow-right-line" />
                 </div>
 
-                <figure className={classnames(classes.item, classes.favorite)}>
+                <figure className={classnames(styles.item, styles.favorite)}>
                     <ProgressImage
                         {...{
-                            className: classes.background,
+                            className: styles.background,
                             width: 360,
                             src: favorite.background
                         }}
@@ -94,7 +92,7 @@ class Welcome extends Component {
 
                     <figcaption>
                         <ProgressImage
-                            className={classes.cover}
+                            className={styles.cover}
                             ref={ele => {
                                 if (!ele || !favorite.pallet) return;
 
@@ -120,20 +118,20 @@ class Welcome extends Component {
     }
 
     renderRecommend(recommend = {}) {
-        const { classes, controller } = this.props;
+        const { controller } = this.props;
 
         return (
-            <Link className={classes.clearfix} to="#" onClick={this.play(recommend)}>
+            <Link className={styles.clearfix} to="#" onClick={this.play(recommend)}>
                 <Status playing={controller.playlist.id === recommend.id} />
 
-                <div className={classes.hovered}>
+                <div className={styles.hovered}>
                     <i className="remixicon-arrow-right-line" />
                 </div>
 
-                <figure className={classnames(classes.item, classes.recommend)}>
+                <figure className={classnames(styles.item, styles.recommend)}>
                     <figcaption>
                         <ProgressImage
-                            className={classes.cover}
+                            className={styles.cover}
                             ref={ele => {
                                 if (!ele || !recommend.pallet) return;
 
@@ -159,31 +157,31 @@ class Welcome extends Component {
     }
 
     renderPlaylist(list) {
-        const { classes, controller } = this.props;
+        const { controller } = this.props;
 
         return list.map((e, index) => {
             return (
-                <Link className={classes.clearfix} key={e.id + index} to={e.link}>
+                <Link className={styles.clearfix} key={e.id + index} to={e.link}>
                     <Status playing={controller.playlist.id === e.id} />
 
-                    <div className={classes.hovered}>
+                    <div className={styles.hovered}>
                         <i className="remixicon-arrow-right-line" />
                     </div>
 
-                    <figure className={classnames(classes.item, classes.large)}>
+                    <figure className={classnames(styles.item, styles.large)}>
                         <ProgressImage
                             {...{
                                 width: 360,
                                 src: e.background,
-                                className: classnames(classes.background, {
-                                    [classes.album]: e.type
+                                className: classnames(styles.background, {
+                                    [styles.album]: e.type
                                 })
                             }}
                         />
 
                         <figcaption>
                             <ProgressImage
-                                className={classes.cover}
+                                className={styles.cover}
                                 ref={ele => {
                                     if (!ele || !e.pallet) return;
 
@@ -214,17 +212,17 @@ class Welcome extends Component {
     }
 
     render() {
-        const { classes, controller, me, home } = this.props;
+        const { controller, me, home } = this.props;
         const { list } = home;
         const logined = me.hasLogin();
         const hasRecommend = logined && list.length && list[1].size;
         const songId = controller.song ? controller.song.id : '';
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Loader show={home.loading} />
                 <main>
-                    <aside className={classes.navs}>
+                    <aside className={styles.navs}>
                         {logined ? (
                             this.renderProfile()
                         ) : (
@@ -238,7 +236,7 @@ class Welcome extends Component {
                             </Link>
                         )}
 
-                        <nav className={classes.menu}>
+                        <nav className={styles.menu}>
                             <p>
                                 <Link to="/search">Search</Link>
                             </p>
@@ -254,7 +252,7 @@ class Welcome extends Component {
                             <p>
                                 <Link
                                     className={classnames({
-                                        [classes.playing]: controller.playlist.id === 'PERSONAL_FM'
+                                        [styles.playing]: controller.playlist.id === 'PERSONAL_FM'
                                     })}
                                     to="/fm">
                                     Made For You
@@ -264,13 +262,13 @@ class Welcome extends Component {
                     </aside>
 
                     {list.length ? (
-                        <section className={classes.list}>
+                        <section className={styles.list}>
                             {logined ? this.renderFavorite(list[0]) : false}
                             {hasRecommend ? this.renderRecommend(list[1]) : false}
                             {this.renderPlaylist(logined ? list.slice(2, list.length) : list.slice())}
                         </section>
                     ) : (
-                        <div className={classes.placeholder} />
+                        <div className={styles.placeholder} />
                     )}
                 </main>
 
@@ -280,4 +278,4 @@ class Welcome extends Component {
     }
 }
 
-export default injectSheet(WelcomeClasses)(Welcome);
+export default Welcome;

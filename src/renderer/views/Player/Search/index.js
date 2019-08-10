@@ -1,8 +1,7 @@
 import closePng from 'assets/close.png';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
-import SearchClasses from './classes';
+import styles from './index.less';
 
 class Search extends Component {
     static propsTypes = {
@@ -18,23 +17,23 @@ class Search extends Component {
     }
 
     render() {
-        const { classes, show, close, filter, children } = this.props;
+        const { show, close, filter, children } = this.props;
 
         if (!show) {
             return false;
         }
 
         return (
-            <div className={classes.container} onKeyUp={e => this.pressEscExit(e)}>
+            <div className={styles.container} onKeyUp={e => this.pressEscExit(e)}>
                 <header>
                     <input type="text" onInput={e => filter(e.target.value)} placeholder="Search..." />
-                    <img alt="Close" className={classes.close} onClick={close} src={closePng} />
+                    <img alt="Close" className={styles.close} onClick={close} src={closePng} />
                 </header>
 
-                <div className={classes.list}>{children}</div>
+                <div className={styles.list}>{children}</div>
             </div>
         );
     }
 }
 
-export default injectSheet(SearchClasses)(Search);
+export default Search;

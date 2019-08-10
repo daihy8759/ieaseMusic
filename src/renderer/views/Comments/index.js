@@ -6,10 +6,9 @@ import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import CommentsClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.comments.loading,
@@ -29,30 +28,28 @@ class Comments extends Component {
 
     loadmore = async () => {
         const container = this.list;
-        const { classes, song, loadMore } = this.props;
+        const { song, loadMore } = this.props;
 
         // Drop the duplicate invoke
-        if (container.classList.contains(classes.loadmore)) {
+        if (container.classList.contains(styles.loadmore)) {
             return;
         }
 
         if (container.scrollTop + container.offsetHeight + 100 > container.scrollHeight) {
             // Mark as loading
-            container.classList.add(classes.loadmore);
+            container.classList.add(styles.loadmore);
             await loadMore(song.id);
-            container.classList.remove(classes.loadmore);
+            container.classList.remove(styles.loadmore);
         }
     };
 
     renderNestest(list) {
-        const { classes } = this.props;
-
         if (!list.length) {
             return false;
         }
 
         return (
-            <ul className={classes.nestest}>
+            <ul className={styles.nestest}>
                 {list.map((e, index) => {
                     return (
                         <li key={index}>
@@ -65,10 +62,10 @@ class Comments extends Component {
     }
 
     renderComment(key, item) {
-        const { classes, thumbsup } = this.props;
+        const { thumbsup } = this.props;
 
         return (
-            <div key={key} className={classes.comment}>
+            <div key={key} className={styles.comment}>
                 <Link className="tooltip" data-text={item.user.nickname} to={`/user/${item.user.userId}`}>
                     <ProgressImage
                         {...{
@@ -82,10 +79,10 @@ class Comments extends Component {
                 <aside>
                     <p>{item.content}</p>
 
-                    <div className={classes.meta}>
+                    <div className={styles.meta}>
                         <span
-                            className={classnames('tooltip', classes.thumbsup, {
-                                [classes.liked]: item.liked
+                            className={classnames('tooltip', styles.thumbsup, {
+                                [styles.liked]: item.liked
                             })}
                             data-text={`${helper.humanNumber(item.likedCount)} liked`}
                             onClick={ev => thumbsup(item.commentId, !item.liked)}>
@@ -116,14 +113,14 @@ class Comments extends Component {
     }
 
     render() {
-        const { classes, loading, song, location } = this.props;
+        const { loading, song, location } = this.props;
 
         if (loading || !song.id) {
             return <Loader show />;
         }
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Header transparent showBack />
 
                 <Hero location={location} />
@@ -132,15 +129,15 @@ class Comments extends Component {
                     ref={ele => {
                         this.list = ele;
                     }}
-                    className={classes.list}
+                    className={styles.list}
                     onScroll={e => this.loadmore()}>
-                    <div className={classes.scroller}>
-                        <div className={classes.hotList}>
+                    <div className={styles.scroller}>
+                        <div className={styles.hotList}>
                             <h3>Hot Comments</h3>
                             {this.renderHotList()}
                         </div>
 
-                        <div className={classes.newestList}>
+                        <div className={styles.newestList}>
                             <h3>Newest Comments</h3>
                             {this.renderNewestList()}
                         </div>
@@ -151,4 +148,4 @@ class Comments extends Component {
     }
 }
 
-export default injectSheet(CommentsClasses)(Comments);
+export default Comments;

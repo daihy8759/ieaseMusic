@@ -33,8 +33,7 @@ export default {
                 default:
                     throw Error('Unknow type: %d', type);
             }
-            const res = await axios.get(`http://music.163.com/back/${reqType}?code=${code}&state=${state}`);
-            console.log(res);
+            await axios.get(`http://music.163.com/back/${reqType}?code=${code}&state=${state}`);
             return { success: true };
         } catch (e) {
             console.error(e);

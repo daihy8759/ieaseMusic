@@ -39,9 +39,10 @@ export default {
             case 1:
             case 2:
                 return this.polling(ticket);
-            case 3:
+            case 3: {
                 const q = url.parse(response.body.url, true);
                 return q.query.code;
+            }
             default:
                 throw Error('An error occurred while login by weibo');
         }

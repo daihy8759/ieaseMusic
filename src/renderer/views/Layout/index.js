@@ -14,59 +14,22 @@ import Share from 'components/Share';
 import UpNext from 'components/UpNext';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import lastfm from 'utils/lastfm';
-
-const LayoutClasses = {
-    container: {
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        width: '100vw',
-        height: '100vh'
-    },
-    viewport: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 2
-    },
-    background: {
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        width: '100%'
-    },
-    cover: {
-        '&::after': {
-            content: '""',
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            height: '100%',
-            width: '100%',
-            background: 'rgba(0, 0, 0, .3)',
-            zIndex: 1
-        }
-    }
-};
+import styles from './index.less';
 
 @inject('controller')
 @observer
-class _Background extends Component {
+class Background extends Component {
     render() {
         const {
-            classes,
             controller: { song }
         } = this.props;
 
         return (
-            <div className={classes.cover}>
+            <div className={styles.cover}>
                 {song && song.id ? (
                     <ProgressImage
-                        className={classes.background}
+                        className={styles.background}
                         {...{
                             width: window.innerWidth,
                             src: `${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`
@@ -79,7 +42,6 @@ class _Background extends Component {
         );
     }
 }
-const Background = injectSheet(LayoutClasses)(_Background);
 
 @inject('me', 'preferences')
 @observer
@@ -115,7 +77,6 @@ class Layout extends Component {
 
     render() {
         const {
-            classes,
             children,
             me: { initialized }
         } = this.props;
@@ -128,10 +89,10 @@ class Layout extends Component {
             return <Loader show />;
         }
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <main
                     className={classnames({
-                        [classes.viewport]: true
+                        [styles.viewport]: true
                     })}>
                     {children}
                 </main>
@@ -151,4 +112,4 @@ class Layout extends Component {
     }
 }
 
-export default injectSheet(LayoutClasses)(Layout);
+export default Layout;

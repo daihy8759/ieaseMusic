@@ -2,9 +2,8 @@ import qrcodePlaceholder from 'assets/qrcode-placeholder.png';
 import FadeImage from 'components/FadeImage';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
-import QRCodeClasses from './classes';
+import styles from './index.less';
 
 @inject('me')
 @observer
@@ -43,14 +42,13 @@ class QRCode extends Component {
 
     render() {
         const {
-            classes,
             match,
             me: { qrcode }
         } = this.props;
 
         return (
-            <div className={classes.container}>
-                <Link className={classes.back} to={`/login/${+match.params.fm}`}>
+            <div className={styles.container}>
+                <Link className={styles.back} to={`/login/${+match.params.fm}`}>
                     <i className="remixicon-arrow-left-line" />
                     Login by Phone
                 </Link>
@@ -61,11 +59,11 @@ class QRCode extends Component {
                 </header>
 
                 <figure>
-                    <div className={classes.wraped}>
+                    <div className={styles.wraped}>
                         {qrcode.url ? (
-                            <FadeImage className={classes.qrcode} src={qrcode.url} />
+                            <FadeImage className={styles.qrcode} src={qrcode.url} />
                         ) : (
-                            <img alt="" className={classes.qrcode} src={qrcodePlaceholder} />
+                            <img alt="" className={styles.qrcode} src={qrcodePlaceholder} />
                         )}
                     </div>
 
@@ -87,4 +85,4 @@ class QRCode extends Component {
     }
 }
 
-export default injectSheet(QRCodeClasses)(QRCode);
+export default QRCode;

@@ -143,9 +143,9 @@ async function getPlayListDetail(type, id) {
                 link: `/player/1/${al.id}`
             },
             artists: ar.map(e => ({
-                id: d.id,
-                name: d.name,
-                link: d.id ? `/artist/${e.id}` : ''
+                id: e.id,
+                name: e.name,
+                link: e.id ? `/artist/${e.id}` : ''
             }))
         };
     });

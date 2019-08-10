@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /* https://codepen.io/isuttell/pen/OPVELL?q=wave&limit=all&type=type-pens */
 
 /**
@@ -10,6 +8,7 @@
  * I've created a seperate library based on this pen.
  * Check it out at https://github.com/isuttell/sine-waves
  */
+//TODO: cpu占用高
 function SineWaveGenerator(options) {
     Object.assign(this, options || {});
 

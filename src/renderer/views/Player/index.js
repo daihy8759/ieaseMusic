@@ -6,11 +6,10 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import PlayerClasses from './classes';
+import styles from './index.less';
 import Search from './Search';
 
 @inject(stores => ({
@@ -100,7 +99,7 @@ class Player extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { classes, searching, song, match } = this.props;
+        const { searching, song, match } = this.props;
         if (prevProps.match.params.id !== match.params.id) {
             this.load();
         }
@@ -111,8 +110,7 @@ class Player extends Component {
         if (!ele) {
             return;
         }
-        const escapeClass = classes.active.replace('(', '\\(').replace(')', '\\)');
-        const playing = ele.querySelector(`.${escapeClass}`);
+        const playing = ele.querySelector(styles.active);
 
         if (playing) {
             playing.scrollIntoViewIfNeeded();
@@ -136,16 +134,16 @@ class Player extends Component {
     };
 
     renderPeople() {
-        const { classes, hasLogin, users, artists } = this.props;
+        const { hasLogin, users, artists } = this.props;
         const content = [];
 
         if (!hasLogin()) {
-            return <div className={classes.nothing}>Nothing ...</div>;
+            return <div className={styles.nothing}>Nothing ...</div>;
         }
 
         if (users.length) {
             content.push(
-                <div className={classes.users} key="users">
+                <div className={styles.users} key="users">
                     <h3>Listening history</h3>
                     {users.map((e, index) => {
                         return (
@@ -159,7 +157,7 @@ class Player extends Component {
         }
 
         content.push(
-            <div className={classes.artists} key="artists">
+            <div className={styles.artists} key="artists">
                 <h3>Similar artist</h3>
                 {artists.slice(0, content.length ? 5 : 10).map((e, index) => {
                     return (
@@ -175,7 +173,7 @@ class Player extends Component {
     }
 
     renderList() {
-        const { classes, playing, canitoggle, song, searching, keywords, filtered, play } = this.props;
+        const { playing, canitoggle, song, searching, keywords, filtered, play } = this.props;
         let { list } = this.props;
         const sameToPlaylist = canitoggle();
 
@@ -184,7 +182,7 @@ class Player extends Component {
         if (list.length === 0) {
             return (
                 <div
-                    className={classes.nothing}
+                    className={styles.nothing}
                     style={{
                         height: '100%'
                     }}>
@@ -198,7 +196,7 @@ class Player extends Component {
                 <li
                     key={e.id}
                     className={classnames({
-                        [classes.active]: sameToPlaylist && e.id === song.id
+                        [styles.active]: sameToPlaylist && e.id === song.id
                     })}
                     onClick={async ev => {
                         await play(e.id);
@@ -209,13 +207,13 @@ class Player extends Component {
                         <i className="remixicon-play-fill" />
                     )}
 
-                    <span className={classes.index}>{index}</span>
+                    <span className={styles.index}>{index}</span>
 
-                    <span className={classes.name} title={e.name}>
+                    <span className={styles.name} title={e.name}>
                         {e.name}
                     </span>
 
-                    <span className={classes.time}>{helper.getTime(e.duration)}</span>
+                    <span className={styles.time}>{helper.getTime(e.duration)}</span>
                 </li>
             );
         });
@@ -223,7 +221,6 @@ class Player extends Component {
 
     render() {
         const {
-            classes,
             loading,
             meta,
             playing,
@@ -238,14 +235,14 @@ class Player extends Component {
         } = this.props;
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Loader show={loading} />
 
                 <Header transparent showFav={canifav()} />
 
                 <section>
                     <div
-                        className={classes.hero}
+                        className={styles.hero}
                         style={{
                             backgroundImage: colors.randomGradient()
                         }}>
@@ -257,12 +254,12 @@ class Player extends Component {
                             }}
                         />
 
-                        <summary className={classes.summary}>
-                            <p className={classes.title}>
+                        <summary className={styles.summary}>
+                            <p className={styles.title}>
                                 <span>{meta.name}</span>
                             </p>
 
-                            <p className={classes.author}>
+                            <p className={styles.author}>
                                 <span>
                                     {meta.author.map((e, index) => {
                                         return (
@@ -275,7 +272,7 @@ class Player extends Component {
                             </p>
 
                             <p
-                                className={classes.subtitle}
+                                className={styles.subtitle}
                                 style={{
                                     marginTop: 20
                                 }}>
@@ -283,7 +280,7 @@ class Player extends Component {
                             </p>
                         </summary>
 
-                        <div className={classes.recommend}>
+                        <div className={styles.recommend}>
                             <div
                                 style={{
                                     position: 'relative',
@@ -292,7 +289,7 @@ class Player extends Component {
                                     width: 260 / 3,
                                     marginTop: -2
                                 }}>
-                                <div className={classes.play} onClick={() => play()}>
+                                <div className={styles.play} onClick={() => play()}>
                                     {canitoggle() && playing ? (
                                         <i className="remixicon-pause-fill" />
                                     ) : (
@@ -317,10 +314,10 @@ class Player extends Component {
                         </div>
                     </div>
 
-                    <div className={classes.body}>
-                        <div className={classes.people}>{this.renderPeople()}</div>
+                    <div className={styles.body}>
+                        <div className={styles.people}>{this.renderPeople()}</div>
 
-                        <div className={classes.list}>
+                        <div className={styles.list}>
                             <header>
                                 <span onClick={showSearch}>Track/SEARCH</span>
                                 <span>Time</span>
@@ -343,7 +340,7 @@ class Player extends Component {
                                 filter();
                             }
                         }}>
-                        <div className={classes.list}>
+                        <div className={styles.list}>
                             <ul
                                 ref={ele => {
                                     this.searching = ele;
@@ -360,4 +357,4 @@ class Player extends Component {
     }
 }
 
-export default injectSheet(PlayerClasses)(Player);
+export default Player;

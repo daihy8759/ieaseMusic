@@ -1,9 +1,8 @@
 import classnames from 'classnames';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
-import LegacyClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     login: stores.me.login,
@@ -60,11 +59,11 @@ class Legacy extends Component {
     }
 
     render() {
-        const { classes, logining, match } = this.props;
+        const { logining, match } = this.props;
         const { showError } = this.state;
         return (
-            <div className={classes.container}>
-                <Link className={classes.back} to="/">
+            <div className={styles.container}>
+                <Link className={styles.back} to="/">
                     <i className="remixicon-arrow-left-line" />
                     Discover music
                 </Link>
@@ -82,8 +81,8 @@ class Legacy extends Component {
                         type="password"
                     />
                     <p
-                        className={classnames(classes.error, {
-                            [classes.show]: showError
+                        className={classnames(styles.error, {
+                            [styles.show]: showError
                         })}>
                         Invalid username or password, Please try again.
                     </p>
@@ -92,7 +91,7 @@ class Legacy extends Component {
                 <footer>
                     <button
                         className={classnames({
-                            [classes.logining]: logining
+                            [styles.logining]: logining
                         })}
                         disabled={logining}
                         type="button"
@@ -100,12 +99,12 @@ class Legacy extends Component {
                         <span>{logining ? 'Logining...' : 'Login'}</span>
                     </button>
 
-                    <div className={classes.sns}>
-                        <Link to={`/login/qrcode/10/${+match.params.fm}`} className={classes.link}>
+                    <div className={styles.sns}>
+                        <Link to={`/login/qrcode/10/${+match.params.fm}`} className={styles.link}>
                             Login with WeChat
                         </Link>
 
-                        <Link to={`/login/qrcode/2/${+match.params.fm}`} className={classes.link}>
+                        <Link to={`/login/qrcode/2/${+match.params.fm}`} className={styles.link}>
                             Login with Weibo
                         </Link>
                     </div>
@@ -115,4 +114,4 @@ class Legacy extends Component {
     }
 }
 
-export default injectSheet(LegacyClasses)(Legacy);
+export default Legacy;

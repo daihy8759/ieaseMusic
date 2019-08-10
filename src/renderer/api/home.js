@@ -25,9 +25,9 @@ async function getSongs(id) {
                     link: `/player/1/${al.id}`
                 },
                 artists: ar.map(e => ({
-                    id: d.id,
-                    name: d.name,
-                    link: d.id ? `/artist/${d.id}` : ''
+                    id: e.id,
+                    name: e.name,
+                    link: e.id ? `/artist/${e.id}` : ''
                 }))
             };
         });
@@ -85,10 +85,10 @@ async function getDaily() {
                         link: `/player/1/${album.id}`
                     },
                     artists: artists.map(e => ({
-                        id: d.id,
-                        name: d.name,
+                        id: e.id,
+                        name: e.name,
                         // Broken link
-                        link: d.id ? `/artist/${e.id}` : ''
+                        link: e.id ? `/artist/${e.id}` : ''
                     }))
                 };
             })

@@ -1,8 +1,7 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
-import ProgressImageClasses from './classes';
+import styles from './index.less';
 
 class ProgressImage extends Component {
     static propTypes = {
@@ -19,10 +18,10 @@ class ProgressImage extends Component {
 
     componentDidUpdate(prevProps) {
         const { container } = this;
-        const { src, classes } = this.props;
+        const { src } = this.props;
         if (container && prevProps.src !== src) {
             // Immediate render the new image
-            container.classList.remove(classes.loaded);
+            container.classList.remove(styles.loaded);
         }
     }
 
@@ -31,20 +30,19 @@ class ProgressImage extends Component {
         e.target.src = fallback;
     }
 
-    handleLoad(e) {
+    handleLoad() {
         const ele = this.container;
         this.thumb.style.paddingBottom = '0%';
 
         if (ele) {
             setTimeout(() => {
-                const { classes } = this.props;
-                ele.classList.add(classes.loaded);
+                ele.classList.add(styles.loaded);
             }, 50);
         }
     }
 
     render() {
-        const { classes, className, style, src, height, width } = this.props;
+        const { className, style, src, height, width } = this.props;
         let { thumb } = this.props;
 
         if (!src) return false;
@@ -56,7 +54,7 @@ class ProgressImage extends Component {
 
         return (
             <figure
-                className={classnames(classes.container, className)}
+                className={classnames(styles.container, className)}
                 ref={ele => {
                     this.container = ele;
                 }}
@@ -69,7 +67,7 @@ class ProgressImage extends Component {
                 )}>
                 <img
                     alt=""
-                    className={classes.main}
+                    className={styles.main}
                     onError={e => this.handleError(e)}
                     onLoad={e => this.handleLoad(e)}
                     src={src}
@@ -80,7 +78,7 @@ class ProgressImage extends Component {
                 />
 
                 <div
-                    className={classes.thumb}
+                    className={styles.thumb}
                     ref={ele => {
                         this.thumb = ele;
                     }}
@@ -98,7 +96,7 @@ class ProgressImage extends Component {
                             },
                             onLoad(e) {
                                 // Default show the gray background, When image has been loaded show the thumb
-                                e.target.classList.add(classes.loaded);
+                                e.target.classList.add(styles.loaded);
                             }
                         }}
                     />
@@ -108,4 +106,4 @@ class ProgressImage extends Component {
     }
 }
 
-export default injectSheet(ProgressImageClasses)(ProgressImage);
+export default ProgressImage;

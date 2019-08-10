@@ -30,6 +30,28 @@ module.exports = merge.smart(baseConfig, {
                 ]
             },
             {
+                test: /\.less$/,
+                use: [
+                    {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            sourceMap: true,
+                            modules: true,
+                            localIdentName: '[local]___[hash:base64:5]'
+                        }
+                    },
+                    {
+                        loader: 'less-loader',
+                        options: {
+                            javascriptEnabled: true
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.(gif|png|jpe?g|svg)$/,
                 use: [
                     'file-loader',

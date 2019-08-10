@@ -1,4 +1,5 @@
 import { loginWithPhone, loginRefresh } from 'api/login';
+import { dialog } from 'electron';
 import { action, observable } from 'mobx';
 import helper from 'utils/helper';
 import storage from 'utils/storage';
@@ -58,7 +59,10 @@ class Me {
             type
         });
         if (data.success === false) {
-            window.alert('Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.');
+            dialog.showErrorBox(
+                '错误',
+                'Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.'
+            );
             return;
         }
 
@@ -67,7 +71,7 @@ class Me {
         // await this.init();
         // await home.load();
         // done();
-        // this.logining = false;
+        this.logining = false;
     };
 
     @action

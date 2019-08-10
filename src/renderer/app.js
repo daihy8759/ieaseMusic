@@ -6,7 +6,7 @@ import { hot } from 'react-hot-loader/root';
 import { HashRouter } from 'react-router-dom';
 import 'remixicon/fonts/remixicon.css';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
-import './app.css';
+import './app.less';
 import MainRouter from './routes';
 import stores from './stores';
 

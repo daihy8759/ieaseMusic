@@ -6,9 +6,8 @@ import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
-import TopClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.top.loading,
@@ -26,11 +25,10 @@ class Top extends Component {
             return false;
         }
 
-        const { classes } = this.props;
         const height = (window.innerHeight - 50) / 2;
 
         return (
-            <Link className={classnames('clearfix', classes.item)} to={item.link}>
+            <Link className={classnames('clearfix', styles.item)} to={item.link}>
                 <ProgressImage
                     {...{
                         height,
@@ -39,10 +37,10 @@ class Top extends Component {
                     }}
                 />
 
-                <article className={classes.info}>
+                <article className={styles.info}>
                     <p>{item.name}</p>
 
-                    <div className={classes.line} />
+                    <div className={styles.line} />
 
                     <span>{formatDistance(item.updateTime, new Date())}</span>
                 </article>
@@ -70,14 +68,14 @@ class Top extends Component {
     }
 
     render() {
-        const { classes, loading } = this.props;
+        const { loading } = this.props;
 
         if (loading) {
             return <Loader show />;
         }
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Header
                     {...{
                         showBack: true,
@@ -85,7 +83,7 @@ class Top extends Component {
                     }}
                 />
 
-                <ul className={classes.list}>{this.renderList()}</ul>
+                <ul className={styles.list}>{this.renderList()}</ul>
 
                 <Controller />
             </div>
@@ -93,4 +91,4 @@ class Top extends Component {
     }
 }
 
-export default injectSheet(TopClasses)(Top);
+export default Top;

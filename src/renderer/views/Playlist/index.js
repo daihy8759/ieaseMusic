@@ -55,7 +55,7 @@ class Playlist extends Component {
                     className={classnames(classes.item, {
                         [classes.playing]: isPlaying(e.id)
                     })}
-                    key={e.link}>
+                    key={index}>
                     <Link to={e.link}>
                         <ProgressImage
                             {...{

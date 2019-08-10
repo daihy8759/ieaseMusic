@@ -4,8 +4,7 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
-import LyricsClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.lyrics.loading,
@@ -27,12 +26,12 @@ class Lyrics extends Component {
     }
 
     renderLyrics() {
-        const { lyrics, classes } = this.props;
+        const { lyrics } = this.props;
         const times = Object.keys(lyrics);
 
         if (times.length === 0) {
             return (
-                <div className={classes.placeholder}>
+                <div className={styles.placeholder}>
                     <span>Nothing ...</span>
                 </div>
             );
@@ -48,19 +47,19 @@ class Lyrics extends Component {
     }
 
     render() {
-        const { classes, loading, song, location } = this.props;
+        const { loading, song, location } = this.props;
 
         if (loading || !song.id) {
             return <Loader show />;
         }
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Header transparent showBack />
 
                 <Hero location={location} />
 
-                <aside id="lyrics" className={classes.lyrics}>
+                <aside id="lyrics" className={styles.lyrics}>
                     <ProgressImage
                         {...{
                             height: window.innerHieght,
@@ -91,4 +90,4 @@ class Lyrics extends Component {
     }
 }
 
-export default injectSheet(LyricsClasses)(Lyrics);
+export default Lyrics;

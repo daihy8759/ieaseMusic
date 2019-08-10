@@ -6,11 +6,10 @@ import format from 'date-fns/format';
 import delegate from 'delegate';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import sine from 'utils/sine';
-import ArtistClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.artist.loading,
@@ -78,23 +77,22 @@ class Artist extends Component {
     };
 
     componentDidMount() {
-        const { classes } = this.props;
         const navs = Array.from(this.headerRef.current.querySelectorAll('nav'));
 
         delegate(this.headerRef.current, 'nav', 'click', e => {
-            navs.map(d => d.classList.remove(classes.selected));
-            e.target.classList.add(classes.selected);
+            navs.map(d => d.classList.remove(styles.selected));
+            e.target.classList.add(styles.selected);
         });
 
-        sine.show(this.canvasRef.current);
+        // sine.show(this.canvasRef.current);
     }
 
     componentDidUpdate(prevProps) {
         const { list } = this;
-        const { classes, match } = this.props;
+        const { match } = this.props;
 
         if (list) {
-            const playing = list.querySelector(`.${classes.playing}`);
+            const playing = list.querySelector(`.${styles.playing}`);
 
             if (playing) {
                 playing.scrollIntoViewIfNeeded();
@@ -108,90 +106,95 @@ class Artist extends Component {
     componentWillUnmount = () => sine.hide();
 
     renderSongs() {
-        const { classes, playlist, sameToPlaying, song, isPlaying } = this.props;
+        const { playlist, sameToPlaying, song, isPlaying } = this.props;
 
         return (
-            <ul className={classes.songs}>
-                {playlist.songs.map((e, index) => {
-                    return (
-                        <li
-                            className={classnames({
-                                [classes.playing]: sameToPlaying() && song.id === e.id
-                            })}
-                            key={e.id}
-                            onClick={async () => {
-                                await this.props.play(e.id);
-                            }}>
-                            {isPlaying(e.id) ? (
-                                <i className="remixicon-pause-fill" />
-                            ) : (
-                                <i className="remixicon-play-fill" />
-                            )}
+            <ul className={styles.songs}>
+                {playlist.songs &&
+                    playlist.songs.map((e, index) => {
+                        return (
+                            <li
+                                className={classnames({
+                                    [styles.playing]: sameToPlaying() && song.id === e.id
+                                })}
+                                key={e.id}
+                                onClick={async () => {
+                                    await this.props.play(e.id);
+                                }}>
+                                {isPlaying(e.id) ? (
+                                    <i className="remixicon-pause-fill" />
+                                ) : (
+                                    <i className="remixicon-play-fill" />
+                                )}
 
-                            <span data-index>{index}</span>
+                                <span data-index>{index}</span>
 
-                            <span data-name title={e.name}>
-                                {e.name}
-                            </span>
+                                <span data-name title={e.name}>
+                                    {e.name}
+                                </span>
 
-                            <span data-album title={e.album.name}>
-                                <Link to={`/player/1/${e.album.id}`}>{e.album.name}</Link>
-                            </span>
+                                <span data-album title={e.album.name}>
+                                    <Link to={`/player/1/${e.album.id}`}>{e.album.name}</Link>
+                                </span>
 
-                            <span data-time>{helper.getTime(e.duration)}</span>
-                        </li>
-                    );
-                })}
+                                <span data-time>{helper.getTime(e.duration)}</span>
+                            </li>
+                        );
+                    })}
             </ul>
         );
     }
 
     renderAlbums() {
-        const { classes, albums, highlightAlbum } = this.props;
-        return (
-            <section className={classes.albums}>
-                {albums.map((e, index) => {
-                    return (
-                        <div
-                            className={classnames(classes.album, {
-                                [classes.playing]: highlightAlbum(e.id)
-                            })}
-                            key={e.id}>
-                            <Link to={e.link}>
-                                <ProgressImage
-                                    {...{
-                                        height: 48,
-                                        width: 48,
-                                        src: e.cover
-                                    }}
-                                />
-                            </Link>
-                            <div className={classes.info}>
-                                <p data-name title={e.name}>
-                                    {e.name}
-                                </p>
+        const { albums, highlightAlbum } = this.props;
+        if (albums) {
+            return (
+                <section className={styles.albums}>
+                    {albums.map(e => {
+                        return (
+                            <div
+                                className={classnames(styles.album, {
+                                    [styles.playing]: highlightAlbum(e.id)
+                                })}
+                                key={e.id}>
+                                <Link to={e.link}>
+                                    <ProgressImage
+                                        {...{
+                                            height: 48,
+                                            width: 48,
+                                            src: e.cover
+                                        }}
+                                    />
+                                </Link>
+                                <div className={styles.info}>
+                                    <p data-name title={e.name}>
+                                        {e.name}
+                                    </p>
 
-                                <p data-time>{format(e.publishTime, 'L')}</p>
+                                    <p data-time>{format(e.publishTime, 'L')}</p>
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </section>
-        );
+                        );
+                    })}
+                </section>
+            );
+        } else {
+            return <section className={styles.nothing}>Nothing ...</section>;
+        }
     }
 
     renderArtists() {
-        const { classes, hasLogin, similar } = this.props;
+        const { hasLogin, similar } = this.props;
 
         if (!hasLogin()) {
-            return <section className={classes.nothing}>Nothing ...</section>;
+            return <section className={styles.nothing}>Nothing ...</section>;
         }
 
         return (
-            <section className={classes.artists}>
+            <section className={styles.artists}>
                 {similar.map((e, index) => {
                     return (
-                        <div className={classes.artist} key={e.name}>
+                        <div className={styles.artist} key={e.name}>
                             <Link className="tooltip" data-text={e.name} to={e.link}>
                                 <ProgressImage
                                     {...{
@@ -209,13 +212,13 @@ class Artist extends Component {
     }
 
     render() {
-        const { classes, loading, profile, isPlaying, follow, play } = this.props;
+        const { loading, profile, isPlaying, follow } = this.props;
         const size = profile.size || {};
         const { followed } = profile;
         const { renderTabContent } = this.state;
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Loader show={loading} />
 
                 <Header
@@ -226,7 +229,7 @@ class Artist extends Component {
                     }}
                 />
 
-                <div className={classes.hero}>
+                <div className={styles.hero}>
                     <ProgressImage
                         {...{
                             width: window.innerWidth,
@@ -235,12 +238,12 @@ class Artist extends Component {
                             thumb: (profile.background || '').replace(/\?.*$/, '?param=20y10')
                         }}
                     />
-                    <div className={classes.inner}>
+                    <div className={styles.inner}>
                         <div
                             role="presentation"
-                            className={classes.play}
+                            className={styles.play}
                             onClick={async () => {
-                                await play();
+                                await this.props.play();
                             }}>
                             {isPlaying() ? (
                                 <i className="remixicon-pause-fill" />
@@ -251,7 +254,7 @@ class Artist extends Component {
 
                         <canvas ref={this.canvasRef} />
 
-                        <p className={classes.name}>
+                        <p className={styles.name}>
                             {profile.uid ? (
                                 <Link to={`/user/${profile.uid}`}>{profile.name}</Link>
                             ) : (
@@ -259,11 +262,11 @@ class Artist extends Component {
                             )}
                         </p>
 
-                        <div className={classes.meta}>
+                        <div className={styles.meta}>
                             <button
                                 type="button"
-                                className={classnames(classes.follow, {
-                                    [classes.followed]: followed
+                                className={classnames(styles.follow, {
+                                    [styles.followed]: followed
                                 })}
                                 onClick={e => follow(followed)}>
                                 {followed ? 'Followed' : 'Follow'}
@@ -278,11 +281,11 @@ class Artist extends Component {
                     </div>
                 </div>
 
-                <div className={classes.body}>
+                <div className={styles.body}>
                     <header ref={this.headerRef}>
                         <nav
                             onClick={e => this.setState({ renderTabContent: () => this.renderSongs() })}
-                            className={classes.selected}>
+                            className={styles.selected}>
                             Top 50
                         </nav>
 
@@ -295,11 +298,11 @@ class Artist extends Component {
                         </nav>
                     </header>
 
-                    <div className={classes.content}>{renderTabContent()}</div>
+                    <div className={styles.content}>{renderTabContent()}</div>
                 </div>
             </div>
         );
     }
 }
 
-export default injectSheet(ArtistClasses)(Artist);
+export default Artist;
