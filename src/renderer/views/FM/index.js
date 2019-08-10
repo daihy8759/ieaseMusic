@@ -6,10 +6,9 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import FMClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.fm.loading,
@@ -23,12 +22,10 @@ import FMClasses from './classes';
     unlike: stores.me.unlike,
     isLiked: stores.me.isLiked,
     comments: stores.comments.total,
-
     isFMPlaying() {
         const { controller, fm } = stores;
         return controller.playlist.id === fm.playlist.id;
     },
-
     isPlaying() {
         const { controller, fm } = stores;
 
@@ -52,13 +49,13 @@ class FM extends Component {
     }
 
     renderBG() {
-        const { classes, songs } = this.props;
+        const { songs } = this.props;
 
         return (
-            <div className={classes.covers}>
+            <div className={styles.covers}>
                 {songs.map((e, index) => {
                     return (
-                        <div className={classes.cover} key={index}>
+                        <div className={styles.cover} key={index}>
                             <FadeImage src={e.album.cover} />
                         </div>
                     );
@@ -69,7 +66,6 @@ class FM extends Component {
 
     render() {
         const {
-            classes,
             loading,
             isFMPlaying,
             isLiked,
@@ -92,7 +88,7 @@ class FM extends Component {
         if (songs.length === 0) {
             return (
                 <div>
-                    <div className={classes.unavailable}>
+                    <div className={styles.unavailable}>
                         <p>Oops, Personal FM only available on mainland.</p>
 
                         <Link to="/">Discover Music</Link>
@@ -106,7 +102,7 @@ class FM extends Component {
         liked = isLiked(song.id);
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Header
                     {...{
                         transparent: true,
@@ -116,7 +112,7 @@ class FM extends Component {
 
                 {this.renderBG()}
 
-                <section className={classes.main}>
+                <section className={styles.main}>
                     <article>
                         <ProgressImage
                             {...{
@@ -127,10 +123,10 @@ class FM extends Component {
                         />
 
                         <aside>
-                            <p className={classes.title}>
+                            <p className={styles.title}>
                                 <span title={song.name}>{song.name}</span>
                             </p>
-                            <p className={classes.artists}>
+                            <p className={styles.artists}>
                                 <span>
                                     {song.artists.map((e, index) => {
                                         return (
@@ -141,7 +137,7 @@ class FM extends Component {
                                     })}
                                 </span>
                             </p>
-                            <p className={classes.album}>
+                            <p className={styles.album}>
                                 <span>
                                     <Link title={song.album.name} to={song.album.link}>
                                         {song.album.name}
@@ -149,7 +145,7 @@ class FM extends Component {
                                 </span>
                             </p>
 
-                            <p className={classes.comments}>
+                            <p className={styles.comments}>
                                 <span>
                                     <Link title={song.album.name} to="/comments">
                                         {helper.humanNumber(comments)} Comments
@@ -159,19 +155,19 @@ class FM extends Component {
                         </aside>
                     </article>
 
-                    <div className={classes.bar} onClick={e => this.seek(e)}>
+                    <div className={styles.bar} onClick={e => this.seek(e)}>
                         {isFMPlaying() && (
                             <div id="progress">
-                                <div className={classes.playing} />
-                                <div className={classes.buffering} />
+                                <div className={styles.playing} />
+                                <div className={styles.buffering} />
                             </div>
                         )}
                     </div>
 
-                    <div className={classes.controls}>
+                    <div className={styles.controls}>
                         <i
                             className={classnames('ion-ios-heart', {
-                                [classes.liked]: liked
+                                [styles.liked]: liked
                             })}
                             onClick={e => (liked ? unlike(song) : like(song))}
                         />
@@ -196,4 +192,4 @@ class FM extends Component {
     }
 }
 
-export default injectSheet(FMClasses)(FM);
+export default FM;

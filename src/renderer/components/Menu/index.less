@@ -1,0 +1,140 @@
+.container {
+    outline: 0;
+}
+
+.body {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100vh;
+    width: 40vw;
+    padding-left: 78px;
+    font-family: HelveticaNeue-UltraLight;
+    background: #fff;
+    box-shadow: 0 30px 80px 0 rgba(97, 45, 45, 0.25);
+    z-index: 999;
+
+    a {
+        color: #000;
+    }
+}
+
+.overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 999;
+}
+
+.navs {
+    a {
+        position: relative;
+        font-size: 20px;
+        text-indent: 4px;
+        letter-spacing: 4px;
+        cursor: pointer;
+    }
+
+    & a:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 1px;
+        width: 100px;
+        background: #000;
+        transform: translateX(-160px) translateY(-11px);
+        opacity: 0;
+        transition: 0.2s ease-out;
+    }
+
+    & a:hover:after {
+        width: 160px;
+        opacity: 1px;
+        transform: translateX(-100px) translateY(-11px);
+    }
+}
+
+.profile {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 24px;
+    margin-bottom: 32px;
+
+    img {
+        height: 64px;
+        width: 64px;
+        border-radius: 64px;
+        margin-right: 20px;
+    }
+
+    & .username a {
+        display: inline-block;
+        margin-bottom: 4px;
+        font-size: 24px;
+        letter-spacing: 1px;
+        text-indent: 0;
+        max-width: 200px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    & .logout {
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+}
+
+.username {
+    padding: 0;
+    margin: 0;
+}
+
+.logout {
+    display: inline-table;
+    text-indent: 4px;
+    padding-bottom: 2px;
+    border-bottom: thin solid transparent;
+    transition: 0.4s;
+
+    &:hover {
+        border-bottom-color: #000;
+    }
+}
+
+.social {
+    a {
+        display: inline-block;
+        width: 48px;
+        height: 48px;
+        font-size: 14px;
+        border-radius: 48px;
+        margin-right: 20px;
+        line-height: 48px;
+        text-align: center;
+        cursor: pointer;
+        color: #fff;
+        letter-spacing: 0;
+        transition: 0.2s;
+    }
+
+    & a:hover {
+        box-shadow: 0 1px 24px rgba(0, 0, 0, 0.24);
+    }
+
+    & .twitter {
+        background: #55acee;
+    }
+
+    & .github {
+        background: rgba(0, 0, 0, 0.7);
+    }
+}

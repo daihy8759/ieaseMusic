@@ -3,10 +3,9 @@ import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import SingletonClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     song: stores.controller.song,
@@ -17,7 +16,7 @@ import SingletonClasses from './classes';
 }))
 class Singleton extends Component {
     componentDidUpdate(prevProps) {
-        const { classes, playing } = this.props;
+        const { playing } = this.props;
         if (prevProps.playing === playing) {
             return;
         }
@@ -28,18 +27,18 @@ class Singleton extends Component {
         ele = ele.firstElementChild;
 
         if (playing) {
-            ele.classList.remove(classes.pause);
+            ele.classList.remove(styles.pause);
         } else {
-            ele.classList.add(classes.pause);
+            ele.classList.add(styles.pause);
         }
     }
 
     render() {
-        const { classes, song, isLiked, like, unlike } = this.props;
+        const { song, isLiked, like, unlike } = this.props;
         const liked = isLiked(song.id);
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Header
                     {...{
                         transparent: true,
@@ -50,7 +49,7 @@ class Singleton extends Component {
                 <summary>
                     <i
                         className={classnames('ion-ios-heart', {
-                            [classes.liked]: liked
+                            [styles.liked]: liked
                         })}
                         onClick={e => (liked ? unlike(song) : like(song))}
                         style={{
@@ -59,12 +58,12 @@ class Singleton extends Component {
                         }}
                     />
 
-                    <span className={classes.highquality}>{helper.getRate(song)}</span>
+                    <span className={styles.highquality}>{helper.getRate(song)}</span>
                 </summary>
 
                 <main>
                     <div
-                        className={classes.circle}
+                        className={styles.circle}
                         style={{
                             filter: `drop-shadow(3mm 6mm 12mm ${colors.randomColor()})`
                         }}
@@ -85,4 +84,4 @@ class Singleton extends Component {
     }
 }
 
-export default injectSheet(SingletonClasses)(Singleton);
+export default Singleton;

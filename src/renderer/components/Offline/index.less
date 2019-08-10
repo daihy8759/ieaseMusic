@@ -1,0 +1,35 @@
+@import '~@/theme.less';
+
+container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    font-family: @primary-font;
+
+    h1 {
+        font-size: 40px;
+        font-weight: 200;
+        color: @color-dribbble;
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 8px 12px;
+        border: 0;
+        font-size: 14px;
+        font-weight: lighter;
+        color: dimgray;
+        background: white;
+        letter-spacing: 0.5;
+        text-transform: uppercase;
+        border-bottom: thin solid dimgray;
+        outline: 0;
+    }
+}

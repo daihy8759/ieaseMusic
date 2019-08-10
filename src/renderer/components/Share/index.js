@@ -3,9 +3,7 @@ import { shell } from 'electron';
 import { inject, observer } from 'mobx-react';
 import QRCode from 'qrcode';
 import React, { Component } from 'react';
-import injectSheet, { ThemeProvider } from 'react-jss';
-import theme from '../../theme';
-import ShareClasses from './classes';
+import styles from './index.less';
 
 @inject('share', 'controller')
 @observer
@@ -17,14 +15,13 @@ class Share extends Component {
 
     renderContent() {
         const {
-            classes,
             controller: { song }
         } = this.props;
         const url = `https://music.163.com/#/song?id=${song.id}`;
         const text = `${song.name} - ${song.artists.map((e, index) => e.name).join()}`;
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <main>
                     <summary>
                         <h2>Share</h2>
@@ -44,7 +41,7 @@ class Share extends Component {
                                 );
                                 this.close();
                             }}>
-                            <img alt="Twitter" className={classes.social} src="assets/social-twitter.png" />
+                            <img alt="Twitter" className={styles.social} src="assets/social-twitter.png" />
                         </a>
 
                         <a
@@ -56,7 +53,7 @@ class Share extends Component {
                                 );
                                 this.close();
                             }}>
-                            <img alt="Facebook" className={classes.social} src="assets/social-facebook.png" />
+                            <img alt="Facebook" className={styles.social} src="assets/social-facebook.png" />
                         </a>
 
                         <a
@@ -66,11 +63,11 @@ class Share extends Component {
                                 shell.openExternal(`https://plus.google.com/share?url=${encodeURIComponent(url)}`);
                                 this.close();
                             }}>
-                            <img alt="Google" className={classes.social} src="assets/social-google.png" />
+                            <img alt="Google" className={styles.social} src="assets/social-google.png" />
                         </a>
                     </section>
 
-                    <figure className={classes.qrcode}>
+                    <figure className={styles.qrcode}>
                         <img
                             alt=""
                             ref={ele => {
@@ -85,12 +82,12 @@ class Share extends Component {
 
                     <a
                         href=""
-                        className={classes.close}
+                        className={styles.close}
                         onClick={e => {
                             e.preventDefault();
                             this.close();
                         }}>
-                        <img alt="Close Menus" className={classes.close} src="../../assets/close.png" />
+                        <img alt="Close Menus" className={styles.close} src="../../assets/close.png" />
                     </a>
                 </main>
             </div>
@@ -99,7 +96,6 @@ class Share extends Component {
 
     render() {
         const {
-            classes,
             share,
             controller: { song }
         } = this.props;
@@ -110,12 +106,10 @@ class Share extends Component {
 
         return (
             <Modal show={share.show}>
-                <ModalBody className={classes.modal}>
-                    <ThemeProvider theme={theme}>{this.renderContent()}</ThemeProvider>
-                </ModalBody>
+                <ModalBody className={styles.modal}>{this.renderContent()}</ModalBody>
             </Modal>
         );
     }
 }
 
-export default injectSheet(ShareClasses)(Share);
+export default Share;

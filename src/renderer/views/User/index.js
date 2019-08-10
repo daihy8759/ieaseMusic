@@ -5,10 +5,9 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import UserClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     loading: stores.user.loading,
@@ -43,13 +42,13 @@ class User extends Component {
     };
 
     renderList() {
-        const { classes, playlists, isPlaying } = this.props;
+        const { playlists, isPlaying } = this.props;
 
         return playlists.map(e => {
             return (
                 <Link
-                    className={classnames('clearfix', classes.item, {
-                        [classes.playing]: isPlaying(e.id)
+                    className={classnames('clearfix', styles.item, {
+                        [styles.playing]: isPlaying(e.id)
                     })}
                     to={e.link}
                     key={e.id}
@@ -59,7 +58,7 @@ class User extends Component {
                         <span>{e.name}</span>
                     </h2>
 
-                    <p className={classes.played}>
+                    <p className={styles.played}>
                         <span>
                             {helper.humanNumber(e.played)}
                             Played
@@ -71,7 +70,7 @@ class User extends Component {
     }
 
     render() {
-        const { classes, loading, profile, isme, follow, controller } = this.props;
+        const { loading, profile, isme, follow, controller } = this.props;
         const { hovered } = this.state;
         const { followed } = profile;
 
@@ -81,7 +80,7 @@ class User extends Component {
         }
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <Header
                     {...{
                         transparent: true,
@@ -94,8 +93,8 @@ class User extends Component {
                     style={{
                         display: isme() ? 'none' : 'block'
                     }}
-                    className={classnames(classes.follow, {
-                        [classes.followed]: followed
+                    className={classnames(styles.follow, {
+                        [styles.followed]: followed
                     })}
                     type="button"
                     onClick={e => follow(followed)}>
@@ -116,21 +115,21 @@ class User extends Component {
                     <img
                         alt=""
                         src={profile.avatar}
-                        className={classes.avatar}
+                        className={styles.avatar}
                         style={{
                             width: window.innerWidth,
                             height: window.innerWidth
                         }}
                         onLoad={e => {
-                            e.target.classList.add(classes.expose);
+                            e.target.classList.add(styles.expose);
                         }}
                     />
 
-                    <div className={classes.overlay} />
+                    <div className={styles.overlay} />
                 </figure>
 
                 <main>
-                    <aside className={classes.hero}>
+                    <aside className={styles.hero}>
                         <div style={{ width: 200 }}>
                             <h3>{profile.name}</h3>
 
@@ -138,13 +137,13 @@ class User extends Component {
 
                             <p data-label="Following">{helper.formatNumber(profile.following)}</p>
 
-                            <div className={classes.signature}>
+                            <div className={styles.signature}>
                                 <span title={profile.signature}>{profile.signature || 'No signature~'}</span>
                             </div>
                         </div>
 
                         <ProgressImage
-                            className={classes.preview}
+                            className={styles.preview}
                             {...{
                                 height: 260,
                                 width: 260,
@@ -153,7 +152,7 @@ class User extends Component {
                         />
                     </aside>
 
-                    <section className={classes.list}>{this.renderList()}</section>
+                    <section className={styles.list}>{this.renderList()}</section>
                 </main>
 
                 <Controller key={controller.song.id} />
@@ -162,4 +161,4 @@ class User extends Component {
     }
 }
 
-export default injectSheet(UserClasses)(User);
+export default User;

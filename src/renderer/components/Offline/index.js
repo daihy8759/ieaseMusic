@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
-import OfflineClasses from './classes';
+import styles from './index.less';
 
 class Offline extends Component {
     static propTypes = {
@@ -27,14 +26,14 @@ class Offline extends Component {
     }
 
     render() {
-        const { classes, show } = this.props;
+        const { show } = this.props;
         const { offline } = this.state;
         if (!show) {
             return false;
         }
         if (!offline) {
             return (
-                <div className={classes.container}>
+                <div className={styles.container}>
                     <h1>Opps, seems like you are offline...</h1>
                 </div>
             );
@@ -42,4 +41,4 @@ class Offline extends Component {
     }
 }
 
-export default injectSheet(OfflineClasses)(Offline);
+export default Offline;

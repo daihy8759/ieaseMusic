@@ -3,9 +3,8 @@ import FadeImage from 'components/FadeImage';
 import { remote } from 'electron';
 import { inject } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
-import MenuClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     show: stores.menu.show,
@@ -32,7 +31,7 @@ class Menu extends Component {
     }
 
     renderMe() {
-        const { classes, close, hasLogin, profile } = this.props;
+        const { close, hasLogin, profile } = this.props;
         const link = `/user/${profile.userId}`;
 
         if (!hasLogin()) {
@@ -46,16 +45,16 @@ class Menu extends Component {
         }
 
         return (
-            <article className={classes.profile}>
+            <article className={styles.profile}>
                 <Link className="clearfix" onClick={close} to={link}>
                     <FadeImage src={profile.avatarUrl} />
                 </Link>
 
-                <div className={classes.info}>
-                    <p className={classes.username} onClick={close} title={profile.nickname}>
+                <div className={styles.info}>
+                    <p className={styles.username} onClick={close} title={profile.nickname}>
                         <Link to={link}>{profile.nickname}</Link>
                     </p>
-                    <a className={classes.logout} href="" onClick={e => this.doLogout()}>
+                    <a className={styles.logout} href="" onClick={e => this.doLogout()}>
                         Logout
                     </a>
                 </div>
@@ -64,7 +63,7 @@ class Menu extends Component {
     }
 
     render() {
-        const { classes, show, close } = this.props;
+        const { show, close } = this.props;
 
         if (!show) {
             return false;
@@ -73,18 +72,18 @@ class Menu extends Component {
         return (
             <div
                 tabIndex="-1"
-                className={classes.container}
+                className={styles.container}
                 // Press ESC close menu
                 onKeyUp={e => e.keyCode === 27 && close()}
                 ref={ele => {
                     this.container = ele;
                 }}>
-                <div className={classes.overlay} onClick={close} />
-                <section className={classes.body}>
+                <div className={styles.overlay} onClick={close} />
+                <section className={styles.body}>
                     <div>
                         {this.renderMe()}
 
-                        <div className={classes.navs}>
+                        <div className={styles.navs}>
                             <p>
                                 <Link onClick={close} to="/">
                                     Home
@@ -114,9 +113,9 @@ class Menu extends Component {
                         </div>
                     </div>
 
-                    <div className={classes.social}>
+                    <div className={styles.social}>
                         <a
-                            className={classnames('tooltip', classes.github)}
+                            className={classnames('tooltip', styles.github)}
                             data-text="Fork me on Github"
                             href="https://github.com/daihy8759"
                             rel="noopener noreferrer"
@@ -130,4 +129,4 @@ class Menu extends Component {
     }
 }
 
-export default injectSheet(MenuClasses)(Menu);
+export default Menu;

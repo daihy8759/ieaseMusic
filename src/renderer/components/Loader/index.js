@@ -1,9 +1,8 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import injectSheet from 'react-jss';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import colors from 'utils/colors';
-import LoaderClasses from './classes';
+import styles from './index.less';
 
 class Loader extends PureComponent {
     static propTypes = {
@@ -15,18 +14,18 @@ class Loader extends PureComponent {
     };
 
     render() {
-        const { classes, show } = this.props;
+        const { show } = this.props;
         return (
             <div
-                className={classnames(classes.container, {
-                    [classes.show]: show
+                className={classnames(styles.container, {
+                    [styles.show]: show
                 })}>
-                <div className={classnames(classes.loader, classes.animationLoader)}>
+                <div className={classnames(styles.loader, styles.animationLoader)}>
                     <span
                         onAnimationIteration={e => {
                             e.target.style.backgroundColor = colors.randomColor();
                         }}
-                        className={classnames(classes.inner, classes.animationInner)}
+                        className={classnames(styles.inner, styles.animationInner)}
                     />
                 </div>
             </div>
@@ -34,4 +33,4 @@ class Loader extends PureComponent {
     }
 }
 
-export default injectSheet(LoaderClasses)(Loader);
+export default Loader;

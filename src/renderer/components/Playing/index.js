@@ -3,10 +3,9 @@ import FadeImage from 'components/FadeImage';
 import Indicator from 'components/Indicator';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet from 'react-jss';
 import { Link } from 'react-router-dom';
 import colors from 'utils/colors';
-import PlayingClasses from './classes';
+import styles from './index.less';
 
 @inject(stores => ({
     show: stores.playing.show,
@@ -17,7 +16,6 @@ import PlayingClasses from './classes';
     play: stores.controller.play,
     close: () => stores.playing.toggle(false)
 }))
-@observer
 class Playing extends Component {
     componentDidUpdate(prevProps) {
         const { show, song, filtered } = this.props;
@@ -43,12 +41,11 @@ class Playing extends Component {
 
     highlight(offset) {
         const { list } = this;
-        const { classes } = this.props;
         const songs = Array.from(list.querySelectorAll('[data-id]'));
-        let index = songs.findIndex(e => e.classList.contains(classes.active));
+        let index = songs.findIndex(e => e.classList.contains(styles.active));
 
         if (index > -1) {
-            songs[index].classList.remove(classes.active);
+            songs[index].classList.remove(styles.active);
         }
 
         index += offset;
@@ -65,7 +62,7 @@ class Playing extends Component {
 
         if (active) {
             // Keep active item always in the viewport
-            active.classList.add(classes.active);
+            active.classList.add(styles.active);
             list.scrollTop = active.offsetTop + active.offsetHeight - list.offsetHeight;
         }
     }
@@ -86,8 +83,8 @@ class Playing extends Component {
         if (keyCode !== 13) {
             return;
         }
-        const { classes, play } = this.props;
-        const active = this.list.querySelector(`.${classes.active}`);
+        const { play } = this.props;
+        const active = this.list.querySelector(`.${styles.active}`);
 
         if (active) {
             const songid = active.dataset.id;
@@ -96,7 +93,7 @@ class Playing extends Component {
     }
 
     renderList() {
-        const { classes, songs = [], filtered, song = {}, play, close } = this.props;
+        const { songs = [], filtered, song = {}, play, close } = this.props;
         let list = songs;
 
         // Show the search result
@@ -105,7 +102,7 @@ class Playing extends Component {
         }
 
         if (list.length === 0) {
-            return <div className={classes.nothing}>Nothing ...</div>;
+            return <div className={styles.nothing}>Nothing ...</div>;
         }
 
         return list.map((e, index) => {
@@ -113,11 +110,11 @@ class Playing extends Component {
 
             return (
                 <li key={e.id}>
-                    <div className={classes.actions}>{playing ? <Indicator /> : false}</div>
+                    <div className={styles.actions}>{playing ? <Indicator /> : false}</div>
 
                     <aside
-                        className={classnames(classes.song, {
-                            [classes.playing]: playing
+                        className={classnames(styles.song, {
+                            [styles.playing]: playing
                         })}
                         data-id={e.id}
                         onClick={() => {
@@ -129,8 +126,8 @@ class Playing extends Component {
                         </Link>
 
                         <aside>
-                            <p className={classes.title}>{e.name}</p>
-                            <p className={classes.author}>
+                            <p className={styles.title}>{e.name}</p>
+                            <p className={styles.author}>
                                 {e.artists.map(d => {
                                     return (
                                         <Link key={d.link} to={d.link}>
@@ -142,7 +139,7 @@ class Playing extends Component {
                         </aside>
 
                         <div
-                            className={classes.mask}
+                            className={styles.mask}
                             style={{
                                 background: colors.randomGradient()
                             }}
@@ -154,7 +151,7 @@ class Playing extends Component {
     }
 
     render() {
-        const { classes, show, search, close } = this.props;
+        const { show, search, close } = this.props;
 
         if (!show) {
             return false;
@@ -162,13 +159,13 @@ class Playing extends Component {
 
         return (
             <div
-                className={classes.container}
+                className={styles.container}
                 onKeyUp={e => this.pressEscExit(e)}
                 ref={ele => {
                     this.container = ele;
                 }}
                 tabIndex="-1">
-                <div className={classes.overlay} onClick={close} />
+                <div className={styles.overlay} onClick={close} />
 
                 <section>
                     <header>
@@ -184,7 +181,7 @@ class Playing extends Component {
                     </header>
 
                     <ul
-                        className={classes.list}
+                        className={styles.list}
                         ref={ele => {
                             this.list = ele;
                         }}>
@@ -196,4 +193,4 @@ class Playing extends Component {
     }
 }
 
-export default injectSheet(PlayingClasses)(Playing);
+export default Playing;
