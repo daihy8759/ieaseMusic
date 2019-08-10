@@ -4,9 +4,7 @@ import { Modal, ModalBody, ModalHeader } from 'components/Modal';
 import Switch from 'components/Switch';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import injectSheet, { ThemeProvider } from 'react-jss';
-import theme from '../../theme';
-import PreferencesClasses from './classes';
+import styles from './index.less';
 
 @inject('preferences')
 @observer
@@ -84,7 +82,7 @@ class Preferences extends Component {
     };
 
     renderOptions() {
-        const { classes, preferences } = this.props;
+        const { preferences } = this.props;
         const {
             showTray,
             setShowTray,
@@ -116,7 +114,7 @@ class Preferences extends Component {
         } = preferences;
 
         return (
-            <div className={classes.container}>
+            <div className={styles.container}>
                 <section>
                     <article>
                         <label htmlFor="alwaysOnTop">
@@ -234,14 +232,14 @@ class Preferences extends Component {
                             </div>
 
                             <input
-                                className={classes.textInput}
+                                className={styles.textInput}
                                 defaultValue={proxy}
                                 onBlur={ev => setProxy(ev.target.value)}
                                 placeholder="http://your.proxy.com:port"
                             />
                         </label>
 
-                        <label className={classes.downloads}>
+                        <label className={styles.downloads}>
                             <aside>
                                 <input
                                     webkitdirectory="true"
@@ -322,10 +320,10 @@ class Preferences extends Component {
                             Connect to Last.fm
                             <small>Track what you listen to, whenever you listen.</small>
                         </h3>
-                        <div className={classes.field}>
+                        <div className={styles.field}>
                             <span>Username</span>
                             <input
-                                className={classes.textInput}
+                                className={styles.textInput}
                                 defaultValue={lastFm.username}
                                 onBlur={ev => this.saveLastfm()}
                                 placeholder="Your last.fm username"
@@ -336,10 +334,10 @@ class Preferences extends Component {
                             />
                         </div>
 
-                        <div className={classes.field}>
+                        <div className={styles.field}>
                             <span>Password</span>
                             <input
-                                className={classes.textInput}
+                                className={styles.textInput}
                                 defaultValue={lastFm.password}
                                 onBlur={ev => this.saveLastfm()}
                                 placeholder="Your last.fm password"
@@ -351,8 +349,8 @@ class Preferences extends Component {
                         </div>
                         <button
                             type="button"
-                            className={classnames(classes.connect, {
-                                [classes.connected]: this.isConnected()
+                            className={classnames(styles.connect, {
+                                [styles.connected]: this.isConnected()
                             })}
                             disabled={this.isConnected() || connecting || !lastFm.username || !lastFm.password}
                             onClick={e => connect()}>
@@ -365,11 +363,11 @@ class Preferences extends Component {
                         {backgrounds &&
                             backgrounds.map((e, index) => {
                                 return (
-                                    <div className={classes.field} key={e.type}>
+                                    <div className={styles.field} key={e.type}>
                                         <span>{e.type}</span>
 
                                         <input
-                                            className={classes.textInput}
+                                            className={styles.textInput}
                                             defaultValue={e.background}
                                             onBlur={ev =>
                                                 this.saveBackground(index, {
@@ -390,23 +388,21 @@ class Preferences extends Component {
     }
 
     render() {
-        const { classes, preferences } = this.props;
+        const { preferences } = this.props;
 
         return (
             <Modal show={preferences.show} onCancel={() => this.close()}>
-                <ModalHeader className={classes.header}>
+                <ModalHeader className={styles.header}>
                     Preferences...
-                    <i className={classes.close} onClick={() => this.close()}>
-                        <img alt="Close Menus" className={classes.close} src={closePng} />
+                    <i className={styles.close} onClick={() => this.close()}>
+                        <img alt="Close Menus" className={styles.close} src={closePng} />
                     </i>
                 </ModalHeader>
 
-                <ModalBody className={classes.modal}>
-                    <ThemeProvider theme={theme}>{this.renderOptions()}</ThemeProvider>
-                </ModalBody>
+                <ModalBody className={styles.modal}>{this.renderOptions()}</ModalBody>
             </Modal>
         );
     }
 }
 
-export default injectSheet(PreferencesClasses)(Preferences);
+export default Preferences;
