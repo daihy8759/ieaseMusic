@@ -34,10 +34,7 @@ class FadeImage extends Component {
     }
 
     handleLoad(e) {
-        const {
-            styles: { fadein }
-        } = this.props;
-        e.target.classList.remove(fadein);
+        e.target.classList.remove(styles.fadein);
     }
 
     render() {

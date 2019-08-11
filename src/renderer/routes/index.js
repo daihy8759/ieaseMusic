@@ -1,9 +1,9 @@
 import Loader from 'components/Loader';
 import React, { Suspense } from 'react';
-import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import stores from 'stores';
-import Welcome from '../views/Welcome';
 import Layout from '../views/Layout';
+import Welcome from '../views/Welcome';
 
 const Main = withRouter(props => <Layout {...props} />);
 
@@ -30,7 +30,7 @@ function LazyComponent(Component) {
 
 function requireAuth(component, props) {
     if (stores.me.hasLogin()) {
-        return React.createElement(component, {
+        return React.createElement(LazyComponent(component), {
             ...props
         });
     }

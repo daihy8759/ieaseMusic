@@ -22,6 +22,7 @@ import styles from './index.less';
     unlike: stores.me.unlike,
     isLiked: stores.me.isLiked,
     comments: stores.comments.total,
+    playing: stores.controller.playing,
     isFMPlaying() {
         const { controller, fm } = stores;
         return controller.playlist.id === fm.playlist.id;
@@ -166,20 +167,24 @@ class FM extends Component {
 
                     <div className={styles.controls}>
                         <i
-                            className={classnames('ion-ios-heart', {
+                            className={classnames('remixicon-heart-fill', {
                                 [styles.liked]: liked
                             })}
                             onClick={e => (liked ? unlike(song) : like(song))}
                         />
 
-                        <i className="ion-android-arrow-down" onClick={e => ban(song.id)} />
+                        <i className="remixicon-arrow-down-circle-fill" onClick={e => ban(song.id)} />
 
                         <span onClick={e => play()}>
-                            {isPlaying() ? <i className="ion-ios-pause" /> : <i className="ion-ios-play" />}
+                            {isPlaying() ? (
+                                <i className="remixicon-pause-fill" />
+                            ) : (
+                                <i className="remixicon-play-fill" />
+                            )}
                         </span>
 
                         <i
-                            className="ion-ios-fastforward"
+                            className="remixicon-speed-fill"
                             onClick={next}
                             style={{
                                 marginRight: 0

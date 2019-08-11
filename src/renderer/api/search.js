@@ -1,5 +1,5 @@
 import search from './common/search';
-//TODO: nextHref
+//  TODO: nextHref
 async function getPlaylists(keywords, offset = 0) {
     let playlists = [];
     try {
@@ -143,6 +143,8 @@ async function searchByType(type, keyword, offset) {
         case '1002':
             data = await getUsers(keyword, offset);
             break;
+        default:
+            data = [];
     }
     return data;
 }

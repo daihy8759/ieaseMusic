@@ -19,7 +19,7 @@ class User {
         this.loading = false;
     };
 
-    //TODO: use api
+    //  TODO: use api
     @action
     follow = async followed => {
         const data = await axios.get(
