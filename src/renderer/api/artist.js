@@ -1,6 +1,8 @@
 import CRYPTO from 'utils/crypto';
 import artists from './common/artists';
 import artistDesc from './common/artist_desc';
+import artistAlbum from './common/artist_album';
+import simiArtist from './common/simi_artist';
 
 const { md5 } = CRYPTO;
 
@@ -52,7 +54,7 @@ async function getArtist(id) {
                 }))
             };
         });
-        const desc = await getDesc(id);
+        const [desc, albums, similar] = await Promise.all([getDesc(id), getAlbums(id), getSimilar(id)]);
         return {
             profile: {
                 id: artist.id,
@@ -67,6 +69,8 @@ async function getArtist(id) {
                 }
             },
             desc,
+            albums,
+            similar,
             playlist: {
                 id: artist.id,
                 name: `TOP 50 - ${artist.name}`,
@@ -101,6 +105,50 @@ async function getDesc(id) {
         briefDesc: '',
         introduction: []
     };
+}
+
+async function getAlbums(id) {
+    try {
+        const res = await artistAlbum({ id });
+        if (res.data.code !== 200) {
+            throw res.data;
+        }
+        const { hotAlbums } = res.data;
+        return hotAlbums.map(e => ({
+            id: e.id,
+            name: e.name,
+            cover: e.picUrl,
+            link: `/player/1/${e.id}`,
+            publishTime: e.publishTime
+        }));
+    } catch (e) {
+        console.error(e);
+    }
+    return [];
+}
+
+/**
+ * 获取相似歌手
+ * ⚠️该接口需要登录
+ */
+async function getSimilar(id) {
+    try {
+        const res = await simiArtist({ id });
+        if (res.data.code !== 200) {
+            throw res.data;
+        }
+        const { artists } = res.data;
+        return artists.map(e => ({
+            id: e.id,
+            name: e.name,
+            avatar: e.picUrl,
+            publishTime: e.publishTime,
+            link: e.id ? `/artist/${e.id}` : ''
+        }));
+    } catch (e) {
+        console.error(e);
+    }
+    return [];
 }
 
 export { getArtist };
