@@ -17,6 +17,7 @@ import styles from './index.less';
     follow: stores.artist.follow,
     playlist: stores.artist.playlist,
     albums: stores.artist.albums,
+    desc: stores.artist.desc,
     similar: stores.artist.similar,
     getArtist: stores.artist.getArtist,
     playing: stores.controller.playing,
@@ -143,6 +144,15 @@ class Artist extends Component {
                     })}
             </ul>
         );
+    }
+
+    renderDesc() {
+        const { desc } = this.props;
+        const { briefDesc } = desc;
+        if (!briefDesc) {
+            return <section className={styles.nothing}>Nothing ...</section>;
+        }
+        return <section className={styles.desc}>{briefDesc}</section>;
     }
 
     renderAlbums() {
@@ -288,12 +298,10 @@ class Artist extends Component {
                             Top 50
                         </nav>
 
-                        <nav onClick={e => this.setState({ renderTabContent: () => this.renderAlbums() })}>
-                            All Albums
-                        </nav>
-
+                        <nav onClick={e => this.setState({ renderTabContent: () => this.renderAlbums() })}>专辑</nav>
+                        <nav onClick={e => this.setState({ renderTabContent: () => this.renderDesc() })}>歌手详情</nav>
                         <nav onClick={e => this.setState({ renderTabContent: () => this.renderArtists() })}>
-                            Similar Artist
+                            相似歌手
                         </nav>
                     </header>
 

@@ -1,5 +1,6 @@
 import CRYPTO from 'utils/crypto';
 import artists from './common/artists';
+import artistDesc from './common/artist_desc';
 
 const { md5 } = CRYPTO;
 
@@ -51,6 +52,7 @@ async function getArtist(id) {
                 }))
             };
         });
+        const desc = await getDesc(id);
         return {
             profile: {
                 id: artist.id,
@@ -64,6 +66,7 @@ async function getArtist(id) {
                     album: artist.albumSize
                 }
             },
+            desc,
             playlist: {
                 id: artist.id,
                 name: `TOP 50 - ${artist.name}`,
@@ -77,6 +80,26 @@ async function getArtist(id) {
     return {
         profile: {},
         playlist: {}
+    };
+}
+
+async function getDesc(id) {
+    try {
+        const res = await artistDesc({ id });
+        if (res.data.code !== 200) {
+            throw res.data;
+        }
+        const { briefDesc, introduction } = res.data;
+        return {
+            briefDesc,
+            introduction
+        };
+    } catch (e) {
+        console.error(e);
+    }
+    return {
+        briefDesc: '',
+        introduction: []
     };
 }
 

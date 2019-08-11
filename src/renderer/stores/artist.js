@@ -19,6 +19,8 @@ class Artist {
         songs: []
     };
 
+    @observable desc = {};
+
     @action
     getArtist = async id => {
         this.loading = true;
@@ -28,6 +30,7 @@ class Artist {
             this.playlist = data.playlist;
             this.albums = data.albums;
             this.similar = data.similar;
+            this.desc = data.desc;
         }
 
         this.loading = false;
