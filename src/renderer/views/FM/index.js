@@ -34,9 +34,8 @@ import styles from './index.less';
     }
 }))
 class FM extends Component {
-    componentWillMount() {
-        const { getFM } = this.props;
-        getFM();
+    componentDidMount() {
+        this.props.getFM();
     }
 
     seek(e) {

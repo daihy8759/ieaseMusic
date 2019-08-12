@@ -52,7 +52,6 @@ class Comments {
         if (!this.nextOffset) {
             return;
         }
-
         const data = await getMusicComments(id, this.nextOffset);
         this.newestList.push(...data.newestList);
         this.nextOffset = data.nextOffset;

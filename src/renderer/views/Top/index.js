@@ -15,9 +15,8 @@ import styles from './index.less';
     getList: stores.top.getList
 }))
 class Top extends Component {
-    componentWillMount() {
-        const { getList } = this.props;
-        getList();
+    componentDidMount() {
+        this.props.getList();
     }
 
     renderItem(item) {

@@ -39,7 +39,6 @@ class Welcome extends Component {
         if (controller.playlist.id === playlist.id) {
             controller.toggle();
         }
-
         controller.setup(playlist);
         controller.play();
     }
@@ -120,7 +119,7 @@ class Welcome extends Component {
         const { controller } = this.props;
 
         return (
-            <Link className={styles.clearfix} to="#" onClick={this.play(recommend)}>
+            <Link className={styles.clearfix} to="#" onClick={() => this.play(recommend)}>
                 <Status playing={controller.playlist.id === recommend.id} />
 
                 <div className={styles.hovered}>
@@ -160,7 +159,7 @@ class Welcome extends Component {
 
         return list.map((e, index) => {
             return (
-                <Link className={styles.clearfix} key={e.id + index} to={e.link}>
+                <Link className={styles.clearfix} key={index} to={e.link}>
                     <Status playing={controller.playlist.id === e.id} />
 
                     <div className={styles.hovered}>
@@ -214,7 +213,7 @@ class Welcome extends Component {
         const { controller, me, home } = this.props;
         const { list } = home;
         const logined = me.hasLogin();
-        const hasRecommend = logined && list.length && list[1].size;
+        const hasRecommend = logined && list.length > 1 && list[1].size;
         const songId = controller.song ? controller.song.id : '';
 
         return (
@@ -264,7 +263,7 @@ class Welcome extends Component {
                         <section className={styles.list}>
                             {logined ? this.renderFavorite(list[0]) : false}
                             {hasRecommend ? this.renderRecommend(list[1]) : false}
-                            {/* {this.renderPlaylist(logined ? list.slice(2, list.length) : list.slice())} */}
+                            {this.renderPlaylist(logined ? list.slice(2, list.length) : list.slice())}
                         </section>
                     ) : (
                         <div className={styles.placeholder} />

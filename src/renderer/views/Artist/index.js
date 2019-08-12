@@ -72,11 +72,6 @@ class Artist extends Component {
         this.canvasRef = React.createRef();
     }
 
-    componentWillMount = () => {
-        const { match, getArtist } = this.props;
-        getArtist(match.params.id);
-    };
-
     componentDidMount() {
         const navs = Array.from(this.headerRef.current.querySelectorAll('nav'));
 
@@ -85,7 +80,9 @@ class Artist extends Component {
             e.target.classList.add(styles.selected);
         });
 
-        // sine.show(this.canvasRef.current);
+        sine.show(this.canvasRef.current);
+        const { match, getArtist } = this.props;
+        getArtist(match.params.id);
     }
 
     componentDidUpdate(prevProps) {

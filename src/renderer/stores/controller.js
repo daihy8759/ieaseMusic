@@ -1,6 +1,6 @@
 import { getSongUrl } from 'api/player';
 import { ipcRenderer } from 'electron';
-import { action, observable, runInAction } from 'mobx';
+import { action, observable, runInAction, toJS } from 'mobx';
 import lastfm from 'utils/lastfm';
 import comments from './comments';
 import fm from './fm';
@@ -45,7 +45,7 @@ class Controller {
     }
 
     @action
-    play = async (songId, forward = true) => {
+    async play(songId, forward = true) {
         if (!this.playlist || !this.playlist.songs) {
             return;
         }
@@ -94,7 +94,7 @@ class Controller {
         comments.getList(song);
         await this.resolveSong(song);
         await lastfm.playing(song);
-    };
+    }
 
     @action
     resolveSong = async () => {
@@ -106,6 +106,7 @@ class Controller {
             });
             runInAction(() => {
                 this.song = Object.assign({}, this.song, { data }, { waiting: false });
+                // console.log(song);
             });
         } catch (ex) {
             console.error(ex);

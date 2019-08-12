@@ -4,6 +4,7 @@ import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import agent from 'random-useragent';
 import url from 'url';
+import crypto from 'crypto';
 import ipcMainSets from './ipcMainSets';
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
@@ -70,13 +71,37 @@ const createWindow = async () => {
         } catch (ex) {}
     });
     // cors
-    const ieaseUri = 'http://music.163.com';
+    const ieaseUri = 'https://music.163.com';
     win.webContents.session.webRequest.onBeforeSendHeaders(
         {
             urls: [`${ieaseUri}/*`]
         },
         async (details, callback) => {
-            const cookie = await session.defaultSession.cookies.get({ url: ieaseUri });
+            let cookie = await session.defaultSession.cookies.get({ url: ieaseUri });
+            cookie = [
+                ...cookie,
+                {
+                    name: '_ntes_nuid',
+                    domain: '.music.163.com',
+                    hostOnly: false,
+                    path: '/',
+                    secure: false,
+                    httpOnly: false,
+                    session: false,
+                    value: crypto.randomBytes(16).toString('hex')
+                },
+                {
+                    name: 'os',
+                    domain: '.music.163.com',
+                    hostOnly: false,
+                    path: '/',
+                    secure: false,
+                    httpOnly: false,
+                    session: false,
+                    value: 'pc'
+                }
+            ];
+            console.log(details);
             callback({
                 requestHeaders: {
                     ...details.requestHeaders,

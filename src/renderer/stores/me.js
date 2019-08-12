@@ -93,11 +93,13 @@ class Me {
             return false;
         }
 
-        this.profile = data.profile;
-        await home.load();
+        runInAction(() => {
+            this.profile = data.profile;
+        });
         await storage.set('profile', this.profile);
-        this.logining = false;
-
+        runInAction(() => {
+            this.logining = false;
+        });
         return this.profile;
     };
 

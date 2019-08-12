@@ -121,14 +121,13 @@ class Player extends Component {
         const {
             showLoading,
             hideLoading,
-            getList,
             getRelated,
             match: { params },
             song
         } = this.props;
 
         showLoading();
-        await getList(params);
+        await this.props.getList(params);
         await getRelated(song);
         hideLoading();
     };

@@ -4,7 +4,7 @@ import Hero from 'components/Hero';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
-import { inject, observer } from 'mobx-react';
+import { inject } from 'mobx-react';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
@@ -19,11 +19,9 @@ import styles from './index.less';
     loadMore: stores.comments.loadMore,
     song: stores.comments.song
 }))
-@observer
 class Comments extends Component {
-    componentWillMount() {
-        const { getList } = this.props;
-        getList();
+    componentDidMount() {
+        this.props.getList();
     }
 
     loadmore = async () => {

@@ -33,6 +33,11 @@ class User extends Component {
         hovered: false
     };
 
+    componentDidMount() {
+        const { getUser, match } = this.props;
+        getUser(match.params.id);
+    }
+
     componentDidUpdate(prevProps) {
         const { match, getUser } = this.props;
 
@@ -40,11 +45,6 @@ class User extends Component {
             getUser(match.params.id);
         }
     }
-
-    componentWillMount = () => {
-        const { getUser, match } = this.props;
-        getUser(match.params.id);
-    };
 
     renderList() {
         const { playlists, isPlaying } = this.props;

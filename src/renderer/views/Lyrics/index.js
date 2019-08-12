@@ -13,9 +13,8 @@ import styles from './index.less';
     song: stores.controller.song
 }))
 class Lyrics extends Component {
-    componentWillMount() {
-        const { getLyrics } = this.props;
-        getLyrics();
+    componentDidMount() {
+        this.props.getLyrics();
     }
 
     componentDidUpdate(prevProps) {
