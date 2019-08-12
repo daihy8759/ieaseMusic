@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, session, BrowserWindow } from 'electron';
 import installer, { MOBX_DEVTOOLS, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
@@ -70,17 +70,20 @@ const createWindow = async () => {
         } catch (ex) {}
     });
     // cors
+    const ieaseUri = 'http://music.163.com';
     win.webContents.session.webRequest.onBeforeSendHeaders(
         {
-            urls: ['http://music.163.com/*']
+            urls: [`${ieaseUri}/*`]
         },
-        (details, callback) => {
+        async (details, callback) => {
+            const cookie = await session.defaultSession.cookies.get({ url: ieaseUri });
             callback({
                 requestHeaders: {
                     ...details.requestHeaders,
                     Connection: 'keep-alive',
-                    Referer: 'http://music.163.com',
-                    Origin: 'http://music.163.com',
+                    Referer: ieaseUri,
+                    cookie,
+                    Origin: ieaseUri,
                     Host: 'music.163.com',
                     'User-Agent': agent.getRandom()
                 }
