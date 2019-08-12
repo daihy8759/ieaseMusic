@@ -1,5 +1,5 @@
 import getPlayList from 'api/playlist';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 
 class Playlist {
     @observable loading = true;
@@ -275,11 +275,12 @@ class Playlist {
 
         const data = await getPlayList(type);
         const { playList, nextOffset } = data;
-        this.list = playList;
-        this.type = type;
-        this.nextOffset = nextOffset;
-
-        this.loading = false;
+        runInAction(() => {
+            this.list = playList;
+            this.type = type;
+            this.nextOffset = nextOffset;
+            this.loading = false;
+        });
     };
 
     // Scroll to load more data

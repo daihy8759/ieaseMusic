@@ -105,7 +105,7 @@ class Controller {
                 id: song.id
             });
             runInAction(() => {
-                // this.song = Object.assign({}, this.song, { data }, { waiting: false });
+                this.song = Object.assign({}, this.song, { data }, { waiting: false });
             });
         } catch (ex) {
             console.error(ex);
