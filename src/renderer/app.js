@@ -1,4 +1,5 @@
 import { ipcRenderer, remote, shell } from 'electron';
+import { configure } from 'mobx';
 import { Provider } from 'mobx-react';
 import React from 'react';
 import EventListener from 'react-event-listener';
@@ -11,6 +12,7 @@ import MainRouter from './routes';
 import stores from './stores';
 
 const { Menu } = remote;
+configure({ enforceActions: 'observed' });
 
 class App extends React.Component {
     constructor(props) {

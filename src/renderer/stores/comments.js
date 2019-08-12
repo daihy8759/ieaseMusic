@@ -1,5 +1,5 @@
 import { getMusicComments } from 'api/comments';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import controller from './controller';
 
 class Comments {
@@ -19,19 +19,21 @@ class Comments {
     nextOffset = 0;
 
     @action
-    getList = async song => {
+    async getList(song) {
         if (!song) {
             return;
         }
         this.loading = true;
         const data = await getMusicComments(song.id);
-        this.song = song;
-        this.hotList = data.hotList || [];
-        this.newestList = data.newestList || [];
-        this.total = data.total || 0;
-        this.nextOffset = data.nextOffset;
-        this.loading = false;
-    };
+        runInAction(() => {
+            this.song = song;
+            this.hotList = data.hotList || [];
+            this.newestList = data.newestList || [];
+            this.total = data.total || 0;
+            this.nextOffset = data.nextOffset;
+            this.loading = false;
+        });
+    }
 
     @action
     like = async (id, liked) => {

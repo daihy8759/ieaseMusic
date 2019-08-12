@@ -1,6 +1,6 @@
 import { getSongUrl } from 'api/player';
 import { ipcRenderer } from 'electron';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import lastfm from 'utils/lastfm';
 import comments from './comments';
 import fm from './fm';
@@ -104,35 +104,12 @@ class Controller {
             const data = await getSongUrl({
                 id: song.id
             });
-            this.song = Object.assign({}, this.song, { data }, { waiting: false });
-            // const response = await axios.get(
-            //     `/api/player/song/${song.id}/${encodeURIComponent(
-            //         helper.clearWith(song.name, ['（', '('])
-            //     )}/${encodeURIComponent(song.artists.map(e => e.name).join(','))}/${
-            //         preferences.highquality
-            //     }?${+new Date()}`,
-            //     {
-            //         // Wait 60 secinds before timing out
-            //         timeout: 60000,
-            //         cancelToken: new CancelToken(c => {
-            //             // An executor function receives a cancel function as a parameter
-            //             cancel = c;
-            //         })
-            //     }
-            // );
-            // var data = response.data.song;
-
-            // if (!data.src) {
-            //     throw Error('Bad audio src.');
-            // }
+            runInAction(() => {
+                // this.song = Object.assign({}, this.song, { data }, { waiting: false });
+            });
         } catch (ex) {
             console.error(ex);
-            // if (['Bad audio src.', 'timeout of 10000ms exceeded'].includes(ex.message)) {
-            //     self.tryTheNext();
-            // }
-            // return;
         }
-        // this.song = Object.assign({}, self.song, { data }, { waiting: false });
     };
 
     @action

@@ -50,17 +50,6 @@ class Layout extends Component {
         offline: false
     };
 
-    async componentWillMount() {
-        const { me, preferences } = this.props;
-
-        await preferences.init();
-        await me.init();
-
-        const { username, password } = preferences.lastFm;
-
-        await lastfm.initialize(username, password);
-    }
-
     componentDidMount() {
         window.addEventListener('offline', () => {
             this.setState({
@@ -73,7 +62,19 @@ class Layout extends Component {
                 offline: false
             });
         });
+        this.init();
     }
+
+    init = async () => {
+        const { me, preferences } = this.props;
+
+        await preferences.init();
+        await me.init();
+
+        const { username, password } = preferences.lastFm;
+
+        await lastfm.initialize(username, password);
+    };
 
     render() {
         const {

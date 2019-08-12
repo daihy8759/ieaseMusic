@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, runInAction } from 'mobx';
 import axios from 'axios';
 import { getUserDetail } from 'api/user';
 
@@ -14,9 +14,11 @@ class User {
         this.loading = true;
 
         const data = await getUserDetail(userid);
-        this.profile = data.profile;
-        this.playlists = data.playlists;
-        this.loading = false;
+        runInAction(() => {
+            this.profile = data.profile;
+            this.playlists = data.playlists;
+            this.loading = false;
+        });
     };
 
     //  TODO: use api

@@ -26,12 +26,11 @@ const Status = props => {
     );
 };
 
-@inject('me', 'controller', 'preferences', 'home')
+@inject('me', 'controller', 'home')
 @observer
 class Welcome extends Component {
     componentDidMount() {
-        const { home } = this.props;
-        home.getList();
+        this.props.home.getList();
     }
 
     play(playlist) {
@@ -265,7 +264,7 @@ class Welcome extends Component {
                         <section className={styles.list}>
                             {logined ? this.renderFavorite(list[0]) : false}
                             {hasRecommend ? this.renderRecommend(list[1]) : false}
-                            {this.renderPlaylist(logined ? list.slice(2, list.length) : list.slice())}
+                            {/* {this.renderPlaylist(logined ? list.slice(2, list.length) : list.slice())} */}
                         </section>
                     ) : (
                         <div className={styles.placeholder} />

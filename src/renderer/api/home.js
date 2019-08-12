@@ -33,8 +33,8 @@ async function getSongs(id) {
         });
     } catch (e) {
         console.error(e);
-        return [];
     }
+    return {};
 }
 
 async function getPersonalized() {
@@ -56,8 +56,8 @@ async function getPersonalized() {
         });
     } catch (e) {
         console.error(e);
-        return [];
     }
+    return [];
 }
 
 async function getDaily() {

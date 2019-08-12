@@ -1,11 +1,9 @@
-import { observable, action } from 'mobx';
-import Api from 'api';
+import homeApi from 'api/home';
+import { action, observable, runInAction } from 'mobx';
 import helper from 'utils/helper';
-import me from './me';
 import controller from './controller';
+import me from './me';
 import preferences from './preferences';
-
-const { home } = Api;
 
 class Home {
     @observable loading = true;
@@ -13,10 +11,10 @@ class Home {
     @observable list = [];
 
     @action
-    load = async () => {
+    async load() {
         let list;
         if (me.hasLogin()) {
-            list = await home.getHomeData(`${me.profile.userId}`);
+            list = await homeApi.getHomeData(`${me.profile.userId}`);
             const [favorite, recommend] = list;
 
             me.rocking(favorite);
@@ -29,7 +27,7 @@ class Home {
                 controller.setup(list[2]);
             }
         } else {
-            list = await home.getHomeData();
+            list = await homeApi.getHomeData();
             if (list.length === 0) {
                 console.error('get home request failed');
                 return;
@@ -48,31 +46,27 @@ class Home {
             e.pallet = false;
         });
 
-        this.list = list;
-
+        runInAction(() => {
+            this.list = list;
+        });
         // Get the color pallets
-        await Promise.all(
-            this.list.map(async (e, index) => {
-                if (!e.cover) return;
+        list.map(async (e, index) => {
+            if (!e.cover) return;
 
-                const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
-                e.pallet = pallet;
+            const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
+            e.pallet = pallet;
 
-                // Force update list
-                this.updateShadow(e, index);
-            })
-        );
-
-        return this.list;
-    };
+            // Force update list
+            this.updateShadow(e, index);
+        });
+    }
 
     @action async getList() {
         this.loading = true;
-
         await this.load();
-
-        this.getList = Function;
-        this.loading = false;
+        runInAction(() => {
+            this.loading = false;
+        });
     }
 
     @action

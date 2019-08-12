@@ -1,6 +1,6 @@
 import { loginWithPhone, loginRefresh } from 'api/login';
 import { dialog } from 'electron';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import helper from 'utils/helper';
 import storage from 'utils/storage';
 import QRCodeApi from 'api/qrcode';
@@ -20,7 +20,7 @@ class Me {
     @observable likes = new Map();
 
     @action
-    init = async () => {
+    async init() {
         let profile = await storage.get('profile');
 
         if (!profile) {
@@ -32,9 +32,11 @@ class Me {
                 await storage.remove('profile');
             }
         }
-        this.profile = profile;
-        this.initialized = true;
-    };
+        runInAction(() => {
+            this.profile = profile;
+            this.initialized = true;
+        });
+    }
 
     @action
     generate = async type => {

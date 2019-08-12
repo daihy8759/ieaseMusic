@@ -1,6 +1,6 @@
 import axios from 'axios';
 import han from 'han';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import helper from 'utils/helper';
 import { getPlayListDetail, getRecommend } from 'api/player';
 
@@ -36,8 +36,10 @@ class Player {
         if (detail && detail.meta) {
             const pallet = await helper.getPallet(detail.meta.cover);
             detail.meta.pallet = pallet;
-            this.meta = detail.meta;
-            this.songs.replace(detail.songs);
+            runInAction(() => {
+                this.meta = detail.meta;
+                this.songs.replace(detail.songs);
+            });
         }
     };
 
@@ -48,9 +50,11 @@ class Player {
         }
         const data = await getRecommend(song.id, song.artists[0].id);
         if (data) {
-            this.recommend = data.playlists;
-            this.users = data.users;
-            this.artists = data.artists;
+            runInAction(() => {
+                this.recommend = data.playlists;
+                this.users = data.users;
+                this.artists = data.artists;
+            });
         }
     };
 
