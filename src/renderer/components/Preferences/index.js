@@ -39,8 +39,7 @@ class Preferences extends Component {
     }
 
     close() {
-        const { preferences } = this.props;
-        preferences.show = false;
+        this.props.preferences.hide();
     }
 
     isConnected() {

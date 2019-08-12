@@ -1,5 +1,5 @@
 import { getTopList } from 'api/top';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 
 class Top {
     @observable loading = true;
@@ -10,8 +10,10 @@ class Top {
     getList = async () => {
         this.loading = true;
         const list = await getTopList();
-        this.list = list;
-        this.loading = false;
+        runInAction(() => {
+            this.list = list;
+            this.loading = false;
+        });
     };
 }
 

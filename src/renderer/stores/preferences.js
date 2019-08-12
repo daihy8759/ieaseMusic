@@ -1,5 +1,5 @@
 import { ipcRenderer, remote } from 'electron';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import path from 'path';
 import pkg from 'root/package.json';
 import lastfm from 'utils/lastfm';
@@ -51,7 +51,7 @@ class Preferences {
     @observable downloads = path.join(remote.app.getPath('music'), pkg.name);
 
     @action
-    init = async () => {
+    async init() {
         const preferences = await storage.get('preferences');
         const {
             showTray = this.showTray,
@@ -70,27 +70,28 @@ class Preferences {
             proxy = this.proxy,
             downloads = this.downloads
         } = preferences;
-
-        this.showTray = !!showTray;
-        this.showMenuBarOnLinux = !!showMenuBarOnLinux;
-        this.revertTrayIcon = !!revertTrayIcon;
-        this.alwaysOnTop = !!alwaysOnTop;
-        this.showNotification = !!showNotification;
-        this.autoPlay = !!autoPlay;
-        this.volume = +volume || 1;
-        this.highquality = +highquality || 0;
-        this.backgrounds = backgrounds || [];
-        this.autoupdate = autoupdate;
-        this.scrobble = scrobble;
-        this.lastFm = lastFm;
-        this.enginers = enginers;
-        this.proxy = proxy;
-        this.downloads = downloads;
+        runInAction(() => {
+            this.showTray = !!showTray;
+            this.showMenuBarOnLinux = !!showMenuBarOnLinux;
+            this.revertTrayIcon = !!revertTrayIcon;
+            this.alwaysOnTop = !!alwaysOnTop;
+            this.showNotification = !!showNotification;
+            this.autoPlay = !!autoPlay;
+            this.volume = +volume || 1;
+            this.highquality = +highquality || 0;
+            this.backgrounds = backgrounds || [];
+            this.autoupdate = autoupdate;
+            this.scrobble = scrobble;
+            this.lastFm = lastFm;
+            this.enginers = enginers;
+            this.proxy = proxy;
+            this.downloads = downloads;
+        });
 
         // Save preferences
         this.save();
         return preferences;
-    };
+    }
 
     @action
     save = async () => {
@@ -168,6 +169,16 @@ class Preferences {
         this.showNotification = showNotification;
         this.save();
     };
+
+    @action
+    toggle() {
+        this.show = !this.show;
+    }
+
+    @action
+    hide() {
+        this.show = false;
+    }
 
     @action
     setAutoPlay = autoPlay => {

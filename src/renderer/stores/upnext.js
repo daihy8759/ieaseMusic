@@ -17,6 +17,11 @@ class UpNext {
         this.show = show;
     }
 
+    @action
+    hide() {
+        this.show = false;
+    }
+
     @action cancel(song = controller.song) {
         this.canceled = song;
 

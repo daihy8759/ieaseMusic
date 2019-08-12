@@ -23,7 +23,7 @@ class App extends React.Component {
     // 设置
     togglePreferences = () => {
         const { preferences } = stores;
-        preferences.show = !preferences.show;
+        preferences.toggle();
     };
 
     toggleLike = () => {

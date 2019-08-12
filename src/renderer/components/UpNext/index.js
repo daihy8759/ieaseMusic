@@ -9,8 +9,7 @@ import styles from './index.less';
 @observer
 class UpNext extends Component {
     close() {
-        const { upnext } = this.props;
-        upnext.show = false;
+        this.props.upnext.hide();
     }
 
     renderContent() {
@@ -68,10 +67,8 @@ class UpNext extends Component {
                 <button
                     type="button"
                     onClick={() => {
-                        // Stop the player and mark current song as
-                        // canceled, when resume replay
                         upnext.cancel();
-                        controller.playing = false;
+                        controller.pause();
                     }}>
                     Cancel
                 </button>
