@@ -101,7 +101,6 @@ const createWindow = async () => {
                     value: 'pc'
                 }
             ];
-            console.log(details);
             callback({
                 requestHeaders: {
                     ...details.requestHeaders,
