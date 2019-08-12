@@ -1,6 +1,6 @@
 import { getPlaylist } from 'api/fm';
 import axios from 'axios';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import controller from './controller';
 
 class FM {
@@ -19,15 +19,17 @@ class FM {
     };
 
     @action
-    shuffle = async () => {
+    async shuffle() {
         this.loading = true;
 
         const data = await getPlaylist();
-        this.playlist = data;
-        const [song] = this.playlist.songs;
-        this.song = song;
-        this.loading = false;
-    };
+        runInAction(() => {
+            this.playlist = data;
+            const [song] = this.playlist.songs;
+            this.song = song;
+            this.loading = false;
+        });
+    }
 
     @action
     play = () => {
