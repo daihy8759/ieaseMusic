@@ -32,10 +32,7 @@ class Preferences extends Component {
 
     saveBackground(index, background) {
         const { preferences } = this.props;
-        const { backgrounds } = preferences;
-
-        backgrounds[index] = background;
-        preferences.setBackgrounds(backgrounds);
+        preferences.setBackground(index, background);
     }
 
     close() {
