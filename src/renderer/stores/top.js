@@ -17,5 +17,5 @@ class Top {
     };
 }
 
-const self = new Top();
-export default self;
+const top = new Top();
+export default top;

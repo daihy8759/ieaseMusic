@@ -1,6 +1,6 @@
 import { getSongUrl } from 'api/player';
 import { ipcRenderer } from 'electron';
-import { action, observable, runInAction, toJS } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import lastfm from 'utils/lastfm';
 import comments from './comments';
 import fm from './fm';

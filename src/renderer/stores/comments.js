@@ -53,10 +53,12 @@ class Comments {
             return;
         }
         const data = await getMusicComments(id, this.nextOffset);
-        this.newestList.push(...data.newestList);
-        this.nextOffset = data.nextOffset;
+        runInAction(() => {
+            this.newestList.push(...data.newestList);
+            this.nextOffset = data.nextOffset;
+        });
     };
 }
 
-const self = new Comments();
-export default self;
+const comments = new Comments();
+export default comments;

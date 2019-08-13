@@ -1,9 +1,10 @@
-import { loginWithPhone, loginRefresh } from 'api/login';
+import { loginRefresh, loginWithPhone } from 'api/login';
+import QRCodeApi from 'api/qrcode';
 import { dialog } from 'electron';
 import { action, observable, runInAction } from 'mobx';
 import helper from 'utils/helper';
+import lastfm from 'utils/lastfm';
 import storage from 'utils/storage';
-import QRCodeApi from 'api/qrcode';
 import home from './home';
 
 const { generate, polling } = QRCodeApi;
@@ -121,6 +122,55 @@ class Me {
     hasLogin = () => {
         return !!this.profile.userId;
     };
+
+    async exeLike(song, like) {
+        let data;
+
+        if (like) {
+            data = await axios.get('/like', {
+                params: {
+                    id: song.id,
+                    like
+                }
+            });
+        } else {
+            data = await axios.get('/playlist/tracks', {
+                params: {
+                    op: 'del',
+                    pid: home.list[0].id,
+                    tracks: song.id
+                }
+            });
+        }
+
+        if (this.likes.get('id') === player.meta.id) {
+            let songs = player.songs;
+            const index = songs.findIndex(e => e.id === song.id);
+
+            if (index === -1) {
+                songs = [song, ...songs];
+            } else {
+                songs = [...songs.slice(0, index), ...songs.slice(index + 1, songs.length)];
+            }
+
+            player.songs = songs;
+        }
+
+        return data.code === 200;
+    }
+
+    @action async like(song) {
+        await lastfm.love(song);
+
+        if (await this.exeLike(song, true)) {
+            this.likes.set(song.id, true);
+        }
+    }
+
+    @action async unlike(song) {
+        await lastfm.unlove(song);
+        this.likes.set(song.id, !(await this.exeLike(song, false)));
+    }
 }
 
 const self = new Me();

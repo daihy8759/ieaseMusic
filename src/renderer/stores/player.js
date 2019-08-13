@@ -72,17 +72,17 @@ class Player {
     };
 
     @action
-    toggleLoading = (show = !this.loading) => {
+    toggleLoading(show = !this.loading) {
         this.loading = show;
-    };
+    }
 
     @action
-    toggleSearch = (show = !this.searching) => {
+    toggleSearch(show = !this.searching) {
         this.searching = show;
-    };
+    }
 
     @action
-    doFilter = text => {
+    doFilter(text) {
         let songs = [];
 
         // Convert text to chinese pinyin
@@ -94,14 +94,13 @@ class Player {
                 han.letter(e.name).indexOf(text) > -1 ||
                 // Fuzzy match the album name
                 han.letter(e.album.name).indexOf(text) > -1 ||
-                // Mathc the artist name
                 e.artists.findIndex(d => han.letter(d.name).indexOf(text) > -1) !== -1
             );
         });
 
         this.keywords = text;
         this.filtered = songs;
-    };
+    }
 
     filter = (text = '') => {
         clearTimeout(this.timer);

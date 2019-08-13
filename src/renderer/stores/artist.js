@@ -1,6 +1,6 @@
 import { getArtist } from 'api/artist';
 import axios from 'axios';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 
 class Artist {
     @observable loading = true;
@@ -25,15 +25,16 @@ class Artist {
     getArtist = async id => {
         this.loading = true;
         const data = await getArtist(id);
-        if (data) {
-            this.profile = data.profile;
-            this.playlist = data.playlist;
-            this.albums = data.albums;
-            this.similar = data.similar;
-            this.desc = data.desc;
-        }
-
-        this.loading = false;
+        runInAction(() => {
+            if (data) {
+                this.profile = data.profile;
+                this.playlist = data.playlist;
+                this.albums = data.albums;
+                this.similar = data.similar;
+                this.desc = data.desc;
+            }
+            this.loading = false;
+        });
     };
 
     @action
@@ -42,11 +43,12 @@ class Artist {
         const { data } = response;
 
         if (data.success) {
-            this.profile = Object.assign({}, this.profile, {
-                followed: !followed
+            runInAction(() => {
+                this.profile = Object.assign({}, this.profile, {
+                    followed: !followed
+                });
             });
         }
-
         return data.success;
     };
 }

@@ -13,19 +13,6 @@ class Search {
 
     @observable users = [];
 
-    /**
-        Search type
-
-        10: 专辑
-        100: 歌手
-        1000: 歌单
-        1002: 用户
-        1004: MV
-        1006: 歌词
-        1009: 电台
-     * */
-
-    // URL of get more playlists
     nextHref4playlists = '';
 
     nextHref4albums = '';
