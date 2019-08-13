@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import ProgressImage from 'components/ProgressImage';
-import { inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
@@ -28,6 +28,7 @@ import styles from './index.less';
     hasLogin: stores.me.hasLogin,
     comments: stores.comments.total
 }))
+@observer
 class Controller extends Component {
     seek(e) {
         const percent = e.clientX / window.innerWidth;
@@ -57,6 +58,7 @@ class Controller extends Component {
             changeMode
         } = this.props;
         const liked = isLiked(song.id);
+        console.log(liked);
 
         if (!song.id) {
             return false;
