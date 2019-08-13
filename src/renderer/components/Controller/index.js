@@ -58,7 +58,6 @@ class Controller extends Component {
             changeMode
         } = this.props;
         const liked = isLiked(song.id);
-        console.log(liked);
 
         if (!song.id) {
             return false;

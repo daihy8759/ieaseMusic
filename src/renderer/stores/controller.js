@@ -106,7 +106,6 @@ class Controller {
             });
             runInAction(() => {
                 this.song = Object.assign({}, this.song, { data }, { waiting: false });
-                // console.log(song);
             });
         } catch (ex) {
             console.error(ex);
