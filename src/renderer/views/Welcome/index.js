@@ -67,7 +67,7 @@ class Welcome extends Component {
     renderFavorite(favorite = {}) {
         const { controller } = this.props;
 
-        if (favorite.size === 0) {
+        if (!favorite || favorite.size === 0) {
             return false;
         }
 
@@ -107,7 +107,7 @@ class Welcome extends Component {
                         <summary>
                             <p>{favorite.name}</p>
 
-                            <small>{formatDistance(favorite.updateTime, new Date())}</small>
+                            <small>{favorite.updateTime && formatDistance(favorite.updateTime, new Date())}</small>
                         </summary>
                     </figcaption>
                 </figure>
