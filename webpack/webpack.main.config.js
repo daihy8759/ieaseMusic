@@ -6,7 +6,6 @@ const baseConfig = require('./webpack.base.config');
 module.exports = merge.smart(baseConfig, {
     mode: 'development',
     target: 'electron-main',
-    devtool: 'source-map',
     entry: {
         main: './src/main/index.js'
     },
