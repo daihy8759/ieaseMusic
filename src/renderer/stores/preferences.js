@@ -372,6 +372,7 @@ class Preferences {
             lastFm,
             enginers,
             proxy,
+            disableProxy,
             downloads
         } = this;
 
@@ -390,6 +391,7 @@ class Preferences {
             lastFm,
             enginers,
             proxy,
+            disableProxy,
             downloads
         });
 
@@ -398,6 +400,7 @@ class Preferences {
             showTray,
             alwaysOnTop,
             proxy,
+            disableProxy,
             revertTrayIcon
         });
     };
@@ -486,6 +489,12 @@ class Preferences {
     @action
     setDownloads = downloads => {
         this.downloads = downloads.path;
+        this.save();
+    };
+
+    @action
+    enableProxy = proxyFlag => {
+        this.disableProxy = !proxyFlag;
         this.save();
     };
 

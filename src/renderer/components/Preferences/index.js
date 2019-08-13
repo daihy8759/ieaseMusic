@@ -103,6 +103,8 @@ class Preferences extends Component {
             connecting,
             enginers,
             proxy,
+            disableProxy,
+            enableProxy,
             setProxy,
             downloads,
             setDownloads
@@ -226,7 +228,7 @@ class Preferences extends Component {
                                 <p>Need restart app.</p>
                             </div>
                             <div style={{ float: 'right' }}>
-                                <Switch defaultChecked={false} onChange={e => setScrobble(+e.target.checked)} />
+                                <Switch defaultChecked={!disableProxy} onChange={e => enableProxy(+e.target.checked)} />
                             </div>
 
                             <input
