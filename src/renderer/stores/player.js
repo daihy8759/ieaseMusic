@@ -1,8 +1,8 @@
-import axios from 'axios';
-import han from 'han';
-import { action, observable, runInAction } from 'mobx';
-import helper from 'utils/helper';
 import { getPlayListDetail, getRecommend } from 'api/player';
+import axios from 'axios';
+import { action, observable, runInAction } from 'mobx';
+import pinyin from 'tiny-pinyin';
+import helper from 'utils/helper';
 
 class Player {
     @observable loading = true;
@@ -86,15 +86,15 @@ class Player {
         let songs = [];
 
         // Convert text to chinese pinyin
-        text = han.letter(text.trim());
+        text = pinyin.convertToPinyin(text.trim());
 
         songs = this.songs.filter(e => {
             return (
                 // Fuzzy match the song name
-                han.letter(e.name).indexOf(text) > -1 ||
+                pinyin.convertToPinyin(e.name).indexOf(text) > -1 ||
                 // Fuzzy match the album name
-                han.letter(e.album.name).indexOf(text) > -1 ||
-                e.artists.findIndex(d => han.letter(d.name).indexOf(text) > -1) !== -1
+                pinyin.convertToPinyin(e.album.name).indexOf(text) > -1 ||
+                e.artists.findIndex(d => pinyin.convertToPinyin(d.name).indexOf(text) > -1) !== -1
             );
         });
 

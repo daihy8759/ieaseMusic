@@ -1,5 +1,5 @@
 import { observable, action } from 'mobx';
-import han from 'han';
+import pinyin from 'tiny-pinyin';
 import controller from './controller';
 
 class Playing {
@@ -17,17 +17,17 @@ class Playing {
         let songs = [];
 
         // Convert text to chinese pinyin
-        const letterText = han.letter(text.trim());
+        const letterText = pinyin.convertToPinyin(text.trim());
 
         songs = controller.playlist.songs.filter(e => {
             return (
                 false ||
                 // Fuzzy match the song name
-                han.letter(e.name).indexOf(letterText) > -1 ||
+                pinyin.convertToPinyin(e.name).indexOf(letterText) > -1 ||
                 // Fuzzy match the album name
-                han.letter(e.album.name).indexOf(letterText) > -1 ||
+                pinyin.convertToPinyin(e.album.name).indexOf(letterText) > -1 ||
                 // Mathc the artist name
-                e.artists.findIndex(artist => han.letter(artist.name).indexOf(letterText) > -1) !== -1
+                e.artists.findIndex(artist => pinyin.convertToPinyin(artist.name).indexOf(letterText) > -1) !== -1
             );
         });
 
