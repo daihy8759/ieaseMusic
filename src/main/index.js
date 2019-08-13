@@ -1,10 +1,9 @@
-import { app, session, BrowserWindow } from 'electron';
+import { app, BrowserWindow, session } from 'electron';
 import installer, { MOBX_DEVTOOLS, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import agent from 'random-useragent';
 import url from 'url';
-import crypto from 'crypto';
 import ipcMainSets from './ipcMainSets';
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
@@ -77,30 +76,7 @@ const createWindow = async () => {
             urls: [`${ieaseUri}/*`]
         },
         async (details, callback) => {
-            let cookie = await session.defaultSession.cookies.get({ url: ieaseUri });
-            cookie = [
-                ...cookie,
-                {
-                    name: '_ntes_nuid',
-                    domain: '.music.163.com',
-                    hostOnly: false,
-                    path: '/',
-                    secure: false,
-                    httpOnly: false,
-                    session: false,
-                    value: crypto.randomBytes(16).toString('hex')
-                },
-                {
-                    name: 'os',
-                    domain: '.music.163.com',
-                    hostOnly: false,
-                    path: '/',
-                    secure: false,
-                    httpOnly: false,
-                    session: false,
-                    value: 'pc'
-                }
-            ];
+            const cookie = await session.defaultSession.cookies.get({ url: ieaseUri });
             callback({
                 requestHeaders: {
                     ...details.requestHeaders,

@@ -47,6 +47,8 @@ class Preferences {
 
     @observable proxy = '';
 
+    @observable disableProxy = false;
+
     @observable downloads = path.join(remote.app.getPath('music'), pkg.name);
 
     @observable backgrounds = [
@@ -326,6 +328,7 @@ class Preferences {
             lastFm = this.lastFm,
             enginers = this.enginers,
             proxy = this.proxy,
+            disableProxy = this.disableProxy,
             downloads = this.downloads
         } = preferences;
         runInAction(() => {
@@ -343,6 +346,7 @@ class Preferences {
             this.lastFm = lastFm;
             this.enginers = enginers;
             this.proxy = proxy;
+            this.disableProxy = disableProxy;
             this.downloads = downloads;
         });
 
@@ -488,11 +492,12 @@ class Preferences {
     @action
     setProxy = proxy => {
         let newProxy = proxy;
-        if (!/^http(s)?:\/\/\w+/i.test(proxy)) {
+        if (!/^(http(s)|socks5)?:\/\/\w+/i.test(proxy)) {
             newProxy = '';
         }
 
         this.proxy = newProxy;
+        ipcRenderer.send('setProxy', newProxy);
         this.save();
     };
 

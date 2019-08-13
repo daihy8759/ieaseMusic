@@ -98,7 +98,6 @@ class Preferences extends Component {
             autoupdate,
             setAutoupdate,
             scrobble,
-            setScrobble,
             lastFm,
             connect,
             connecting,
@@ -215,16 +214,19 @@ class Preferences extends Component {
                             <Switch
                                 defaultChecked={scrobble}
                                 id="scrobble"
-                                onChange={e => setScrobble(+e.target.checked)}
+                                onChange={e => this.props.setScrobble(+e.target.checked)}
                             />
                         </label>
                         <label
                             style={{
                                 display: 'block'
                             }}>
-                            <div>
+                            <div style={{ display: 'inline-block' }}>
                                 <h4>HTTP proxy</h4>
                                 <p>Need restart app.</p>
+                            </div>
+                            <div style={{ float: 'right' }}>
+                                <Switch defaultChecked={false} onChange={e => setScrobble(+e.target.checked)} />
                             </div>
 
                             <input
