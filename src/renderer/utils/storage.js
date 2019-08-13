@@ -1,42 +1,5 @@
-import storage from 'electron-json-storage';
+import Store from 'electron-store';
 
-export default {
-    getDataPath: () => {
-        return storage.getDataPath();
-    },
-    get: key => {
-        return new Promise((resolve, reject) => {
-            storage.get(key, (err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
-            });
-        });
-    },
+const storage = new Store();
 
-    set: (key, data) => {
-        return new Promise((resolve, reject) => {
-            storage.set(key, data, err => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
-            });
-        });
-    },
-
-    remove: key => {
-        return new Promise((resolve, reject) => {
-            storage.remove(key, err => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
-};
+export default storage;

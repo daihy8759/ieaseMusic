@@ -24,7 +24,7 @@ class Me {
 
     @action
     async init() {
-        let profile = await storage.get('profile');
+        let profile = storage.get('profile');
 
         if (!profile) {
             profile = {};

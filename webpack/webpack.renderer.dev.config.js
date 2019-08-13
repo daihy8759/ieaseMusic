@@ -25,7 +25,7 @@ module.exports = merge.smart(baseConfig, {
             }
         ]
     },
-    plugins: [new webpack.NamedModulesPlugin(), new webpack.HotModuleReplacementPlugin()],
+    plugins: [new webpack.HotModuleReplacementPlugin()],
     resolve: {
         alias: {
             'react-dom': '@hot-loader/react-dom'

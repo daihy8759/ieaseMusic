@@ -1,5 +1,5 @@
-import { ipcMain, session, globalShortcut } from 'electron';
 import _debug from 'debug';
+import { globalShortcut, ipcMain, session } from 'electron';
 import storage from './utils/storage';
 
 let debug = _debug('dev:main');
@@ -28,11 +28,13 @@ const registerGlobalShortcut = () => {
     });
 };
 
-async function setProxyFromStore() {
-    const preferences = await storage.get('preferences');
-    const { proxy, disableProxy } = preferences;
-    if (!disableProxy) {
-        setProxy(proxy);
+function setProxyFromStore() {
+    const preferences = storage.get('preferences');
+    if (preferences) {
+        const { proxy, disableProxy } = preferences;
+        if (!disableProxy) {
+            setProxy(proxy);
+        }
     }
 }
 

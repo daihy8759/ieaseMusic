@@ -312,7 +312,11 @@ class Preferences {
 
     @action
     async init() {
-        const preferences = await storage.get('preferences');
+        let preferences = storage.get('preferences');
+        if (!preferences) {
+            preferences = {};
+            storage.set('preferences', preferences);
+        }
         const {
             showTray = this.showTray,
             showMenuBarOnLinux = this.showMenuBarOnLinux,
@@ -331,24 +335,22 @@ class Preferences {
             disableProxy = this.disableProxy,
             downloads = this.downloads
         } = preferences;
-        runInAction(() => {
-            this.showTray = !!showTray;
-            this.showMenuBarOnLinux = !!showMenuBarOnLinux;
-            this.revertTrayIcon = !!revertTrayIcon;
-            this.alwaysOnTop = !!alwaysOnTop;
-            this.showNotification = !!showNotification;
-            this.autoPlay = !!autoPlay;
-            this.volume = +volume || 1;
-            this.highquality = +highquality || 0;
-            this.backgrounds = backgrounds || [];
-            this.autoupdate = autoupdate;
-            this.scrobble = scrobble;
-            this.lastFm = lastFm;
-            this.enginers = enginers;
-            this.proxy = proxy;
-            this.disableProxy = disableProxy;
-            this.downloads = downloads;
-        });
+        this.showTray = !!showTray;
+        this.showMenuBarOnLinux = !!showMenuBarOnLinux;
+        this.revertTrayIcon = !!revertTrayIcon;
+        this.alwaysOnTop = !!alwaysOnTop;
+        this.showNotification = !!showNotification;
+        this.autoPlay = !!autoPlay;
+        this.volume = +volume || 1;
+        this.highquality = +highquality || 0;
+        this.backgrounds = backgrounds || [];
+        this.autoupdate = autoupdate;
+        this.scrobble = scrobble;
+        this.lastFm = lastFm;
+        this.enginers = enginers;
+        this.proxy = proxy;
+        this.disableProxy = disableProxy;
+        this.downloads = downloads;
 
         // Save preferences
         this.save();
