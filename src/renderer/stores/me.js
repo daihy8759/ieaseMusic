@@ -1,11 +1,13 @@
 import { loginRefresh, loginWithPhone } from 'api/login';
 import QRCodeApi from 'api/qrcode';
+import { likeSong, unlikeSong } from 'api/user';
 import { dialog } from 'electron';
 import { action, observable, runInAction } from 'mobx';
 import helper from 'utils/helper';
 import lastfm from 'utils/lastfm';
 import storage from 'utils/storage';
 import home from './home';
+import player from './player';
 
 const { generate, polling } = QRCodeApi;
 
@@ -127,24 +129,13 @@ class Me {
         let data;
 
         if (like) {
-            data = await axios.get('/like', {
-                params: {
-                    id: song.id,
-                    like
-                }
-            });
+            data = await likeSong(song.id, like);
         } else {
-            data = await axios.get('/playlist/tracks', {
-                params: {
-                    op: 'del',
-                    pid: home.list[0].id,
-                    tracks: song.id
-                }
-            });
+            data = await unlikeSong(home.list[0].id, song.id);
         }
 
         if (this.likes.get('id') === player.meta.id) {
-            let songs = player.songs;
+            let { songs } = player;
             const index = songs.findIndex(e => e.id === song.id);
 
             if (index === -1) {
@@ -159,18 +150,25 @@ class Me {
         return data.code === 200;
     }
 
-    @action async like(song) {
+    @action
+    like = async song => {
         await lastfm.love(song);
+        const result = await this.exeLike(song, true);
+        runInAction(() => {
+            if (result) {
+                this.likes.set(song.id, true);
+            }
+        });
+    };
 
-        if (await this.exeLike(song, true)) {
-            this.likes.set(song.id, true);
-        }
-    }
-
-    @action async unlike(song) {
+    @action
+    unlike = async song => {
         await lastfm.unlove(song);
-        this.likes.set(song.id, !(await this.exeLike(song, false)));
-    }
+        const result = await this.exeLike(song, false);
+        runInAction(() => {
+            this.likes.set(song.id, !result);
+        });
+    };
 }
 
 const self = new Me();

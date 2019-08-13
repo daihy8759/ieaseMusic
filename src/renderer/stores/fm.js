@@ -53,7 +53,7 @@ class FM {
     };
 
     @action
-    async next() {
+    next = async () => {
         let index = this.playlist.songs.findIndex(e => e.id === controller.song.id);
 
         if (controller.playlist.id !== this.playlist.id) {
@@ -72,7 +72,7 @@ class FM {
         await this.shuffle();
         controller.setup(this.playlist);
         controller.play();
-    }
+    };
 }
 
 const fm = new FM();

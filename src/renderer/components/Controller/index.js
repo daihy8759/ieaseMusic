@@ -192,6 +192,7 @@ class Controller extends Component {
                                 })}
                                 onClick={changeMode}
                             />
+                            <i className="remixicon-download-2-fill" onClick={prev} />
 
                             <div className={styles.controls}>
                                 <i className="remixicon-rewind-fill" onClick={prev} />

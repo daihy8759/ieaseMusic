@@ -1,5 +1,7 @@
 import userDetail from './common/user_detail';
 import userPlayList from './common/user_playlist';
+import songLike from './common/like';
+import tracksOp from './common/playlist_tracks';
 
 async function getUser(uid) {
     try {
@@ -53,4 +55,24 @@ async function getUserDetail(uid) {
     };
 }
 
-export { getUserDetail };
+async function likeSong(id, like) {
+    try {
+        const res = await songLike({ id, like });
+        return res.data;
+    } catch (e) {
+        console.error(e);
+    }
+    return { code: 301 };
+}
+
+async function unlikeSong(pid, songId) {
+    try {
+        const res = await tracksOp({ op: 'del', pid, tracks: songId });
+        return res.data;
+    } catch (e) {
+        console.error(e);
+    }
+    return { code: 301 };
+}
+
+export { getUserDetail, likeSong, unlikeSong };
