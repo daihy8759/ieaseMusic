@@ -4,13 +4,13 @@ import * as styles from './index.less';
 
 interface ProgressImageProps {
     src: string;
-    className: string;
-    style: any;
+    className?: string;
+    style?: any;
     width: number;
-    height: number;
-    thumb: string;
-    pallet: number[];
-    fallback: string;
+    height?: number;
+    thumb?: string;
+    pallet?: number[];
+    fallback?: string;
 }
 
 function ProgressImage({
@@ -31,8 +31,8 @@ function ProgressImage({
         thumbNew = `${src.replace(/\?.*$/, '')}?param=20y20`;
     }
 
-    const containerRef = React.useRef();
-    const thumbRef = React.useRef();
+    const containerRef = React.useRef<HTMLElement>();
+    const thumbRef = React.useRef<HTMLDivElement>();
 
     const handleError = (e: any) => {
         e.target.src = fallback;
@@ -42,7 +42,7 @@ function ProgressImage({
         thumbRef.current.style.paddingBottom = '0%';
         if (containerRef.current) {
             setTimeout(() => {
-                containerRef.current!.classList.add(styles.loaded);
+                containerRef!.current.classList.add(styles.loaded);
             }, 50);
         }
     };

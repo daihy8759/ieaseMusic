@@ -1,9 +1,9 @@
 import { ipcRenderer, remote } from 'electron';
-import { action, observable, runInAction } from 'mobx';
+import { action, observable } from 'mobx';
 import * as path from 'path';
-import * as pkg from 'root/package.json';
+import * as pkg from '../../../package.json';
+import storage from '../../shared/storage';
 import lastfm from 'utils/lastfm';
-import storage from 'shared/storage';
 import controller from './controller';
 
 class Preferences {

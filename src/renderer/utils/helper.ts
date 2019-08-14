@@ -14,13 +14,14 @@ const helper = {
     getPallet(image: string) {
         return new Promise(resolve => {
             const imageWithParam = `${image.replace(/\?.*$/, '')}?param=20y20`;
-            new AlbumColors(imageWithParam).getColors().then((colors: number[][], err: any) => {
-                if (err) {
-                    resolve([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
-                } else {
+            new AlbumColors(imageWithParam)
+                .getColors()
+                .then((colors: number[][]) => {
                     resolve(colors);
-                }
-            });
+                })
+                .catch(() => {
+                    resolve([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+                });
         });
     },
     getLyricsKey(times: any, lyrics: any) {

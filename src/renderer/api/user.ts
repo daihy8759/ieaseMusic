@@ -1,7 +1,7 @@
-import userDetail from './common/user_detail';
-import userPlayList from './common/user_playlist';
 import songLike from './common/like';
 import tracksOp from './common/playlist_tracks';
+import userDetail from './common/user_detail';
+import userPlayList from './common/user_playlist';
 
 async function getUser(uid: number) {
     try {

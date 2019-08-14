@@ -15,7 +15,7 @@ const { Menu } = remote;
 configure({ enforceActions: 'observed' });
 
 function App() {
-    const navigatorRef = React.useRef();
+    const navigatorRef = React.useRef<any>();
 
     const toggleLike = () => {
         const { controller, me } = stores;
@@ -139,13 +139,13 @@ function App() {
             {
                 label: 'Home',
                 click: () => {
-                    navigator!.history.push('/');
+                    navigator.history.push('/');
                 }
             },
             {
                 label: 'Search',
                 click: () => {
-                    navigator!.history.push('/search');
+                    navigator.history.push('/search');
                 }
             },
             {
@@ -166,19 +166,19 @@ function App() {
             {
                 label: 'Show Comments 💬',
                 click: () => {
-                    navigator!.history.push('/comments');
+                    navigator.history.push('/comments');
                 }
             },
             {
                 label: 'Show Lyrics 🎤',
                 click: () => {
-                    navigator!.history.push('/lyrics');
+                    navigator.history.push('/lyrics');
                 }
             },
             {
                 label: 'Show Cover 💅',
                 click: () => {
-                    navigator!.history.push('/cover');
+                    navigator.history.push('/cover');
                 }
             },
             {
@@ -226,11 +226,9 @@ function App() {
     useEvent('contextmenu', handleContextMenu);
 
     return (
-        <>
-            <Provider {...stores}>
-                <HashRouter ref={navigatorRef}>{MainRouter}</HashRouter>
-            </Provider>
-        </>
+        <Provider {...stores}>
+            <HashRouter ref={navigatorRef}>{MainRouter}</HashRouter>
+        </Provider>
     );
 }
 

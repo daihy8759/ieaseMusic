@@ -6,6 +6,7 @@ import me from './me';
 import preferences from './preferences';
 
 interface IHomeData {
+    id?: number;
     size: any;
     pallet: any;
     cover: string;
@@ -20,7 +21,7 @@ class Home {
     async load() {
         let list: IHomeData[];
         if (me.hasLogin()) {
-            list = await homeApi.getHomeData(`${me.profile.userId}`);
+            list = await homeApi.getHomeData(me.profile.userId);
             const [favorite, recommend] = list;
 
             me.rocking(favorite);

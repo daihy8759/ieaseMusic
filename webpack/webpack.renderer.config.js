@@ -2,17 +2,15 @@ const path = require('path');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { CheckerPlugin } = require('awesome-typescript-loader');
 
 const baseConfig = require('./webpack.base.config');
 
 module.exports = merge.smart(baseConfig, {
     target: 'electron-renderer',
     entry: {
-        app: './src/renderer/index.js'
+        app: './src/renderer/index.tsx'
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
         alias: {
             utils: path.resolve(__dirname, '../src/renderer/utils/'),
             components: path.resolve(__dirname, '../src/renderer/components/'),
@@ -25,16 +23,6 @@ module.exports = merge.smart(baseConfig, {
     },
     module: {
         rules: [
-            {
-                test: /\.js?$/,
-                include: [path.resolve(__dirname, '../src/renderer')],
-                loader: 'babel-loader'
-            },
-            {
-                test: /\.tsx?$/,
-                include: [path.resolve(__dirname, '../src/renderer')],
-                loader: 'awesome-typescript-loader'
-            },
             {
                 test: /\.css$/,
                 use: [
@@ -94,7 +82,6 @@ module.exports = merge.smart(baseConfig, {
         ]
     },
     plugins: [
-        new CheckerPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].css',
             chunkFilename: '[id].css'

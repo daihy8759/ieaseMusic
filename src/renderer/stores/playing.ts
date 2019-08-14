@@ -1,7 +1,7 @@
-import { observable, action } from 'mobx';
-import pinyin from 'tiny-pinyin';
-import controller from './controller';
 import ISong from 'interface/ISong';
+import { action, observable } from 'mobx';
+import * as pinyin from 'tiny-pinyin';
+import controller from './controller';
 
 class Playing {
     @observable show = false;

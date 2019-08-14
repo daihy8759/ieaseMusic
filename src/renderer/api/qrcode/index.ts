@@ -2,7 +2,7 @@ import axios from 'axios';
 import wechat from './wechat';
 import weibo from './weibo';
 
-type LoginType = '10' | '2';
+export type LoginType = '10' | '2';
 
 const adaptors = {
     '10': wechat,

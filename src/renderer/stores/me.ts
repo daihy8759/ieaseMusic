@@ -1,13 +1,15 @@
 import { loginRefresh, loginWithPhone } from 'api/login';
-import QRCodeApi from 'api/qrcode';
+import QRCodeApi, { LoginType } from 'api/qrcode';
 import { likeSong, unlikeSong } from 'api/user';
 import { dialog } from 'electron';
+import ISong from 'interface/ISong';
 import { action, observable, runInAction } from 'mobx';
 import helper from 'utils/helper';
 import lastfm from 'utils/lastfm';
-import storage from 'shared/storage';
+import storage from '../../shared/storage';
 import home from './home';
 import player from './player';
+import IUserProfile from 'interface/IUserProfile';
 
 const { generate, polling } = QRCodeApi;
 
@@ -16,9 +18,9 @@ class Me {
 
     @observable logining = false;
 
-    @observable profile = {};
+    @observable profile: IUserProfile = {};
 
-    @observable qrcode = {};
+    @observable qrcode: any = {};
 
     @observable likes = new Map();
 
@@ -32,6 +34,7 @@ class Me {
             const data = await loginRefresh();
             if (data.code === 301) {
                 profile = {};
+                // @ts-ignore
                 await storage.remove('profile');
             }
         }
@@ -42,8 +45,8 @@ class Me {
     }
 
     @action
-    generate = async type => {
-        const data = await generate(type);
+    generate = async (type: LoginType) => {
+        const data: any = await generate(type);
 
         if (data.success === false) {
             window.alert('Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.');
@@ -56,7 +59,7 @@ class Me {
         };
     };
 
-    waiting = async done => {
+    waiting = async () => {
         const { ticket, state, type } = this.qrcode;
         const data = await polling({
             ticket,
@@ -80,13 +83,13 @@ class Me {
     };
 
     @action
-    login = async (phone, password) => {
+    login = async (phone: string, password: string) => {
         this.logining = true;
 
         const formatter = helper.formatPhone(phone);
         const data = await loginWithPhone({
-            countrycode: formatter.code,
-            phone: formatter.phone,
+            countrycode: formatter.code.toString(),
+            phone: formatter.phone.toString(),
             password
         });
 
@@ -107,17 +110,17 @@ class Me {
     };
 
     @action
-    rocking = likes => {
+    rocking = (likes: any) => {
         const mapping = new Map();
         mapping.set('id', likes.id);
-        likes.songs.forEach(e => {
+        likes.songs.forEach((e: any) => {
             mapping.set(e.id, true);
         });
-
+        // @ts-ignore
         this.likes.replace(mapping);
     };
 
-    isLiked = id => {
+    isLiked = (id: number) => {
         return this.hasLogin() && this.likes.get(id);
     };
 
@@ -125,7 +128,7 @@ class Me {
         return !!this.profile.userId;
     };
 
-    async exeLike(song, like) {
+    async exeLike(song: ISong, like: boolean) {
         let data;
 
         if (like) {
@@ -151,7 +154,7 @@ class Me {
     }
 
     @action
-    like = async song => {
+    like = async (song: ISong) => {
         await lastfm.love(song);
         const result = await this.exeLike(song, true);
         runInAction(() => {
@@ -162,7 +165,7 @@ class Me {
     };
 
     @action
-    unlike = async song => {
+    unlike = async (song: ISong) => {
         await lastfm.unlove(song);
         const result = await this.exeLike(song, false);
         runInAction(() => {

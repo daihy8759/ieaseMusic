@@ -14,8 +14,9 @@
             "utils/*": ["src/renderer/utils/*"],
             "api/*": ["src/renderer/api/*"],
             "interface/*": ["src/renderer/interface/*"],
+            "assets/*": ["src/renderer/assets/*"],
             "root/*": ["/"]
         }
     },
-    "include": ["./src/**/*"]
+    "include": ["./src/**/*", "./typings/index.d.ts"]
 }

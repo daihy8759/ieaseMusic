@@ -4,8 +4,9 @@ import * as styles from './index.less';
 
 interface FadeImageProps {
     src: string;
-    className: string;
-    fallback: string;
+    className?: string;
+    fallback?: string;
+    title?: string;
 }
 
 function FadeImage({ src, className, fallback = 'https://source.unsplash.com/random' }: FadeImageProps) {
@@ -19,10 +20,10 @@ function FadeImage({ src, className, fallback = 'https://source.unsplash.com/ran
         e.target.classList.remove(styles.fadein);
     };
 
-    const imgRef = React.useRef();
+    const imgRef = React.useRef<HTMLImageElement>();
 
     React.useEffect(() => {
-        imgRef.current!.classList.add(styles.fadein);
+        imgRef.current.classList.add(styles.fadein);
     }, [src]);
 
     return (

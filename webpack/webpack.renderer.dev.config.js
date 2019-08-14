@@ -8,23 +8,7 @@ const baseConfig = require('./webpack.renderer.config');
 module.exports = merge.smart(baseConfig, {
     mode: 'development',
     devtool: 'cheap-module-eval-source-map',
-    entry: ['react-hot-loader/patch', './src/renderer/index.js'],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                enforce: 'pre',
-                loader: 'eslint-loader',
-                include: [path.resolve(__dirname, '../src/renderer')],
-                exclude: /node_modules/
-            },
-            {
-                test: /\.js?$/,
-                include: [path.resolve(__dirname, '../src/renderer')],
-                loaders: ['react-hot-loader/webpack', 'babel-loader']
-            }
-        ]
-    },
+    entry: ['react-hot-loader/patch', './src/renderer/index.tsx'],
     plugins: [new webpack.HotModuleReplacementPlugin()],
     resolve: {
         alias: {

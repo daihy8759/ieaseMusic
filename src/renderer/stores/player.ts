@@ -1,9 +1,10 @@
 import { getPlayListDetail, getRecommend } from 'api/player';
 import axios from 'axios';
-import { action, observable, runInAction } from 'mobx';
-import pinyin from 'tiny-pinyin';
-import helper from 'utils/helper';
 import ISong from 'interface/ISong';
+import { action, observable, runInAction } from 'mobx';
+import * as pinyin from 'tiny-pinyin';
+import helper from 'utils/helper';
+import IArtist from 'interface/IArtist';
 
 class Player {
     @observable loading = true;
@@ -12,7 +13,7 @@ class Player {
 
     @observable filtered: ISong[] = [];
 
-    @observable meta = {
+    @observable meta: any = {
         pallet: [[0, 0, 0]],
         author: []
     };
@@ -23,24 +24,25 @@ class Player {
     @observable keywords: string;
 
     // Recommend albums and playlist
-    @observable recommend = [];
+    @observable recommend: any = [];
 
     // Recent user
-    @observable users = [];
+    @observable users: any = [];
 
     // Similar artist
-    @observable artists = [];
+    @observable artists: IArtist[] = [];
 
     timer: number;
 
     @action
-    getDetail = async (type, id) => {
+    getDetail = async (type: string, id: number) => {
         const detail = await getPlayListDetail(type, id);
         if (detail && detail.meta) {
             const pallet = await helper.getPallet(detail.meta.cover);
             detail.meta.pallet = pallet;
             runInAction(() => {
                 this.meta = detail.meta;
+                // @ts-ignore
                 this.songs.replace(detail.songs);
             });
         }
@@ -62,8 +64,8 @@ class Player {
     };
 
     @action
-    subscribe = async subscribed => {
-        const { meta } = this;
+    subscribe = async (subscribed: boolean) => {
+        const { meta }: any = this;
         const response = await axios.get(
             subscribed ? `/api/player/subscribe/${meta.id}` : `/api/player/unsubscribe/${meta.id}`
         );

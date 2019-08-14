@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNetwork } from 'react-use';
-import styles from './index.less';
+import * as styles from './index.less';
 
 function Offline({ show = false }) {
     if (!show) {
