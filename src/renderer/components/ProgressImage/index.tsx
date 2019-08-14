@@ -1,0 +1,108 @@
+import classnames from 'classnames';
+import * as React from 'react';
+import * as styles from './index.less';
+
+interface ProgressImageProps {
+    src: string;
+    className: string;
+    style: any;
+    width: number;
+    height: number;
+    thumb: string;
+    pallet: number[];
+    fallback: string;
+}
+
+function ProgressImage({
+    src,
+    className,
+    style = {},
+    thumb,
+    height,
+    width,
+    pallet,
+    fallback = 'https://source.unsplash.com/random'
+}: ProgressImageProps) {
+    let thumbNew = thumb;
+    if (!src) return null;
+
+    if (!thumbNew) {
+        // Get the thumb image src
+        thumbNew = `${src.replace(/\?.*$/, '')}?param=20y20`;
+    }
+
+    const containerRef = React.useRef();
+    const thumbRef = React.useRef();
+
+    const handleError = (e: any) => {
+        e.target.src = fallback;
+    };
+
+    const handleLoad = () => {
+        thumbRef.current.style.paddingBottom = '0%';
+        if (containerRef.current) {
+            setTimeout(() => {
+                containerRef.current!.classList.add(styles.loaded);
+            }, 50);
+        }
+    };
+
+    React.useEffect(() => {
+        if (containerRef.current) {
+            containerRef.current.classList.remove(styles.loaded);
+        }
+    }, [src]);
+
+    if (pallet) {
+        style.boxShadow = `0 0 24px rgb(${pallet.join()})`;
+    }
+
+    return (
+        <figure
+            className={classnames(styles.container, className)}
+            ref={containerRef}
+            style={Object.assign(
+                {
+                    height,
+                    width
+                },
+                style
+            )}>
+            <img
+                alt=""
+                className={styles.main}
+                onError={handleError}
+                onLoad={handleLoad}
+                src={src}
+                style={{
+                    height,
+                    width
+                }}
+            />
+
+            <div
+                className={styles.thumb}
+                ref={thumbRef}
+                style={{
+                    paddingBottom: (height / width) * 100 || 0
+                }}>
+                <img
+                    alt=""
+                    {...{
+                        src: thumbNew,
+                        style: {
+                            height,
+                            width
+                        },
+                        onLoad(e: any) {
+                            // Default show the gray background, When image has been loaded show the thumb
+                            e.target.classList.add(styles.loaded);
+                        }
+                    }}
+                />
+            </div>
+        </figure>
+    );
+}
+
+export default ProgressImage;

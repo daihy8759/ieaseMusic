@@ -91,12 +91,7 @@ class Welcome extends Component {
                     <figcaption>
                         <ProgressImage
                             className={styles.cover}
-                            ref={ele => {
-                                if (!ele || !favorite.pallet) return;
-
-                                const dom = ReactDOM.findDOMNode(ele);
-                                dom.style.boxShadow = `0 0 24px rgb(${favorite.pallet[0].join()})`;
-                            }}
+                            pallet={favorite.pallet && favorite.pallet[0]}
                             {...{
                                 height: 50,
                                 width: 50,
@@ -130,12 +125,7 @@ class Welcome extends Component {
                     <figcaption>
                         <ProgressImage
                             className={styles.cover}
-                            ref={ele => {
-                                if (!ele || !recommend.pallet) return;
-
-                                const dom = ReactDOM.findDOMNode(ele);
-                                dom.style.boxShadow = `0 0 24px rgb(${recommend.pallet[1].join()})`;
-                            }}
+                            pallet={recommend.pallet && recommend.pallet[1]}
                             {...{
                                 height: 50,
                                 width: 50,
@@ -168,6 +158,7 @@ class Welcome extends Component {
 
                     <figure className={classnames(styles.item, styles.large)}>
                         <ProgressImage
+                            pallet={e.pallet && e.pallet[0]}
                             {...{
                                 width: 360,
                                 src: e.background,
@@ -180,14 +171,6 @@ class Welcome extends Component {
                         <figcaption>
                             <ProgressImage
                                 className={styles.cover}
-                                ref={ele => {
-                                    if (!ele || !e.pallet) return;
-
-                                    const dom = ReactDOM.findDOMNode(ele);
-                                    setTimeout(() => {
-                                        dom.style.boxShadow = `0 0 24px rgb(${e.pallet[0].join()})`;
-                                    });
-                                }}
                                 {...{
                                     height: 50,
                                     width: 50,

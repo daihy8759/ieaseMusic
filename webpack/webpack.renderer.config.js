@@ -2,6 +2,7 @@ const path = require('path');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CheckerPlugin } = require('awesome-typescript-loader');
 
 const baseConfig = require('./webpack.base.config');
 
@@ -10,12 +11,29 @@ module.exports = merge.smart(baseConfig, {
     entry: {
         app: './src/renderer/index.js'
     },
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+        alias: {
+            utils: path.resolve(__dirname, '../src/renderer/utils/'),
+            components: path.resolve(__dirname, '../src/renderer/components/'),
+            stores: path.resolve(__dirname, '../src/renderer/stores/'),
+            api: path.resolve(__dirname, '../src/renderer/api/'),
+            assets: path.resolve(__dirname, '../src/renderer/assets/'),
+            root: path.resolve(__dirname, '../'),
+            '@': path.resolve(__dirname, '../src/renderer/')
+        }
+    },
     module: {
         rules: [
             {
                 test: /\.js?$/,
                 include: [path.resolve(__dirname, '../src/renderer')],
                 loader: 'babel-loader'
+            },
+            {
+                test: /\.tsx?$/,
+                include: [path.resolve(__dirname, '../src/renderer')],
+                loader: 'awesome-typescript-loader'
             },
             {
                 test: /\.css$/,
@@ -75,18 +93,8 @@ module.exports = merge.smart(baseConfig, {
             }
         ]
     },
-    resolve: {
-        alias: {
-            utils: path.resolve(__dirname, '../src/renderer/utils/'),
-            components: path.resolve(__dirname, '../src/renderer/components/'),
-            stores: path.resolve(__dirname, '../src/renderer/stores/'),
-            api: path.resolve(__dirname, '../src/renderer/api/'),
-            assets: path.resolve(__dirname, '../src/renderer/assets/'),
-            root: path.resolve(__dirname, '../'),
-            '@': path.resolve(__dirname, '../src/renderer/')
-        }
-    },
     plugins: [
+        new CheckerPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].css',
             chunkFilename: '[id].css'

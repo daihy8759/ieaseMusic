@@ -10,7 +10,10 @@ module.exports = {
         __filename: false
     },
     resolve: {
-        extensions: ['.js', '.json']
+        extensions: ['.js', '.json', '.ts'],
+        alias: {
+            shared: path.resolve(__dirname, '../src/shared')
+        }
     },
     plugins: []
 };

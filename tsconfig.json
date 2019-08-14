@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "es6",
+        "jsx": "react",
+        "baseUrl": "./",
+        "experimentalDecorators": true,
+        "paths": {
+            "stores/*": ["src/renderer/stores/*"],
+            "components/*": ["src/renderer/components/*"],
+            "utils/*": ["src/renderer/utils/*"],
+            "api/*": ["src/renderer/api/*"],
+            "interface/*": ["src/renderer/interface/*"],
+            "root/*": ["/"]
+        }
+    },
+    "include": ["./src/**/*"]
+}

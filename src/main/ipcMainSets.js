@@ -1,6 +1,6 @@
 import _debug from 'debug';
 import { globalShortcut, ipcMain, session } from 'electron';
-import storage from './utils/storage';
+import storage from 'shared/storage';
 
 let debug = _debug('dev:main');
 let mainWindow;
