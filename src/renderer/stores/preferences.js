@@ -514,7 +514,7 @@ class Preferences {
 
     @action
     connect = async () => {
-        const { username, password } = this.lastfm;
+        const { username, password } = this.lastFm;
 
         this.connecting = true;
 
