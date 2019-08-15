@@ -1,5 +1,5 @@
 import _debug from 'debug';
-import { BrowserWindow, globalShortcut, ipcMain, session } from 'electron';
+import { BrowserWindow, globalShortcut, ipcMain, powerMonitor, session } from 'electron';
 import IPreferences from 'src/shared/interface/IPreferences';
 import storage from '../shared/storage';
 
@@ -53,6 +53,10 @@ export default (win: BrowserWindow) => {
     mainWindow = win;
     setProxyFromStore();
     registerGlobalShortcut();
+    // App has suspend
+    powerMonitor.on('suspend', () => {
+        mainWindow.webContents.send('player-pause');
+    });
     ipcMain.on('goodbye', () => goodbye());
     // 设置代理
     ipcMain.on('setProxy', (_event, args) => {

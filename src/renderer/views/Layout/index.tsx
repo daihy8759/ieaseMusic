@@ -15,7 +15,7 @@ import Share from 'components/Share';
 import UpNext from 'components/UpNext';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { useNetwork } from 'react-use';
+import { useNetwork, useEffectOnce } from 'react-use';
 import lastfm from 'utils/lastfm';
 import * as styles from './index.less';
 
@@ -50,24 +50,23 @@ interface ILayoutProps {}
 const Layout: React.FC<ILayoutProps> = observer(props => {
     const { children } = props;
     const store = useStore();
-    const {
-        me: { initialized }
-    } = store;
-    React.useEffect(() => {
+    const { me, preferences } = store;
+
+    useEffectOnce(() => {
         const init = async () => {
-            const { me, preferences } = store;
             await preferences.init();
             await me.init();
             const { username, password } = preferences.lastFm;
             await lastfm.initialize(username, password);
         };
         init();
-    }, []);
+    });
+
     const networkState = useNetwork();
     if (!networkState.online) {
         return <Offline show />;
     }
-    if (!initialized) {
+    if (!me.initialized) {
         return <Loader show />;
     }
     return (

@@ -7,7 +7,7 @@ class PlayerNavigation extends React.Component {
         // true: prev, false: next
         direction: true
     };
-    private containerRef = React.createRef<HTMLDivElement>();
+    private containerRef = React.useRef<HTMLDivElement>();
     shouldUpdate: boolean;
 
     componentDidMount() {

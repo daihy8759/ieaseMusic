@@ -10,7 +10,7 @@ import * as styles from './index.less';
 
 const Singleton: React.SFC = observer(() => {
     const { me, controller } = useStore();
-    const circleRef = React.createRef<HTMLDivElement>();
+    const circleRef = React.useRef<HTMLDivElement>();
 
     const { isLiked, like, unlike } = me;
     const { song, playing } = controller;

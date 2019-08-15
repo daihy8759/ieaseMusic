@@ -34,8 +34,10 @@ const AudioPlayer: React.FC = observer(() => {
                 setBufferedDone(true);
             }
             const progress = document.getElementById('progress');
-            // @ts-ignore
-            progress.lastElementChild.style.transform = `translate3d(${-100 + bufferedTransform}%, 0, 0)`;
+            if (progress) {
+                // @ts-ignore
+                progress.lastElementChild.style.transform = `translate3d(${-100 + bufferedTransform}%, 0, 0)`;
+            }
         }
     }, [state.buffered]);
 

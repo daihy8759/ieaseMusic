@@ -9,6 +9,7 @@ import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
@@ -30,17 +31,11 @@ const Status: React.SFC<IStatusProps> = props => {
     );
 };
 
-interface IWelcomeProps {
-    controller: any;
-    me: any;
-    home: any;
-}
-
 const Welcome: React.SFC = observer(() => {
     const { me, controller, home } = useStore();
-    React.useEffect(() => {
+    useEffectOnce(() => {
         home.getList();
-    }, []);
+    });
 
     const play = (playlist: any) => {
         if (controller.playlist.id === playlist.id) {

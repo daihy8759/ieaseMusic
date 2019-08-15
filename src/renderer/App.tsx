@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { HashRouter } from 'react-router-dom';
-import { useEvent } from 'react-use';
+import { useEffectOnce, useEvent } from 'react-use';
 import 'remixicon/fonts/remixicon.css';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import './App.less';
@@ -14,9 +14,24 @@ import MainRouter from './routes';
 const { Menu } = remote;
 configure({ enforceActions: 'observed' });
 
-const App: React.FC = observer(() => {
+const App: React.FC = observer(props => {
     const navigatorRef = React.useRef<any>();
     const store = useStore();
+    const { controller, playing } = store;
+
+    useEffectOnce(() => {
+        ipcRenderer.on('player-toggle', () => {
+            if (navigatorRef.current.history.location.pathname === '/search' || playing.show) {
+                return;
+            }
+            controller.toggle();
+        });
+        ipcRenderer.on('player-pause', () => {
+            if (controller.playing) {
+                controller.toggle();
+            }
+        });
+    });
 
     const toggleLike = () => {
         const { controller, me } = store;

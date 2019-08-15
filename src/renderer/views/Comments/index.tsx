@@ -7,13 +7,23 @@ import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { Link } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-const Comments: React.FC = observer(() => {
+interface ICommentsProps extends RouteChildrenProps {}
+
+const Comments: React.SFC<ICommentsProps> = observer(props => {
     const { comments } = useStore();
     const { loading, song, like, loadMore, hotList, newestList } = comments;
+
+    useEffectOnce(() => {
+        if (!song || !song.id) {
+            props.history.replace('/');
+        }
+    });
 
     if (loading || !song.id) {
         return <Loader show />;
@@ -106,7 +116,7 @@ const Comments: React.FC = observer(() => {
         <div className={styles.container}>
             <Header transparent showBack />
 
-            <Hero location={location} />
+            <Hero />
 
             <aside ref={listRef} className={styles.list} onScroll={loadmore}>
                 <div className={styles.scroller}>

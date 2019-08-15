@@ -2,10 +2,10 @@ import { useStore } from '@/context';
 import { Modal, ModalBody } from 'components/Modal';
 import { shell } from 'electron';
 import IArtist from 'interface/IArtist';
+import { observer } from 'mobx-react-lite';
 import * as QRCode from 'qrcode';
 import * as React from 'react';
 import * as styles from './index.less';
-import { observer } from 'mobx-react-lite';
 
 const Share: React.SFC = observer(() => {
     const {
@@ -46,7 +46,6 @@ const Share: React.SFC = observer(() => {
                             }}>
                             <img alt="Twitter" className={styles.social} src="assets/social-twitter.png" />
                         </a>
-
                         <a
                             href=""
                             onClick={e => {
@@ -56,7 +55,7 @@ const Share: React.SFC = observer(() => {
                                 );
                                 close();
                             }}>
-                            <img alt="Facebook" className={styles.social} src="assets/social-facebook.png" />
+                            <i className="remixicon-facebook-fill"></i>
                         </a>
 
                         <a

@@ -2,6 +2,7 @@ import { useStore } from '@/context';
 import { ipcRenderer } from 'electron';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { useEffectOnce } from 'react-use';
 import * as styles from './index.less';
 
 const VolumeUpDown: React.SFC = observer(() => {
@@ -12,7 +13,7 @@ const VolumeUpDown: React.SFC = observer(() => {
     const containerRef = React.useRef<HTMLDivElement>();
     const [direction, setDirection] = React.useState(true);
 
-    React.useEffect(() => {
+    useEffectOnce(() => {
         ipcRenderer.on('player-volume-up', () => {
             setDirection(true);
         });
@@ -20,7 +21,11 @@ const VolumeUpDown: React.SFC = observer(() => {
         ipcRenderer.on('player-volume-down', () => {
             setDirection(false);
         });
-    }, []);
+    });
+
+    React.useEffect(() => {
+        containerRef.current.classList.add(styles.animated);
+    });
 
     const animationDone = () => {
         containerRef.current.classList.remove(styles.animated);
