@@ -1,5 +1,6 @@
 import { useStore } from '@/context';
 import { ipcRenderer } from 'electron';
+import { throttle } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useAudio } from 'react-use';
@@ -19,9 +20,24 @@ const AudioPlayer: React.FC = observer(() => {
     });
 
     React.useEffect(() => {
-        onProgress(state.duration);
-        onScrollerLyrics(state.duration);
-    }, [state.duration]);
+        onProgress(state.time);
+        onScrollerLyrics(state.time);
+    }, [state.time]);
+
+    // buffered
+    React.useEffect(() => {
+        const [buffered] = state.buffered;
+        if (buffered) {
+            let bufferedTransform = buffered.end;
+            if (bufferedTransform >= 100) {
+                bufferedTransform = 100;
+                setBufferedDone(true);
+            }
+            const progress = document.getElementById('progress');
+            // @ts-ignore
+            progress.lastElementChild.style.transform = `translate3d(${-100 + bufferedTransform}%, 0, 0)`;
+        }
+    }, [state.buffered]);
 
     const resetProgress = () => {
         clearTimeout(timer);
@@ -33,7 +49,8 @@ const AudioPlayer: React.FC = observer(() => {
         if (!ele) return;
         let firstElementChild = ele.firstElementChild;
         if (firstElementChild) {
-            ele.style.transform = `translate3d(${-100 + percent * 100}%, 0, 0)`;
+            // @ts-ignore
+            firstElementChild.style.transform = `translate3d(${-100 + percent * 100}%, 0, 0)`;
         }
     };
 
@@ -51,42 +68,23 @@ const AudioPlayer: React.FC = observer(() => {
         }
     };
 
-    const onProgress = (currentTime = 0) => {
+    // TODO: hight cpu usage
+    const onProgress = throttle((currentTime = 0) => {
         const { duration } = song;
         const progress = document.getElementById('progress');
-        if (!progress) {
-            return;
-        }
-        let newEle = progress.firstElementChild;
-        // Reduce CPU usage, cancel the duplicate compution
-        if (currentTime * 1000 - passed < 1000) {
-            return;
-        }
-        clearTimeout(timer);
-        timer = window.setTimeout(() => {
-            if (newEle) {
-                const percent = (currentTime * 1000) / duration;
-
-                setPosition(percent, progress);
-                buffering(newEle.lastElementChild);
-
-                newEle.setAttribute('data-time', `${helper.getTime(currentTime * 1000)} / ${helper.getTime(duration)}`);
+        if (progress) {
+            if (currentTime * 1000 - passed < 1000) {
+                return;
             }
-        }, 450);
-        setPassed(currentTime * 1000);
-    };
-
-    const buffering = (ele: any) => {
-        if (!bufferedDone && ele && state.buffered.length) {
-            let buffered = ref.current.buffered.end(state.buffered.length - 1);
-
-            if (buffered >= 100) {
-                buffered = 100;
-                setBufferedDone(true);
-            }
-            ele.style.transform = `translate3d(${-100 + buffered}%, 0, 0)`;
+            const percent = (currentTime * 1000) / duration;
+            setPosition(percent, progress);
+            progress.firstElementChild.setAttribute(
+                'data-time',
+                `${helper.getTime(currentTime * 1000)} / ${helper.getTime(duration)}`
+            );
+            setPassed(currentTime * 1000);
         }
-    };
+    }, 1000);
 
     const onScrollerLyrics = (currentTime = 0) => {
         const lyricsEle = document.getElementById('lyrics');
