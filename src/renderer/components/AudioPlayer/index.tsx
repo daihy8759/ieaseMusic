@@ -3,7 +3,7 @@ import { ipcRenderer } from 'electron';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { useAudio } from 'react-use';
+import { useAudio, useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 
 const AudioPlayer: React.FC = observer(() => {
@@ -112,7 +112,7 @@ const AudioPlayer: React.FC = observer(() => {
         }
     };
 
-    React.useEffect(() => {
+    useEffectOnce(() => {
         ref.current.onerror = (e: any) => {
             if (!ref.current.src.startsWith('http') || song.waiting) return;
 
@@ -144,7 +144,7 @@ const AudioPlayer: React.FC = observer(() => {
             controls.volume(volumeDown < 0 ? 0 : volumeDown);
             setVolume(state.volume);
         });
-    }, []);
+    });
 
     React.useEffect(() => {
         setBufferedDone(false);

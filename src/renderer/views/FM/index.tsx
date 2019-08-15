@@ -10,17 +10,25 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
+import { useEffectOnce } from 'react-use';
+import { RouteChildrenProps } from 'react-router';
 
-const FM: React.SFC = observer(() => {
+interface FMProps extends RouteChildrenProps {}
+
+const FM: React.SFC<FMProps> = observer(props => {
     const { fm, me, comments, controller } = useStore();
+
+    useEffectOnce(() => {
+        if (!me.hasLogin()) {
+            props.history.replace('/login/1');
+            return;
+        }
+        fm.preload();
+    });
 
     if (fm.loading) {
         return <Loader show />;
     }
-
-    React.useEffect(() => {
-        fm.preload();
-    }, []);
 
     const renderBg = () => {
         const { songs } = fm.playlist;

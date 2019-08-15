@@ -1,7 +1,6 @@
-import { useStore } from '@/context';
 import Loader from 'components/Loader';
 import * as React from 'react';
-import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import Layout from '../views/Layout';
 import Welcome from '../views/Welcome';
 
@@ -30,17 +29,6 @@ function LazyComponent(Component: any) {
     );
 }
 
-function requireAuth(component: any, props: any) {
-    const stores = useStore();
-    if (stores.me.hasLogin()) {
-        return React.createElement(LazyComponent(component), {
-            ...props
-        });
-    }
-
-    return <Redirect to="/login/1" />;
-}
-
 const MainRouter = (
     <Main>
         <Switch>
@@ -56,7 +44,7 @@ const MainRouter = (
             <Route exact path="/comments" component={LazyComponent(Comments)} />
             <Route exact path="/lyrics" component={LazyComponent(Lyrics)} />
             <Route exact path="/search" component={LazyComponent(Search)} />
-            <Route exact path="/fm" render={props => requireAuth(FM, props)} />
+            <Route exact path="/fm" component={LazyComponent(FM)} />
         </Switch>
     </Main>
 );
