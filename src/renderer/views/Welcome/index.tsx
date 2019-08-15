@@ -1,3 +1,4 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import FadeImage from 'components/FadeImage';
@@ -5,7 +6,7 @@ import Indicator from 'components/Indicator';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
@@ -15,21 +16,19 @@ interface IStatusProps {
     playing: boolean;
 }
 
-class Status extends React.Component<IStatusProps> {
-    render() {
-        const { playing } = this.props;
+const Status: React.SFC<IStatusProps> = props => {
+    const { playing } = props;
 
-        if (!playing) {
-            return false;
-        }
-
-        return (
-            <div className={styles.status}>
-                <Indicator />
-            </div>
-        );
+    if (!playing) {
+        return null;
     }
-}
+
+    return (
+        <div className={styles.status}>
+            <Indicator />
+        </div>
+    );
+};
 
 interface IWelcomeProps {
     controller: any;
@@ -37,27 +36,22 @@ interface IWelcomeProps {
     home: any;
 }
 
-@inject('me', 'controller', 'home')
-@observer
-class Welcome extends React.Component<IWelcomeProps, {}> {
-    componentDidMount() {
-        this.props.home.getList();
-    }
+const Welcome: React.SFC = observer(() => {
+    const { me, controller, home } = useStore();
+    React.useEffect(() => {
+        home.getList();
+    }, []);
 
-    play(playlist: any) {
-        const { controller } = this.props;
-
+    const play = (playlist: any) => {
         if (controller.playlist.id === playlist.id) {
             controller.toggle();
         }
         controller.setup(playlist);
         controller.play();
-    }
+    };
 
-    renderProfile() {
-        const {
-            me: { profile }
-        } = this.props;
+    const renderProfile = () => {
+        const { profile } = me;
         const link = `/user/${profile.userId}`;
         return (
             <article className={styles.profile}>
@@ -73,18 +67,16 @@ class Welcome extends React.Component<IWelcomeProps, {}> {
                 </div>
             </article>
         );
-    }
+    };
 
-    renderFavorite(favorite: any = {}) {
-        const { controller } = this.props;
-
+    const renderFavorite = (favorite: any = {}) => {
         if (!favorite || favorite.size === 0) {
             return false;
         }
 
         return (
             <Link className={styles.clearfix} to={favorite.link || '#'}>
-                <Status playing={controller.playlist.id === favorite.id} />
+                {Status({ playing: controller.playlist.id === favorite.id })}
 
                 <div className={styles.hovered}>
                     <i className="remixicon-arrow-right-line" />
@@ -119,13 +111,11 @@ class Welcome extends React.Component<IWelcomeProps, {}> {
                 </figure>
             </Link>
         );
-    }
+    };
 
-    renderRecommend(recommend: any = {}) {
-        const { controller } = this.props;
-
+    const renderRecommend = (recommend: any = {}) => {
         return (
-            <Link className={styles.clearfix} to="#" onClick={() => this.play(recommend)}>
+            <Link className={styles.clearfix} to="#" onClick={() => play(recommend)}>
                 <Status playing={controller.playlist.id === recommend.id} />
 
                 <div className={styles.hovered}>
@@ -153,11 +143,9 @@ class Welcome extends React.Component<IWelcomeProps, {}> {
                 </figure>
             </Link>
         );
-    }
+    };
 
-    renderPlaylist(list: any) {
-        const { controller } = this.props;
-
+    const renderPlaylist = (list: any) => {
         return list.map((e: any, index: number) => {
             return (
                 <Link className={styles.clearfix} key={index} to={e.link}>
@@ -201,73 +189,69 @@ class Welcome extends React.Component<IWelcomeProps, {}> {
                 </Link>
             );
         });
-    }
+    };
+    const { list } = home;
+    const logined = me.hasLogin();
+    const hasRecommend = logined && list.length > 1 && list[1].size;
+    const songId = controller.song ? controller.song.id : '';
 
-    render() {
-        const { controller, me, home } = this.props;
-        const { list } = home;
-        const logined = me.hasLogin();
-        const hasRecommend = logined && list.length > 1 && list[1].size;
-        const songId = controller.song ? controller.song.id : '';
-
-        return (
-            <div className={styles.container}>
-                <Loader show={home.loading} />
-                <main>
-                    <aside className={styles.navs}>
-                        {logined ? (
-                            this.renderProfile()
-                        ) : (
-                            <Link
-                                to="/login/0"
-                                style={{
-                                    fontSize: 14,
-                                    letterSpacing: 2
-                                }}>
-                                Sign in
-                            </Link>
-                        )}
-
-                        <nav className={styles.menu}>
-                            <p>
-                                <Link to="/search">Search</Link>
-                            </p>
-
-                            <p>
-                                <Link to="/playlist/全部">Playlist</Link>
-                            </p>
-
-                            <p>
-                                <Link to="/top">Top podcasts</Link>
-                            </p>
-
-                            <p>
-                                <Link
-                                    className={classnames({
-                                        [styles.playing]: controller.playlist.id === 'PERSONAL_FM'
-                                    })}
-                                    to="/fm">
-                                    Made For You
-                                </Link>
-                            </p>
-                        </nav>
-                    </aside>
-
-                    {list.length ? (
-                        <section className={styles.list}>
-                            {logined ? this.renderFavorite(list[0]) : false}
-                            {hasRecommend ? this.renderRecommend(list[1]) : false}
-                            {this.renderPlaylist(logined ? list.slice(2, list.length) : list.slice())}
-                        </section>
+    return (
+        <div className={styles.container}>
+            <Loader show={home.loading} />
+            <main>
+                <aside className={styles.navs}>
+                    {logined ? (
+                        renderProfile()
                     ) : (
-                        <div className={styles.placeholder} />
+                        <Link
+                            to="/login/0"
+                            style={{
+                                fontSize: 14,
+                                letterSpacing: 2
+                            }}>
+                            Sign in
+                        </Link>
                     )}
-                </main>
 
-                <Controller key={songId} />
-            </div>
-        );
-    }
-}
+                    <nav className={styles.menu}>
+                        <p>
+                            <Link to="/search">Search</Link>
+                        </p>
+
+                        <p>
+                            <Link to="/playlist/全部">Playlist</Link>
+                        </p>
+
+                        <p>
+                            <Link to="/top">Top podcasts</Link>
+                        </p>
+
+                        <p>
+                            <Link
+                                className={classnames({
+                                    [styles.playing]: controller.playlist.id === 'PERSONAL_FM'
+                                })}
+                                to="/fm">
+                                Made For You
+                            </Link>
+                        </p>
+                    </nav>
+                </aside>
+
+                {list.length ? (
+                    <section className={styles.list}>
+                        {logined ? renderFavorite(list[0]) : false}
+                        {hasRecommend ? renderRecommend(list[1]) : false}
+                        {renderPlaylist(logined ? list.slice(2, list.length) : list.slice())}
+                    </section>
+                ) : (
+                    <div className={styles.placeholder} />
+                )}
+            </main>
+
+            <Controller key={songId} />
+        </div>
+    );
+});
 
 export default Welcome;

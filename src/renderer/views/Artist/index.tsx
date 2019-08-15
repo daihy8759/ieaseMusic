@@ -1,3 +1,4 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
@@ -7,10 +8,8 @@ import format from 'date-fns/format';
 import delegate from 'delegate';
 import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
-import IArtistProfile from 'interface/IArtistProfile';
 import ISong from 'interface/ISong';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
@@ -18,54 +17,42 @@ import * as styles from './index.less';
 
 interface IArtistProps {
     match: any;
-    getArtist: any;
-    play: any;
-    desc: any;
-    albums: any;
-    highlightAlbum: any;
-    loading: boolean;
-    profile: IArtistProfile;
-    isPlaying: any;
-    follow: any;
-    hasLogin: any;
-    similar: IArtist[];
-    playlist: any;
-    sameToPlaying: any;
-    song: ISong;
 }
 
-@inject((stores: IStore) => ({
-    loading: stores.artist.loading,
-    profile: stores.artist.profile,
-    follow: stores.artist.follow,
-    playlist: stores.artist.playlist,
-    albums: stores.artist.albums,
-    desc: stores.artist.desc,
-    similar: stores.artist.similar,
-    getArtist: stores.artist.getArtist,
-    playing: stores.controller.playing,
-    song: stores.controller.song,
-    isPlaying(id: number) {
-        const { controller, artist } = stores;
+const Artist: React.FC<IArtistProps> = observer(props => {
+    const { artist, controller, me } = useStore();
+
+    const headerRef = React.useRef<HTMLHeadElement>();
+    const canvasRef = React.useRef<HTMLCanvasElement>();
+    const listRef = React.useRef<HTMLUListElement>();
+
+    const sameToPlaying = () => {
+        return controller.playlist.id === artist.playlist.id;
+    };
+
+    const isPlaying = (id?: number) => {
         let res = controller.playing && controller.playlist.id === artist.playlist.id;
 
         if (res && id) {
             res = controller.song.id === id;
         }
         return res;
-    },
-    async play(songId: number) {
-        const { controller, artist } = stores;
-        const sameToPlaying = this.sameToPlaying();
+    };
 
-        if (sameToPlaying) {
+    const highlightAlbum = (id: number) => {
+        return controller.playlist.id === id;
+    };
+
+    const play = async (songId?: number) => {
+        const isSameToPlaying = sameToPlaying();
+
+        if (isSameToPlaying) {
             if (controller.playing && controller.song.id === songId) {
                 controller.toggle();
             } else {
                 await controller.play(songId);
             }
         } else {
-            // Play a new playlist
             controller.setup({
                 id: artist.playlist.id,
                 link: `/artist/${artist.profile.id}`,
@@ -74,58 +61,14 @@ interface IArtistProps {
             });
             await controller.play(songId);
         }
-    },
-    sameToPlaying() {
-        const { controller, artist } = stores;
-        return controller.playlist.id === artist.playlist.id;
-    },
-    highlightAlbum(id: number) {
-        return stores.controller.playlist.id === id;
-    },
-    hasLogin: stores.me.hasLogin
-}))
-class Artist extends React.Component<IArtistProps, {}> {
-    state = {
-        renderTabContent: this.renderSongs.bind(this)
     };
-    private headerRef = React.createRef<HTMLHeadElement>();
-    private canvasRef = React.createRef<HTMLCanvasElement>();
-    private listRef = React.createRef<HTMLUListElement>();
 
-    componentDidMount() {
-        const navs = Array.from(this.headerRef.current.querySelectorAll('nav'));
-
-        delegate(this.headerRef.current, 'nav', 'click', (e: any) => {
-            navs.map(d => d.classList.remove(styles.selected));
-            e.target.classList.add(styles.selected);
-        });
-
-        const { match, getArtist } = this.props;
-        getArtist(match.params.id);
-    }
-
-    componentDidUpdate(prevProps: IArtistProps) {
-        const { listRef } = this;
-        const { match } = this.props;
-
-        if (listRef.current) {
-            const playing = listRef.current.querySelector(`.${styles.playing}`);
-
-            if (playing) {
-                // @ts-ignore
-                playing.scrollIntoViewIfNeeded();
-            }
-        }
-        if (prevProps.match.params.id !== match.params.id) {
-            this.props.getArtist(match.params.id);
-        }
-    }
-
-    renderSongs() {
-        const { playlist, sameToPlaying, song, isPlaying } = this.props;
+    const renderSongs = () => {
+        const { playlist } = artist;
+        const { song } = controller;
 
         return (
-            <ul className={styles.songs} ref={this.listRef}>
+            <ul className={styles.songs} ref={listRef}>
                 {playlist.songs &&
                     playlist.songs.map((e: ISong, index: number) => {
                         return (
@@ -134,9 +77,7 @@ class Artist extends React.Component<IArtistProps, {}> {
                                     [styles.playing]: sameToPlaying() && song.id === e.id
                                 })}
                                 key={e.id}
-                                onClick={async () => {
-                                    await this.props.play(e.id);
-                                }}>
+                                onClick={() => play(e.id)}>
                                 {isPlaying(e.id) ? (
                                     <i className="remixicon-pause-fill" />
                                 ) : (
@@ -159,19 +100,19 @@ class Artist extends React.Component<IArtistProps, {}> {
                     })}
             </ul>
         );
-    }
+    };
 
-    renderDesc() {
-        const { desc } = this.props;
+    const renderDesc = () => {
+        const { desc } = artist;
         const { briefDesc } = desc;
         if (!briefDesc) {
             return <section className={styles.nothing}>Nothing ...</section>;
         }
         return <section className={styles.desc}>{briefDesc}</section>;
-    }
+    };
 
-    renderAlbums() {
-        const { albums, highlightAlbum } = this.props;
+    const renderAlbums = () => {
+        const { albums } = artist;
         if (albums) {
             return (
                 <section className={styles.albums}>
@@ -205,10 +146,11 @@ class Artist extends React.Component<IArtistProps, {}> {
             );
         }
         return <section className={styles.nothing}>Nothing ...</section>;
-    }
+    };
 
-    renderArtists() {
-        const { hasLogin, similar } = this.props;
+    const renderArtists = () => {
+        const { hasLogin } = me;
+        const { similar } = artist;
 
         if (!hasLogin()) {
             return <section className={styles.nothing}>Nothing ...</section>;
@@ -233,98 +175,93 @@ class Artist extends React.Component<IArtistProps, {}> {
                 })}
             </section>
         );
-    }
+    };
 
-    render() {
-        const { loading, profile, isPlaying, follow } = this.props;
-        const size = profile.size || {};
-        const { followed } = profile;
-        const { renderTabContent } = this.state;
+    React.useEffect(() => {
+        const navs = Array.from(headerRef.current.querySelectorAll('nav'));
 
-        return (
-            <div className={styles.container}>
-                <Loader show={loading} />
+        delegate(headerRef.current, 'nav', 'click', (e: any) => {
+            navs.map(d => d.classList.remove(styles.selected));
+            e.target.classList.add(styles.selected);
+        });
+        artist.getArtist(props.match.params.id);
+    }, []);
 
-                <Header
+    const { loading, profile, follow } = artist;
+    const size = profile.size || {};
+    const { followed } = profile;
+    const [tabContent, setTabContent] = React.useState();
+
+    return (
+        <div className={styles.container}>
+            <Loader show={loading} />
+
+            <Header
+                {...{
+                    transparent: true,
+                    showBack: true,
+                    showPlaylist: true
+                }}
+            />
+
+            <div className={styles.hero}>
+                <ProgressImage
                     {...{
-                        transparent: true,
-                        showBack: true,
-                        showPlaylist: true
+                        width: window.innerWidth,
+                        height: window.innerWidth / (640 / 300),
+                        src: profile.background,
+                        thumb: (profile.background || '').replace(/\?.*$/, '?param=20y10')
                     }}
                 />
+                <div className={styles.inner}>
+                    <div role="presentation" className={styles.play} onClick={() => play()}>
+                        {isPlaying() ? <i className="remixicon-pause-fill" /> : <i className="remixicon-play-fill" />}
+                    </div>
 
-                <div className={styles.hero}>
-                    <ProgressImage
-                        {...{
-                            width: window.innerWidth,
-                            height: window.innerWidth / (640 / 300),
-                            src: profile.background,
-                            thumb: (profile.background || '').replace(/\?.*$/, '?param=20y10')
-                        }}
-                    />
-                    <div className={styles.inner}>
-                        <div
-                            role="presentation"
-                            className={styles.play}
-                            onClick={async () => {
-                                await this.props.play();
-                            }}>
-                            {isPlaying() ? (
-                                <i className="remixicon-pause-fill" />
-                            ) : (
-                                <i className="remixicon-play-fill" />
-                            )}
-                        </div>
+                    <canvas ref={canvasRef} />
 
-                        <canvas ref={this.canvasRef} />
+                    <p className={styles.name}>
+                        {profile.uid ? (
+                            <Link to={`/user/${profile.uid}`}>{profile.name}</Link>
+                        ) : (
+                            <span>{profile.name}</span>
+                        )}
+                    </p>
 
-                        <p className={styles.name}>
-                            {profile.uid ? (
-                                <Link to={`/user/${profile.uid}`}>{profile.name}</Link>
-                            ) : (
-                                <span>{profile.name}</span>
-                            )}
-                        </p>
+                    <div className={styles.meta}>
+                        <button
+                            type="button"
+                            className={classnames(styles.follow, {
+                                [styles.followed]: followed
+                            })}
+                            onClick={e => follow(followed)}>
+                            {followed ? 'Followed' : 'Follow'}
+                        </button>
 
-                        <div className={styles.meta}>
-                            <button
-                                type="button"
-                                className={classnames(styles.follow, {
-                                    [styles.followed]: followed
-                                })}
-                                onClick={e => follow(followed)}>
-                                {followed ? 'Followed' : 'Follow'}
-                            </button>
+                        <span>{size.song} Tracks</span>
 
-                            <span>{size.song} Tracks</span>
+                        <span>{size.mv} MV</span>
 
-                            <span>{size.mv} MV</span>
-
-                            <span>{size.album} Albums</span>
-                        </div>
+                        <span>{size.album} Albums</span>
                     </div>
                 </div>
-
-                <div className={styles.body}>
-                    <header ref={this.headerRef}>
-                        <nav
-                            onClick={e => this.setState({ renderTabContent: () => this.renderSongs() })}
-                            className={styles.selected}>
-                            Top 50
-                        </nav>
-
-                        <nav onClick={e => this.setState({ renderTabContent: () => this.renderAlbums() })}>专辑</nav>
-                        <nav onClick={e => this.setState({ renderTabContent: () => this.renderDesc() })}>歌手详情</nav>
-                        <nav onClick={e => this.setState({ renderTabContent: () => this.renderArtists() })}>
-                            相似歌手
-                        </nav>
-                    </header>
-
-                    <div className={styles.content}>{renderTabContent()}</div>
-                </div>
             </div>
-        );
-    }
-}
+
+            <div className={styles.body}>
+                <header ref={headerRef}>
+                    <nav onClick={e => setTabContent(renderSongs())} className={styles.selected}>
+                        Top 50
+                    </nav>
+
+                    <nav onClick={() => setTabContent(renderAlbums())}>专辑</nav>
+                    <nav onClick={() => setTabContent(renderDesc())}>歌手详情</nav>
+                    <nav onClick={() => setTabContent(renderArtists())}>相似歌手</nav>
+                </header>
+
+                <div className={styles.content}>{tabContent()}</div>
+            </div>
+        </div>
+    );
+});
 
 export default Artist;

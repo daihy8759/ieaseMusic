@@ -1,25 +1,20 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import { Modal, ModalBody } from 'components/Modal';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import * as styles from './index.less';
 
-interface IUpNextProps {
-    upnext?: any;
-    controller?: any;
-}
+const UpNext: React.SFC = observer(() => {
+    const { upnext, controller } = useStore();
 
-@inject('upnext', 'controller')
-@observer
-class UpNext extends React.Component<IUpNextProps, {}> {
-    close() {
-        this.props.upnext.hide();
-    }
+    const close = () => {
+        upnext.hide();
+    };
 
-    renderContent() {
-        const { upnext, controller } = this.props;
+    const renderContent = () => {
         const { song } = upnext;
 
         return (
@@ -37,7 +32,7 @@ class UpNext extends React.Component<IUpNextProps, {}> {
                             role="presentation"
                             className={classnames('remixicon-play-fill', styles.play)}
                             onClick={e => {
-                                this.close();
+                                close();
                                 controller.play(song.id);
                             }}
                         />
@@ -80,17 +75,13 @@ class UpNext extends React.Component<IUpNextProps, {}> {
                 </button>
             </div>
         );
-    }
+    };
 
-    render() {
-        const { upnext } = this.props;
-
-        return (
-            <Modal show={upnext.show}>
-                <ModalBody className={styles.modal}>{this.renderContent()}</ModalBody>
-            </Modal>
-        );
-    }
-}
+    return (
+        <Modal show={upnext.show}>
+            <ModalBody className={styles.modal}>{renderContent()}</ModalBody>
+        </Modal>
+    );
+});
 
 export default UpNext;

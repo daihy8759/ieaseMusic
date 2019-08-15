@@ -1,52 +1,33 @@
+import { useStore } from '@/context';
 import { ipcRenderer } from 'electron';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import * as styles from './index.less';
 
-interface IVolumeUpDownProps {
-    isMuted?: any;
-}
+const VolumeUpDown: React.SFC = observer(() => {
+    const {
+        preferences: { volume }
+    } = useStore();
+    const isMuted = volume === 0;
+    const containerRef = React.useRef<HTMLDivElement>();
+    const [direction, setDirection] = React.useState(true);
 
-@inject((stores: IStore) => ({
-    isMuted: () => stores.preferences.volume === 0
-}))
-class VolumeUpDown extends React.Component<IVolumeUpDownProps, {}> {
-    state = {
-        // true: up, false: down
-        direction: true
-    };
-    private containerRef = React.createRef<HTMLDivElement>();
-
-    componentDidMount() {
+    React.useEffect(() => {
         ipcRenderer.on('player-volume-up', () => {
-            this.setState({
-                direction: true
-            });
+            setDirection(true);
         });
 
         ipcRenderer.on('player-volume-down', () => {
-            this.setState({
-                direction: false
-            });
+            setDirection(false);
         });
-    }
+    }, []);
 
-    componentWillUpdate() {
-        this.animationDone();
-    }
+    const animationDone = () => {
+        containerRef.current.classList.remove(styles.animated);
+    };
 
-    componentDidUpdate() {
-        this.containerRef.current.classList.add(styles.animated);
-    }
-
-    animationDone() {
-        this.containerRef.current.classList.remove(styles.animated);
-    }
-
-    renderVolume() {
-        const { isMuted } = this.props;
-        if (isMuted()) {
+    const renderVolume = () => {
+        if (isMuted) {
             return (
                 <i
                     className="remixicon-volume-down-fill"
@@ -56,20 +37,17 @@ class VolumeUpDown extends React.Component<IVolumeUpDownProps, {}> {
                 />
             );
         }
-        const { direction } = this.state;
         if (direction) {
             return <i className="remixicon-volume-up-fill" />;
         }
         return <i className="remixicon-volume-down-fill" />;
-    }
+    };
 
-    render() {
-        return (
-            <div className={styles.container} onAnimationEnd={() => this.animationDone()} ref={this.containerRef}>
-                {this.renderVolume()}
-            </div>
-        );
-    }
-}
+    return (
+        <div className={styles.container} onAnimationEnd={() => animationDone()} ref={containerRef}>
+            {renderVolume()}
+        </div>
+    );
+});
 
 export default VolumeUpDown;

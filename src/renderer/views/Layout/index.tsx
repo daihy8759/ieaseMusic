@@ -1,3 +1,4 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import AudioPlayer from 'components/AudioPlayer';
 import Loader from 'components/Loader';
@@ -12,8 +13,9 @@ import PlayerStatus from 'components/Ripple/PlayerStatus';
 import VolumeUpDown from 'components/Ripple/VolumeUpDown';
 import Share from 'components/Share';
 import UpNext from 'components/UpNext';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { useNetwork } from 'react-use';
 import lastfm from 'utils/lastfm';
 import * as styles from './index.less';
 
@@ -21,105 +23,74 @@ interface IBackgroundProps {
     controller?: any;
 }
 
-@inject('controller')
-@observer
-class Background extends React.Component<IBackgroundProps, {}> {
-    render() {
-        const {
-            controller: { song }
-        } = this.props;
+const Background: React.SFC<IBackgroundProps> = observer(() => {
+    const {
+        controller: { song }
+    } = useStore();
 
-        return (
-            <div className={styles.cover}>
-                {song && song.id ? (
-                    <ProgressImage
-                        className={styles.background}
-                        {...{
-                            width: window.innerWidth,
-                            src: `${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`
-                        }}
-                    />
-                ) : (
-                    false
-                )}
-            </div>
-        );
+    return (
+        <div className={styles.cover}>
+            {song && song.id ? (
+                <ProgressImage
+                    className={styles.background}
+                    {...{
+                        width: window.innerWidth,
+                        src: `${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`
+                    }}
+                />
+            ) : (
+                false
+            )}
+        </div>
+    );
+});
+
+interface ILayoutProps {}
+
+const Layout: React.FC<ILayoutProps> = observer(props => {
+    const { children } = props;
+    const store = useStore();
+    const {
+        me: { initialized }
+    } = store;
+    React.useEffect(() => {
+        const init = async () => {
+            const { me, preferences } = store;
+            await preferences.init();
+            await me.init();
+            const { username, password } = preferences.lastFm;
+            await lastfm.initialize(username, password);
+        };
+        init();
+    }, []);
+    const networkState = useNetwork();
+    if (!networkState.online) {
+        return <Offline show />;
     }
-}
-
-interface ILayoutProps {
-    me: any;
-    preferences: any;
-}
-
-@inject('me', 'preferences')
-@observer
-class Layout extends React.Component<ILayoutProps, {}> {
-    state = {
-        offline: false
-    };
-
-    componentDidMount() {
-        window.addEventListener('offline', () => {
-            this.setState({
-                offline: true
-            });
-        });
-
-        window.addEventListener('online', () => {
-            this.setState({
-                offline: false
-            });
-        });
-        this.init();
+    if (!initialized) {
+        return <Loader show />;
     }
-
-    init = async () => {
-        const { me, preferences } = this.props;
-
-        await preferences.init();
-        await me.init();
-
-        const { username, password } = preferences.lastFm;
-
-        await lastfm.initialize(username, password);
-    };
-
-    render() {
-        const {
-            children,
-            me: { initialized }
-        } = this.props;
-        const { offline } = this.state;
-
-        if (offline) {
-            return <Offline show />;
-        }
-        if (!initialized) {
-            return <Loader show />;
-        }
-        return (
-            <div className={styles.container}>
-                <main
-                    className={classnames({
-                        [styles.viewport]: true
-                    })}>
-                    {children}
-                </main>
-                <AudioPlayer />
-                <UpNext />
-                <Share />
-                <Preferences />
-                <Menu />
-                <VolumeUpDown />
-                <Playing />
-                <PlayerNavigation />
-                <PlayerMode />
-                <PlayerStatus />
-                <Background />
-            </div>
-        );
-    }
-}
+    return (
+        <div className={styles.container}>
+            <main
+                className={classnames({
+                    [styles.viewport]: true
+                })}>
+                {children}
+            </main>
+            <AudioPlayer />
+            <UpNext />
+            <Share />
+            <Preferences />
+            <Menu />
+            <VolumeUpDown />
+            <Playing />
+            <PlayerNavigation />
+            <PlayerMode />
+            <PlayerStatus />
+            <Background />
+        </div>
+    );
+});
 
 export default Layout;

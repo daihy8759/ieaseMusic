@@ -59,7 +59,7 @@ class Me {
         };
     };
 
-    waiting = async () => {
+    waiting = async (done: any) => {
         const { ticket, state, type } = this.qrcode;
         const data = await polling({
             ticket,
@@ -78,7 +78,7 @@ class Me {
         // await storage.set('profile', this.profile);
         // await this.init();
         // await home.load();
-        // done();
+        done();
         this.logining = false;
     };
 
@@ -151,6 +151,11 @@ class Me {
         }
 
         return data.code === 200;
+    }
+
+    @action async logout() {
+        // @ts-ignore
+        await storage.remove('profile');
     }
 
     @action

@@ -1,117 +1,104 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Indicator from 'components/Indicator';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
-import ISong from 'interface/ISong';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
 interface IHeroProps {
-    song?: ISong;
-    isLiked?: any;
-    unlike?: any;
-    like?: any;
-    comments?: any;
-    showShare?: any;
     location: any;
 }
 
-@inject((stores: IStore) => ({
-    like: stores.me.like,
-    unlike: stores.me.unlike,
-    isLiked: stores.me.isLiked,
-    song: stores.controller.song,
-    comments: stores.comments.total,
-    showShare: stores.share.toggle
-}))
-class Hero extends React.Component<IHeroProps, {}> {
-    render() {
-        const { song, isLiked, unlike, like, comments, showShare, location } = this.props;
-        const { pathname } = location;
-        const liked = isLiked(song.id);
+const Hero: React.SFC<IHeroProps> = observer(props => {
+    const { location } = props;
+    const { me, comments, controller, share } = useStore();
+    const { isLiked, unlike, like } = me;
+    const { total: commentsTotal } = comments;
+    const { song } = controller;
+    const { pathname } = location;
+    const liked = isLiked(song.id);
 
-        return (
-            <div className={styles.container}>
-                <ProgressImage
-                    {...{
-                        height: window.innerHeight,
-                        width: window.innerHeight,
-                        src: song.album.cover.replace(/100y100$/, '500y500')
+    return (
+        <div className={styles.container}>
+            <ProgressImage
+                {...{
+                    height: window.innerHeight,
+                    width: window.innerHeight,
+                    src: song.album.cover.replace(/100y100$/, '500y500')
+                }}
+            />
+
+            <a
+                href=""
+                className={styles.share}
+                onClick={e => {
+                    e.preventDefault();
+                    share.toggle(true);
+                }}>
+                <i className="remixicon-share-fill" />
+            </a>
+
+            <summary>
+                <i
+                    className={classnames('remixicon-heart-fill', {
+                        [styles.liked]: liked
+                    })}
+                    onClick={e => (liked ? unlike(song) : like(song))}
+                    style={{
+                        cursor: 'pointer',
+                        display: 'table'
                     }}
                 />
 
-                <a
-                    href=""
-                    className={styles.share}
-                    onClick={e => {
-                        e.preventDefault();
-                        showShare(true);
-                    }}>
-                    <i className="ion-android-share-alt" />
-                </a>
+                <span className={styles.badge}>{helper.getRate(song)}</span>
 
-                <summary>
-                    <i
-                        className={classnames('ion-ios-heart', {
-                            [styles.liked]: liked
-                        })}
-                        onClick={e => (liked ? unlike(song) : like(song))}
-                        style={{
-                            cursor: 'pointer',
-                            display: 'table'
-                        }}
-                    />
+                <span className={styles.badge}>
+                    {pathname === '/comments' ? `${helper.humanNumber(commentsTotal)} Comments` : 'Lyrics'}
+                </span>
+            </summary>
 
-                    <span className={styles.badge}>{helper.getRate(song)}</span>
+            <nav>
+                <article
+                    className={classnames({
+                        [styles.active]: pathname === '/lyrics'
+                    })}>
+                    <Link to={`/${pathname === '/comments' ? 'lyrics' : 'comments'}`}>
+                        {pathname === '/comments' ? 'Lyrics' : `${helper.humanNumber(commentsTotal)} Comments`}
+                    </Link>
+                </article>
 
-                    <span className={styles.badge}>
-                        {pathname === '/comments' ? `${helper.humanNumber(comments)} Comments` : 'Lyrics'}
-                    </span>
-                </summary>
+                <article>
+                    <Link to="/singleton">
+                        Cover
+                        <Indicator
+                            style={{
+                                marginLeft: 28
+                            }}
+                        />
+                    </Link>
+                </article>
+            </nav>
 
-                <nav>
-                    <article
-                        className={classnames({
-                            [styles.active]: pathname === '/lyrics'
-                        })}>
-                        <Link to={`/${pathname === '/comments' ? 'lyrics' : 'comments'}`}>
-                            {pathname === '/comments' ? 'Lyrics' : `${helper.humanNumber(comments)} Comments`}
-                        </Link>
-                    </article>
+            <footer>
+                <h3>{song.name}</h3>
 
-                    <article>
-                        <Link to="/singleton">
-                            Cover
-                            <Indicator
-                                style={{
-                                    marginLeft: 28
-                                }}
-                            />
-                        </Link>
-                    </article>
-                </nav>
-
-                <footer>
-                    <h3>{song.name}</h3>
-
-                    <p className={styles.author}>
-                        {song.artists.map((e: IArtist, index: number) => {
-                            // Show the artist
-                            return (
-                                <Link key={index} to={e.link}>
-                                    {e.name}
-                                </Link>
-                            );
-                        })}
-                    </p>
-                </footer>
-            </div>
-        );
-    }
-}
+                <p className={styles.author}>
+                    {song.artists.map((e: IArtist, index: number) => {
+                        // Show the artist
+                        return (
+                            <Link key={index} to={e.link}>
+                                {e.name}
+                            </Link>
+                        );
+                    })}
+                </p>
+            </footer>
+        </div>
+    );
+});
 
 export default Hero;

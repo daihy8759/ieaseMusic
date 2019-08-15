@@ -2,7 +2,11 @@ import * as React from 'react';
 import { useNetwork } from 'react-use';
 import * as styles from './index.less';
 
-function Offline({ show = false }) {
+interface IOfflineProps {
+    show?: boolean;
+}
+
+const Offline: React.FC<IOfflineProps> = ({ show = false }) => {
     if (!show) {
         return null;
     }
@@ -15,6 +19,6 @@ function Offline({ show = false }) {
             <h1>Opps, seems like you are offline...</h1>
         </div>
     );
-}
+};
 
 export default Offline;

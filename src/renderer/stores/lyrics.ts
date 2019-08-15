@@ -5,7 +5,7 @@ import controller from './controller';
 class Lyrics {
     @observable loading = true;
 
-    @observable list = {};
+    @observable list: { [propName: string]: any } = {};
 
     @action
     getLyrics = async () => {

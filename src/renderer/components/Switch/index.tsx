@@ -7,13 +7,14 @@ interface ISwitchProps {
     onChange?: any;
 }
 
-function Switch({ id, defaultChecked, onChange }: ISwitchProps) {
+const Switch: React.SFC<ISwitchProps> = props => {
+    const { id, defaultChecked, onChange } = props;
     return (
         <span className={styles.container}>
             <input defaultChecked={defaultChecked} id={id} type="checkbox" onChange={onChange} />
             <span className={styles.fake} />
         </span>
     );
-}
+};
 
 export default Switch;

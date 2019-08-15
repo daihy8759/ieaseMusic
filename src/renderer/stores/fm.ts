@@ -1,13 +1,16 @@
+import ISong from '@/interface/ISong';
 import { getPlaylist } from 'api/fm';
 import axios from 'axios';
+import IPlayList from 'interface/IPlayList';
 import { action, observable, runInAction } from 'mobx';
 import controller from './controller';
-import IPlayList from 'interface/IPlayList';
 
 class FM {
     @observable loading = true;
 
-    @observable song = {};
+    @observable song: ISong = {
+        duration: 0
+    };
 
     @observable playlist: IPlayList = {
         songs: []

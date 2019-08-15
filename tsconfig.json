@@ -9,6 +9,7 @@
         "baseUrl": "./",
         "experimentalDecorators": true,
         "paths": {
+            "@/*": ["src/renderer/*"],
             "stores/*": ["src/renderer/stores/*"],
             "components/*": ["src/renderer/components/*"],
             "utils/*": ["src/renderer/utils/*"],

@@ -1,5 +1,5 @@
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { useStore } from '@/context';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import * as styles from './index.less';
@@ -8,25 +8,17 @@ interface IPlayerModeProps {
     mode?: number;
 }
 
-@inject((stores: IStore) => ({
-    mode: stores.controller.mode
-}))
-class PlayerMode extends React.Component<IPlayerModeProps, {}> {
-    private containerRef = React.createRef<HTMLDivElement>();
+const PlayerMode: React.SFC = observer(() => {
+    const {
+        controller: { mode }
+    } = useStore();
+    const containerRef = React.useRef<HTMLDivElement>();
 
-    componentWillUpdate() {
-        this.animationDone();
-    }
+    const animationDone = () => {
+        containerRef.current.classList.remove(styles.animated);
+    };
 
-    componentDidUpdate() {
-        this.containerRef.current.classList.add(styles.animated);
-    }
-
-    animationDone() {
-        this.containerRef.current.classList.remove(styles.animated);
-    }
-
-    renderIndicator(mode: number) {
+    const renderIndicator = (mode: number) => {
         switch (mode) {
             case PLAYER_SHUFFLE:
                 return <i className="remixicon-shuffle-fill" />;
@@ -40,17 +32,13 @@ class PlayerMode extends React.Component<IPlayerModeProps, {}> {
             default:
                 return <></>;
         }
-    }
+    };
 
-    render() {
-        const { mode } = this.props;
-
-        return (
-            <div className={styles.container} onAnimationEnd={() => this.animationDone()} ref={this.containerRef}>
-                {this.renderIndicator(mode)}
-            </div>
-        );
-    }
-}
+    return (
+        <div className={styles.container} onAnimationEnd={() => animationDone()} ref={containerRef}>
+            {renderIndicator(mode)}
+        </div>
+    );
+});
 
 export default PlayerMode;

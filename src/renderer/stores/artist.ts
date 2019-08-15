@@ -23,7 +23,9 @@ class Artist {
         songs: []
     };
 
-    @observable desc = {};
+    @observable desc = {
+        briefDesc: ''
+    };
 
     @action
     getArtist = async (id: number) => {

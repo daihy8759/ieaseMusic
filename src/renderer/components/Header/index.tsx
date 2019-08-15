@@ -1,131 +1,110 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
-import ISong from 'interface/ISong';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import * as styles from './index.less';
 
 interface IHeaderProps {
     showBack?: boolean;
-    showMenu?: any;
+    showFav?: boolean;
     showPlaylist?: boolean;
-    showPlaying?: any;
-    song?: ISong;
-    transparent: any;
     className?: string;
-    hasLogin?: any;
-    showFav?: any;
-    subscribed?: any;
-    subscribe?: any;
+    transparent?: boolean;
 }
 
-@inject((stores: IStore) => ({
-    song: stores.controller.song,
-    subscribed: stores.player.meta.subscribed,
-    hasLogin: stores.me.hasLogin,
-    subscribe: stores.player.subscribe,
-    showMenu: () => stores.menu.toggle(true),
-    showPlaying: () => stores.playing.toggle(true)
-}))
-class Header extends React.Component<IHeaderProps, {}> {
-    goBack = () => window.history.back();
+const Header: React.SFC<IHeaderProps> = observer(props => {
+    const { controller, menu, playing, me, player } = useStore();
+    const { song } = controller;
+    const goBack = () => window.history.back();
 
-    renderBack() {
-        const { showBack } = this.props;
-
+    const renderBack = () => {
+        const { showBack } = props;
         if (!showBack) {
             return false;
         }
+        return <span className={styles.backward} onClick={goBack} />;
+    };
 
-        return <span className={styles.backward} onClick={e => this.goBack()} />;
-    }
-
-    renderPlaylist() {
-        const { showPlaylist, showPlaying } = this.props;
+    const renderPlaylist = () => {
+        const { showPlaylist } = props;
 
         if (showPlaylist) {
-            return <i className="remixicon-bar-chart-fill" onClick={() => showPlaying()} />;
+            return <i className="remixicon-bar-chart-fill" onClick={() => playing.toggle(true)} />;
         }
 
         return false;
-    }
+    };
 
-    renderFav() {
-        const { hasLogin, showFav, subscribed, subscribe } = this.props;
-
-        if (!showFav || !hasLogin()) {
+    const renderFav = () => {
+        if (!props.showFav || !me.hasLogin()) {
             return false;
         }
 
-        if (subscribed) {
+        if (player.meta.subscribed) {
             return (
-                <i className={classnames('remixicon-star-fill', styles.subscribed)} onClick={e => subscribe(false)} />
+                <i
+                    className={classnames('remixicon-star-fill', styles.subscribed)}
+                    onClick={e => player.subscribe(false)}
+                />
             );
         }
 
-        return <i className="remixicon-star-fill" onClick={e => subscribe(true)} />;
-    }
+        return <i className="remixicon-star-fill" onClick={e => player.subscribe(true)} />;
+    };
 
-    renderMenu() {
-        const { showMenu } = this.props;
-        return <i className="remixicon-more-2-fill" onClick={() => showMenu()} />;
-    }
+    const renderMenu = () => {
+        return <i className="remixicon-more-2-fill" onClick={() => menu.toggle(true)} />;
+    };
 
-    render() {
-        const { song, transparent, className } = this.props;
+    const { transparent, className } = props;
 
-        return (
-            <header className={classnames(styles.container, className)}>
-                {song.id && transparent === false ? (
-                    <figure
+    return (
+        <header className={classnames(styles.container, className)}>
+            {song.id && transparent === false ? (
+                <figure
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        height: '100%',
+                        width: '100%',
+                        padding: 0,
+                        margin: 0,
+                        overflow: 'hidden'
+                    }}>
+                    <figcaption
                         style={{
                             position: 'absolute',
                             left: 0,
                             top: 0,
-                            height: '100%',
-                            width: '100%',
+                            width: window.innerWidth,
+                            height: window.innerWidth,
                             padding: 0,
                             margin: 0,
-                            overflow: 'hidden'
-                        }}>
-                        <figcaption
-                            style={{
-                                position: 'absolute',
-                                left: 0,
-                                top: 0,
-                                width: window.innerWidth,
-                                height: window.innerWidth,
-                                padding: 0,
-                                margin: 0,
-                                backgroundImage: `url(${`${song.album.cover.replace(
-                                    /\?param=.*/,
-                                    ''
-                                )}?param=800y800`})`,
-                                backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
-                                filter: 'blur(20px)',
-                                zIndex: -1
-                            }}
-                        />
-                    </figure>
-                ) : (
-                    false
-                )}
+                            backgroundImage: `url(${`${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`})`,
+                            backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
+                            filter: 'blur(20px)',
+                            zIndex: -1
+                        }}
+                    />
+                </figure>
+            ) : (
+                false
+            )}
 
-                <section
-                    className={classnames({
-                        [styles.transparent]: transparent
-                    })}>
-                    {this.renderBack()}
-
-                    <div>
-                        {this.renderFav()}
-                        {this.renderPlaylist()}
-                        {this.renderMenu()}
-                    </div>
-                </section>
-            </header>
-        );
-    }
-}
+            <section
+                className={classnames({
+                    [styles.transparent]: transparent
+                })}>
+                {renderBack()}
+                <div>
+                    {renderFav()}
+                    {renderPlaylist()}
+                    {renderMenu()}
+                </div>
+            </section>
+        </header>
+    );
+});
 
 export default Header;

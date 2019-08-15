@@ -1,11 +1,11 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as styles from './index.less';
@@ -16,17 +16,19 @@ interface ITopProps {
     list: any;
 }
 
-@inject((stores: IStore) => ({
-    loading: stores.top.loading,
-    list: stores.top.list,
-    getList: stores.top.getList
-}))
-class Top extends React.Component<ITopProps, {}> {
-    componentDidMount() {
-        this.props.getList();
+const Top: React.SFC = observer(() => {
+    const { top } = useStore();
+    const { loading, getList } = top;
+
+    if (loading) {
+        return <Loader show />;
     }
 
-    renderItem(item: any) {
+    React.useEffect(() => {
+        top.getList();
+    }, []);
+
+    const renderItem = (item: any) => {
         if (!item) {
             return false;
         }
@@ -52,10 +54,10 @@ class Top extends React.Component<ITopProps, {}> {
                 </article>
             </Link>
         );
-    }
+    };
 
-    renderList() {
-        const { list } = this.props;
+    const renderList = () => {
+        const { list } = top;
         const columns = [];
 
         for (let i = 0, length = Math.ceil(list.length / 2); i < length; ++i) {
@@ -64,37 +66,28 @@ class Top extends React.Component<ITopProps, {}> {
 
             columns.push(
                 <li key={i} className="clearfix">
-                    {this.renderItem(item)}
-                    {this.renderItem(next)}
+                    {renderItem(item)}
+                    {renderItem(next)}
                 </li>
             );
         }
-
         return columns;
-    }
+    };
 
-    render() {
-        const { loading } = this.props;
+    return (
+        <div className={styles.container}>
+            <Header
+                {...{
+                    showBack: true,
+                    transparent: true
+                }}
+            />
 
-        if (loading) {
-            return <Loader show />;
-        }
+            <ul className={styles.list}>{renderList()}</ul>
 
-        return (
-            <div className={styles.container}>
-                <Header
-                    {...{
-                        showBack: true,
-                        transparent: true
-                    }}
-                />
-
-                <ul className={styles.list}>{this.renderList()}</ul>
-
-                <Controller />
-            </div>
-        );
-    }
-}
+            <Controller />
+        </div>
+    );
+});
 
 export default Top;

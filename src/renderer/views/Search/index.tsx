@@ -1,56 +1,29 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
-import IAlbum from 'interface/IAlbum';
-import IArtist from 'interface/IArtist';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-interface ISearchProps {
-    loading: boolean;
-    getPlaylists: any;
-    loadmorePlaylists: any;
-    getAlbums: any;
-    loadmoreAlbums: any;
-    getArtists: any;
-    loadmoreArtists: any;
-    getUsers: any;
-    loadmoreUsers: any;
-    albums: IAlbum[];
-    playlists: any;
-    users: any;
-    artists: IArtist[];
-    follow: any;
+interface ISearchState {
+    renderContent: any;
+    search: any;
+    loadmore: any;
 }
 
-@inject((stores: IStore) => ({
-    loading: stores.search.loading,
-    follow: stores.artist.follow,
-    playlists: stores.search.playlists,
-    getPlaylists: stores.search.getPlaylists,
-    loadmorePlaylists: stores.search.loadmorePlaylists,
-    albums: stores.search.albums,
-    getAlbums: stores.search.getAlbums,
-    loadmoreAlbums: stores.search.loadmoreAlbums,
-    artists: stores.search.artists,
-    getArtists: stores.search.getArtists,
-    loadmoreArtists: stores.search.loadmoreArtists,
-    users: stores.search.users,
-    getUsers: stores.search.getUsers,
-    loadmoreUsers: stores.search.loadmoreUsers
-}))
-class Search extends React.Component<ISearchProps, {}> {
-    private listRef = React.createRef<HTMLElement>();
-    private searchRef = React.createRef<HTMLInputElement>();
+const Search: React.FC = observer(() => {
+    const { search, artist } = useStore();
+    const listRef = React.useRef<HTMLElement>();
+    const searchRef = React.useRef<HTMLInputElement>();
+    const [searchInfo, setSearchInfo] = React.useState<ISearchState>();
 
-    loadmore() {
-        const container = this.listRef.current;
-        const { loading, loadmorePlaylists } = this.props;
+    const loadmore = () => {
+        const container = listRef.current;
+        const { loading, loadmorePlaylists } = search;
         if (loading) {
             return;
         }
@@ -58,9 +31,9 @@ class Search extends React.Component<ISearchProps, {}> {
         if (container.scrollTop + container.offsetHeight + 50 > container.scrollHeight) {
             loadmorePlaylists();
         }
-    }
+    };
 
-    highlight(ele: HTMLElement) {
+    const highlight = (ele: HTMLElement) => {
         const eles = ele.parentElement.children;
 
         Array.from(eles).forEach(e => {
@@ -68,42 +41,42 @@ class Search extends React.Component<ISearchProps, {}> {
         });
 
         ele.classList.add(styles.selected);
-    }
+    };
 
-    reset() {
-        this.setState({
-            renderContent: this.renderPlaylist.bind(this),
-            search: this.props.getPlaylists,
-            loadmore: this.props.loadmorePlaylists
+    const reset = () => {
+        setSearchInfo({
+            renderContent: renderPlaylist,
+            search: getPlaylists,
+            loadmore: loadmorePlaylists
         });
-    }
+    };
 
-    selected(ele: any, state: any) {
-        const keywords = this.searchRef.current.value.trim();
+    const selected = (ele: any, state: ISearchState) => {
+        const keywords = searchRef.current.value.trim();
 
         if (ele.classList.contains(styles.selected)) {
             return;
         }
 
-        this.highlight(ele);
-        this.setState(state);
+        highlight(ele);
+        setSearchInfo(state);
 
         if (keywords) {
             setTimeout(() => state.search(keywords));
         }
-    }
+    };
 
-    doSearch(e: any) {
+    const doSearch = (e: any) => {
         if (e.keyCode !== 13) {
             return;
         }
         const keyword = e.target.value.trim();
-        const { getPlaylists } = this.props;
+        const { getPlaylists } = search;
         getPlaylists(keyword);
-    }
+    };
 
-    renderPlaylist() {
-        const { playlists } = this.props;
+    const renderPlaylist = () => {
+        const { playlists } = search;
 
         if (playlists.length === 0) {
             return (
@@ -115,7 +88,7 @@ class Search extends React.Component<ISearchProps, {}> {
 
         return playlists.map((e: any) => {
             return (
-                <Link className={styles.row} key={e.link} onClick={() => this.reset()} to={e.link}>
+                <Link className={styles.row} key={e.link} onClick={reset} to={e.link}>
                     <ProgressImage
                         {...{
                             src: e.cover,
@@ -142,10 +115,10 @@ class Search extends React.Component<ISearchProps, {}> {
                 </Link>
             );
         });
-    }
+    };
 
-    renderAlbums() {
-        const { albums } = this.props;
+    const renderAlbums = () => {
+        const { albums } = search;
 
         if (albums.length === 0) {
             return (
@@ -157,7 +130,7 @@ class Search extends React.Component<ISearchProps, {}> {
 
         return albums.map(e => {
             return (
-                <Link className={styles.row} key={e.link} onClick={() => this.reset()} to={e.link}>
+                <Link className={styles.row} key={e.link} onClick={reset} to={e.link}>
                     <ProgressImage
                         {...{
                             src: e.cover,
@@ -176,10 +149,11 @@ class Search extends React.Component<ISearchProps, {}> {
                 </Link>
             );
         });
-    }
+    };
 
-    renderArtists() {
-        const { artists, follow } = this.props;
+    const renderArtists = () => {
+        const { artists } = search;
+        const { follow } = artist;
 
         if (artists.length === 0) {
             return (
@@ -192,7 +166,7 @@ class Search extends React.Component<ISearchProps, {}> {
         return artists.map(e => {
             return (
                 <div className={styles.artist} key={e.link}>
-                    <Link onClick={() => this.reset()} to={e.link}>
+                    <Link onClick={reset} to={e.link}>
                         <ProgressImage
                             {...{
                                 src: e.avatar,
@@ -212,7 +186,7 @@ class Search extends React.Component<ISearchProps, {}> {
                         </div>
 
                         <i
-                            className={classnames('ion-ios-heart', {
+                            className={classnames('remixicon-heart-fill', {
                                 liked: e.followed
                             })}
                             onClick={async (ev: any) => {
@@ -232,10 +206,10 @@ class Search extends React.Component<ISearchProps, {}> {
                 </div>
             );
         });
-    }
+    };
 
-    renderUsers() {
-        const { users } = this.props;
+    const renderUsers = () => {
+        const { users } = search;
 
         if (users.length === 0) {
             return (
@@ -248,7 +222,7 @@ class Search extends React.Component<ISearchProps, {}> {
         return users.map((e: any) => {
             return (
                 <div className={styles.user} key={e.link}>
-                    <Link onClick={() => this.reset()} to={e.link}>
+                    <Link onClick={reset} to={e.link}>
                         <ProgressImage
                             {...{
                                 src: e.avatar,
@@ -262,97 +236,90 @@ class Search extends React.Component<ISearchProps, {}> {
                 </div>
             );
         });
-    }
+    };
 
-    render() {
-        const {
-            loading,
-            getPlaylists,
-            loadmorePlaylists,
-            getAlbums,
-            loadmoreAlbums,
-            getArtists,
-            loadmoreArtists,
-            getUsers,
-            loadmoreUsers
-        } = this.props;
+    const {
+        loading,
+        getPlaylists,
+        loadmorePlaylists,
+        getAlbums,
+        loadmoreAlbums,
+        getArtists,
+        loadmoreArtists,
+        getUsers,
+        loadmoreUsers
+    } = search;
 
-        return (
-            <div className={styles.container}>
-                <Header
-                    {...{
-                        transparent: true,
-                        showBack: true
-                    }}
-                />
+    return (
+        <div className={styles.container}>
+            <Header
+                {...{
+                    transparent: true,
+                    showBack: true
+                }}
+            />
 
-                <main>
-                    <summary>
-                        <input
-                            ref={this.searchRef}
-                            type="text"
-                            onKeyUp={e => this.doSearch(e)}
-                            placeholder="Search ..."
-                        />
-                    </summary>
+            <main>
+                <summary>
+                    <input ref={searchRef} type="text" onKeyUp={doSearch} placeholder="Search ..." />
+                </summary>
 
-                    <nav>
-                        <span
-                            className={styles.selected}
-                            onClick={e =>
-                                this.selected(e.target, {
-                                    search: getPlaylists,
-                                    loadmore: loadmorePlaylists,
-                                    renderContent: () => this.renderPlaylist()
-                                })
-                            }>
-                            Playlist
-                        </span>
-                        <span
-                            onClick={e =>
-                                this.selected(e.target, {
-                                    search: getAlbums,
-                                    loadmore: loadmoreAlbums,
-                                    renderContent: () => this.renderAlbums()
-                                })
-                            }>
-                            Album
-                        </span>
-                        <span
-                            onClick={e =>
-                                this.selected(e.target, {
-                                    search: getArtists,
-                                    loadmore: loadmoreArtists,
-                                    renderContent: () => this.renderArtists()
-                                })
-                            }>
-                            Singer
-                        </span>
-                        <span
-                            onClick={e =>
-                                this.selected(e.target, {
-                                    search: getUsers,
-                                    loadmore: loadmoreUsers,
-                                    renderContent: () => this.renderUsers()
-                                })
-                            }>
-                            User
-                        </span>
-                    </nav>
+                <nav>
+                    <span
+                        className={styles.selected}
+                        onClick={e =>
+                            selected(e.target, {
+                                search: getPlaylists,
+                                loadmore: loadmorePlaylists,
+                                renderContent: () => renderPlaylist()
+                            })
+                        }>
+                        Playlist
+                    </span>
+                    <span
+                        onClick={e =>
+                            selected(e.target, {
+                                search: getAlbums,
+                                loadmore: loadmoreAlbums,
+                                renderContent: () => renderAlbums()
+                            })
+                        }>
+                        Album
+                    </span>
+                    <span
+                        onClick={e =>
+                            selected(e.target, {
+                                search: getArtists,
+                                loadmore: loadmoreArtists,
+                                renderContent: () => renderArtists()
+                            })
+                        }>
+                        Singer
+                    </span>
+                    <span
+                        onClick={e =>
+                            selected(e.target, {
+                                search: getUsers,
+                                loadmore: loadmoreUsers,
+                                renderContent: () => renderUsers()
+                            })
+                        }>
+                        User
+                    </span>
+                </nav>
 
-                    <section className={styles.list} onScroll={() => this.loadmore()} ref={this.listRef}>
-                        {loading ? (
-                            <div className={styles.placeholder}>
-                                <span>Loading ...</span>
-                            </div>
-                        ) : (
-                            this.renderPlaylist()
-                        )}
-                    </section>
-                </main>
-            </div>
-        );
-    }
-}
+                <section className={styles.list} onScroll={loadmore} ref={listRef}>
+                    {loading ? (
+                        <div className={styles.placeholder}>
+                            <span>Loading ...</span>
+                        </div>
+                    ) : (
+                        renderPlaylist()
+                    )}
+                </section>
+            </main>
+        </div>
+    );
+});
 
 export default Search;

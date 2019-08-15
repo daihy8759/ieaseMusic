@@ -1,69 +1,34 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import IStore from 'interface/IStore';
-import IUserProfile from 'interface/IUserProfile';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-interface IUserProps {
-    getUser: any;
-    match: any;
-    playlists: any;
-    isPlaying: any;
-    loading: boolean;
-    profile: IUserProfile;
-    isme: any;
-    follow: any;
-    controller: any;
-}
+const User: React.FC = observer(() => {
+    const { user, controller, me } = useStore();
+    if (user.loading) {
+        return <Loader show />;
+    }
 
-@inject((stores: IStore) => ({
-    loading: stores.user.loading,
-    getUser: stores.user.getUser,
-    profile: stores.user.profile,
-    playlists: stores.user.playlists,
-    follow: stores.user.follow,
-    controller: stores.controller,
-    isme: () => {
-        if (!stores.me.profile.userId) {
+    const isme = () => {
+        if (!me.profile.userId) {
             return false;
         }
-        return stores.user.profile.id === stores.me.profile.userId;
-    },
-    isPlaying: (id: number) => {
-        const { controller } = stores;
-
-        return controller.playing && controller.playlist.id === id;
-    }
-}))
-class User extends React.Component<IUserProps, {}> {
-    state = {
-        hovered: {
-            cover: ''
-        }
+        return user.profile.id === me.profile.userId;
     };
 
-    componentDidMount() {
-        const { getUser, match } = this.props;
-        getUser(match.params.id);
-    }
+    const isPlaying = (id: number) => {
+        return controller.playing && controller.playlist.id === id;
+    };
 
-    componentDidUpdate(prevProps: IUserProps) {
-        const { match, getUser } = this.props;
-
-        if (prevProps.match.params.id !== match.params.id) {
-            getUser(match.params.id);
-        }
-    }
-
-    renderList() {
-        const { playlists, isPlaying } = this.props;
+    const renderList = () => {
+        const { playlists } = user;
 
         return playlists.map((e: any) => {
             return (
@@ -73,8 +38,8 @@ class User extends React.Component<IUserProps, {}> {
                     })}
                     to={e.link}
                     key={e.id}
-                    onMouseEnter={ev => this.setState({ hovered: e })}
-                    onMouseLeave={ev => this.setState({ hovered: false })}>
+                    onMouseEnter={ev => setHovered(e)}
+                    onMouseLeave={ev => setHovered(null)}>
                     <h2>
                         <span>{e.name}</span>
                     </h2>
@@ -88,98 +53,91 @@ class User extends React.Component<IUserProps, {}> {
                 </Link>
             );
         });
-    }
+    };
 
-    render() {
-        const { loading, profile, isme, follow, controller } = this.props;
-        const { hovered } = this.state;
-        const { followed } = profile;
+    const { profile, follow } = user;
+    const { followed } = profile;
+    const [hovered, setHovered] = React.useState();
 
-        // Force rerender all, let image progressively load
-        if (loading) {
-            return <Loader show />;
-        }
+    return (
+        <div className={styles.container}>
+            <Header
+                {...{
+                    transparent: true,
+                    showBack: true,
+                    showPlaylist: true
+                }}
+            />
 
-        return (
-            <div className={styles.container}>
-                <Header
-                    {...{
-                        transparent: true,
-                        showBack: true,
-                        showPlaylist: true
+            <button
+                style={{
+                    display: isme() ? 'none' : 'block'
+                }}
+                className={classnames(styles.follow, {
+                    [styles.followed]: followed
+                })}
+                type="button"
+                onClick={e => follow(followed)}>
+                {followed ? 'Followed' : 'Follow'}
+            </button>
+
+            <figure
+                style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    height: '100%',
+                    width: '100%',
+                    padding: 0,
+                    margin: 0,
+                    overflow: 'hidden'
+                }}>
+                <img
+                    alt=""
+                    src={profile.avatar}
+                    className={styles.avatar}
+                    style={{
+                        width: window.innerWidth,
+                        height: window.innerWidth
+                    }}
+                    onLoad={(e: any) => {
+                        e.target.classList.add(styles.expose);
                     }}
                 />
 
-                <button
-                    style={{
-                        display: isme() ? 'none' : 'block'
-                    }}
-                    className={classnames(styles.follow, {
-                        [styles.followed]: followed
-                    })}
-                    type="button"
-                    onClick={e => follow(followed)}>
-                    {followed ? 'Followed' : 'Follow'}
-                </button>
+                <div className={styles.overlay} />
+            </figure>
 
-                <figure
-                    style={{
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        height: '100%',
-                        width: '100%',
-                        padding: 0,
-                        margin: 0,
-                        overflow: 'hidden'
-                    }}>
-                    <img
-                        alt=""
-                        src={profile.avatar}
-                        className={styles.avatar}
-                        style={{
-                            width: window.innerWidth,
-                            height: window.innerWidth
-                        }}
-                        onLoad={(e: any) => {
-                            e.target.classList.add(styles.expose);
+            <main>
+                <aside className={styles.hero}>
+                    <div style={{ width: 200 }}>
+                        <h3>{profile.name}</h3>
+
+                        <p data-label="Followers">{helper.formatNumber(profile.followers)}</p>
+
+                        <p data-label="Following">{helper.formatNumber(profile.following)}</p>
+
+                        <div className={styles.signature}>
+                            <span title={profile.signature}>{profile.signature || 'No signature~'}</span>
+                        </div>
+                    </div>
+
+                    <ProgressImage
+                        className={styles.preview}
+                        {...{
+                            height: 260,
+                            width: 260,
+                            src: hovered && hovered.cover ? hovered.cover : profile.avatar
                         }}
                     />
+                </aside>
 
-                    <div className={styles.overlay} />
-                </figure>
+                <section className={styles.list}>{renderList()}</section>
+            </main>
 
-                <main>
-                    <aside className={styles.hero}>
-                        <div style={{ width: 200 }}>
-                            <h3>{profile.name}</h3>
-
-                            <p data-label="Followers">{helper.formatNumber(profile.followers)}</p>
-
-                            <p data-label="Following">{helper.formatNumber(profile.following)}</p>
-
-                            <div className={styles.signature}>
-                                <span title={profile.signature}>{profile.signature || 'No signature~'}</span>
-                            </div>
-                        </div>
-
-                        <ProgressImage
-                            className={styles.preview}
-                            {...{
-                                height: 260,
-                                width: 260,
-                                src: hovered && hovered.cover ? hovered.cover : profile.avatar
-                            }}
-                        />
-                    </aside>
-
-                    <section className={styles.list}>{this.renderList()}</section>
-                </main>
-
-                <Controller key={controller.song.id} />
-            </div>
-        );
-    }
-}
+            <Controller key={controller.song.id} />
+        </div>
+    );
+});
 
 export default User;

@@ -1,28 +1,25 @@
+import { useStore } from '@/context';
 import { Modal, ModalBody } from 'components/Modal';
 import { shell } from 'electron';
 import IArtist from 'interface/IArtist';
-import { inject, observer } from 'mobx-react';
 import * as QRCode from 'qrcode';
 import * as React from 'react';
 import * as styles from './index.less';
+import { observer } from 'mobx-react-lite';
 
-interface IShareProps {
-    share?: any;
-    controller?: any;
-}
-
-@inject('share', 'controller')
-@observer
-class Share extends React.Component<IShareProps, {}> {
-    close() {
-        const { share } = this.props;
-        share.toggle(false);
+const Share: React.SFC = observer(() => {
+    const {
+        share,
+        controller: { song }
+    } = useStore();
+    if (!song.id) {
+        return null;
     }
+    const close = () => {
+        share.toggle(false);
+    };
 
-    renderContent() {
-        const {
-            controller: { song }
-        } = this.props;
+    const renderContent = () => {
         const url = `https://music.163.com/#/song?id=${song.id}`;
         const text = `${song.name} - ${song.artists.map((e: IArtist, index: number) => e.name).join()}`;
 
@@ -45,7 +42,7 @@ class Share extends React.Component<IShareProps, {}> {
                                         url
                                     )}&text=${encodeURIComponent(text)}`
                                 );
-                                this.close();
+                                close();
                             }}>
                             <img alt="Twitter" className={styles.social} src="assets/social-twitter.png" />
                         </a>
@@ -57,7 +54,7 @@ class Share extends React.Component<IShareProps, {}> {
                                 shell.openExternal(
                                     `https://facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
                                 );
-                                this.close();
+                                close();
                             }}>
                             <img alt="Facebook" className={styles.social} src="assets/social-facebook.png" />
                         </a>
@@ -67,7 +64,7 @@ class Share extends React.Component<IShareProps, {}> {
                             onClick={e => {
                                 e.preventDefault();
                                 shell.openExternal(`https://plus.google.com/share?url=${encodeURIComponent(url)}`);
-                                this.close();
+                                close();
                             }}>
                             <img alt="Google" className={styles.social} src="assets/social-google.png" />
                         </a>
@@ -91,31 +88,20 @@ class Share extends React.Component<IShareProps, {}> {
                         className={styles.close}
                         onClick={e => {
                             e.preventDefault();
-                            this.close();
+                            close();
                         }}>
                         <img alt="Close Menus" className={styles.close} src="../../assets/close.png" />
                     </a>
                 </main>
             </div>
         );
-    }
+    };
 
-    render() {
-        const {
-            share,
-            controller: { song }
-        } = this.props;
-
-        if (!song.id) {
-            return false;
-        }
-
-        return (
-            <Modal show={share.show}>
-                <ModalBody className={styles.modal}>{this.renderContent()}</ModalBody>
-            </Modal>
-        );
-    }
-}
+    return (
+        <Modal show={share.show}>
+            <ModalBody className={styles.modal}>{renderContent()}</ModalBody>
+        </Modal>
+    );
+});
 
 export default Share;

@@ -9,7 +9,8 @@ interface FadeImageProps {
     title?: string;
 }
 
-function FadeImage({ src, className, fallback = 'https://source.unsplash.com/random' }: FadeImageProps) {
+const FadeImage: React.SFC<FadeImageProps> = props => {
+    const { src, className, fallback = 'https://source.unsplash.com/random' } = props;
     if (!src) return null;
 
     const handleError = (e: any) => {
@@ -36,6 +37,6 @@ function FadeImage({ src, className, fallback = 'https://source.unsplash.com/ran
             onError={handleError}
         />
     );
-}
+};
 
 export default FadeImage;

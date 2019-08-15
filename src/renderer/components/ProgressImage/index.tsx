@@ -13,7 +13,7 @@ interface ProgressImageProps {
     fallback?: string;
 }
 
-function ProgressImage({
+const ProgressImage: React.FC<ProgressImageProps> = ({
     src,
     className,
     style = {},
@@ -22,7 +22,7 @@ function ProgressImage({
     width,
     pallet,
     fallback = 'https://source.unsplash.com/random'
-}: ProgressImageProps) {
+}) => {
     let thumbNew = thumb;
     if (!src) return null;
 
@@ -103,6 +103,6 @@ function ProgressImage({
             </div>
         </figure>
     );
-}
+};
 
 export default ProgressImage;

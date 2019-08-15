@@ -3,7 +3,11 @@ import * as React from 'react';
 import colors from 'utils/colors';
 import * as styles from './index.less';
 
-function Loader({ show = false }) {
+interface ILoaderProps {
+    show?: boolean;
+}
+
+const Loader: React.SFC<ILoaderProps> = ({ show = false }) => {
     return (
         <div
             className={classnames(styles.container, {
@@ -19,6 +23,6 @@ function Loader({ show = false }) {
             </div>
         </div>
     );
-}
+};
 
 export default Loader;

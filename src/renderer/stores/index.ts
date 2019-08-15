@@ -16,22 +16,26 @@ import top from './top';
 import upnext from './upnext';
 import user from './user';
 
-export default {
-    me,
-    controller,
-    preferences,
-    home,
-    upnext,
-    comments,
-    lyrics,
-    share,
-    menu,
-    playing,
-    player,
-    top,
-    search,
-    artist,
-    playlist,
-    user,
-    fm
-};
+export function createStore() {
+    return {
+        me,
+        controller,
+        preferences,
+        home,
+        upnext,
+        comments,
+        lyrics,
+        share,
+        menu,
+        playing,
+        player,
+        top,
+        search,
+        artist,
+        playlist,
+        user,
+        fm
+    };
+}
+
+export type TStore = ReturnType<typeof createStore>;

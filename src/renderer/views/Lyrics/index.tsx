@@ -1,10 +1,9 @@
+import { useStore } from '@/context';
 import Header from 'components/Header';
 import Hero from 'components/Hero';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import ISong from 'interface/ISong';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
 import * as React from 'react';
 import * as styles from './index.less';
 
@@ -16,27 +15,25 @@ interface ILyricsProps {
     location: any;
 }
 
-@inject((stores: IStore) => ({
-    loading: stores.lyrics.loading,
-    getLyrics: () => stores.lyrics.getLyrics(),
-    lyrics: stores.lyrics.list,
-    song: stores.controller.song
-}))
-class Lyrics extends React.Component<ILyricsProps, {}> {
-    componentDidMount() {
-        this.props.getLyrics();
+const Lyrics: React.SFC<ILyricsProps> = props => {
+    const { lyrics, controller } = useStore();
+    const { loading, list: lyricsList } = lyrics;
+    const { song } = controller;
+
+    if (loading || !song.id) {
+        return <Loader show />;
     }
 
-    componentDidUpdate(prevProps: ILyricsProps) {
-        const { song, getLyrics } = this.props;
-        if (song.id !== prevProps.song.id) {
-            getLyrics();
-        }
-    }
+    React.useEffect(() => {
+        lyrics.getLyrics();
+    }, []);
 
-    renderLyrics() {
-        const { lyrics } = this.props;
-        const times = Object.keys(lyrics);
+    React.useEffect(() => {
+        lyrics.getLyrics();
+    }, [song.id]);
+
+    const renderLyrics = () => {
+        const times = Object.keys(lyricsList);
 
         if (times.length === 0) {
             return (
@@ -49,54 +46,48 @@ class Lyrics extends React.Component<ILyricsProps, {}> {
         return times.map(e => {
             return (
                 <p data-times={e} key={e}>
-                    <span>{lyrics[e]}</span>
+                    <span>{lyricsList[e]}</span>
                 </p>
             );
         });
-    }
+    };
 
-    render() {
-        const { loading, song, location } = this.props;
+    const { location } = props;
 
-        if (loading || !song.id) {
-            return <Loader show />;
-        }
+    return (
+        <div className={styles.container}>
+            <Header transparent showBack />
 
-        return (
-            <div className={styles.container}>
-                <Header transparent showBack />
+            <Hero location={location} />
 
-                <Hero location={location} />
+            <aside id="lyrics" className={styles.lyrics}>
+                <ProgressImage
+                    {...{
+                        height: window.innerHeight,
+                        width: window.innerWidth,
+                        src: song.album.cover.replace(/\?.*$/, '')
+                    }}
+                />
 
-                <aside id="lyrics" className={styles.lyrics}>
-                    <ProgressImage
-                        {...{
-                            height: window.innerHeight,
-                            width: window.innerWidth,
-                            src: song.album.cover.replace(/\?.*$/, '')
-                        }}
-                    />
-
-                    <section
-                        onWheel={e => {
-                            e.currentTarget.setAttribute('scrolling', 'true');
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.removeAttribute('scrolling');
+                <section
+                    onWheel={e => {
+                        e.currentTarget.setAttribute('scrolling', 'true');
+                    }}
+                    onMouseLeave={e => {
+                        e.currentTarget.removeAttribute('scrolling');
+                    }}>
+                    <div
+                        style={{
+                            position: 'relative',
+                            paddingTop: '10vh',
+                            paddingBottom: '14vh'
                         }}>
-                        <div
-                            style={{
-                                position: 'relative',
-                                paddingTop: '10vh',
-                                paddingBottom: '14vh'
-                            }}>
-                            {this.renderLyrics()}
-                        </div>
-                    </section>
-                </aside>
-            </div>
-        );
-    }
-}
+                        {renderLyrics()}
+                    </div>
+                </section>
+            </aside>
+        </div>
+    );
+};
 
 export default Lyrics;

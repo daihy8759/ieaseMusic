@@ -1,7 +1,7 @@
+import { useStore } from '@/context';
 import Loader from 'components/Loader';
 import * as React from 'react';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
-import stores from '../stores';
 import Layout from '../views/Layout';
 import Welcome from '../views/Welcome';
 
@@ -31,6 +31,7 @@ function LazyComponent(Component: any) {
 }
 
 function requireAuth(component: any, props: any) {
+    const stores = useStore();
     if (stores.me.hasLogin()) {
         return React.createElement(LazyComponent(component), {
             ...props

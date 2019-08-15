@@ -1,11 +1,10 @@
-import { observable, action } from 'mobx';
-import ISong from 'interface/ISong';
+import { action, observable } from 'mobx';
 
 class Share {
     @observable show = false;
 
     @action
-    toggle = (song: ISong, show = !this.show) => {
+    toggle = (show = !this.show) => {
         this.show = show;
     };
 }

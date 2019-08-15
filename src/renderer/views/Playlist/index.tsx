@@ -1,10 +1,10 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
@@ -12,47 +12,23 @@ import * as styles from './index.less';
 
 interface IPlaylistProps {
     match: any;
-    getList: any;
-    list: any;
-    isPlaying: any;
-    loading: boolean;
-    types: any;
-    loadmore: any;
 }
 
-@inject((stores: IStore) => ({
-    loading: stores.playlist.loading,
-    types: stores.playlist.types,
-    list: stores.playlist.list,
-    getList: stores.playlist.getList,
-    loadmore: stores.playlist.loadmore,
-    isPlaying: (id: number) => {
-        return stores.controller.playlist.id === id;
-    }
-}))
-class Playlist extends React.Component<IPlaylistProps, {}> {
-    private listRef = React.createRef<HTMLElement>();
+const Playlist: React.SFC<IPlaylistProps> = observer(props => {
+    const { playlist, controller } = useStore();
+    const listRef = React.useRef<HTMLElement>();
 
-    componentDidMount() {
-        this.loadList();
-    }
-
-    componentDidUpdate(prevProps: IPlaylistProps) {
-        const { match } = this.props;
-        if (match.params.type !== prevProps.match.params.type) {
-            this.loadList();
-        }
-    }
-
-    loadList = () => {
-        const { match, getList } = this.props;
-        getList(match.params.type);
+    const isPlaying = (id: number) => {
+        return controller.playlist.id === id;
     };
 
-    async loadmore() {
-        const container = this.listRef.current;
-        const { loadmore } = this.props;
+    const loadList = () => {
+        const { match } = props;
+        playlist.getList(match.params.type);
+    };
 
+    const loadmore = async () => {
+        const container = listRef.current;
         // Drop the duplicate invoke
         if (container.classList.contains(styles.loadmore)) {
             return;
@@ -62,13 +38,13 @@ class Playlist extends React.Component<IPlaylistProps, {}> {
             // Mark as loading
             container.classList.add(styles.loadmore);
 
-            await loadmore();
+            await playlist.loadmore();
             container.classList.remove(styles.loadmore);
         }
-    }
+    };
 
-    renderList() {
-        const { list, isPlaying } = this.props;
+    const renderList = () => {
+        const { list } = playlist;
 
         return list.map((e: any, index: number) => {
             return (
@@ -97,58 +73,54 @@ class Playlist extends React.Component<IPlaylistProps, {}> {
                 </article>
             );
         });
-    }
+    };
 
-    render() {
-        const {
-            loading,
-            types,
-            match: { params },
-            list
-        } = this.props;
+    const {
+        match: { params }
+    } = props;
+    const { loading, types, list } = playlist;
 
-        return (
-            <div className={styles.container} data-type={encodeURIComponent(params.type)}>
-                <Header
-                    {...{
-                        transparent: true,
-                        showBack: true
-                    }}
-                />
+    return (
+        <div className={styles.container} data-type={encodeURIComponent(params.type)}>
+            <Header
+                {...{
+                    transparent: true,
+                    showBack: true
+                }}
+            />
 
-                <div className={styles.inner}>
-                    <Loader show={loading} />
+            <div className={styles.inner}>
+                <Loader show={loading} />
 
-                    <ul className={styles.navs}>
-                        {types.map((e: any) => {
-                            const selected = params.type === e.name;
-                            return (
-                                <li
-                                    key={e.name}
-                                    className={classnames(styles.nav, {
-                                        [styles.selected]: selected
-                                    })}>
-                                    {selected ? (
-                                        <Link to={`/playlist/${encodeURIComponent(e.name)}`}>
-                                            {e.name} / {list.length} LIST
-                                        </Link>
-                                    ) : (
-                                        <Link to={`/playlist/${encodeURIComponent(e.name)}`}>{e.name}</Link>
-                                    )}
-                                </li>
-                            );
-                        })}
-                    </ul>
+                <ul className={styles.navs}>
+                    {types.map((e: any) => {
+                        const selected = params.type === e.name;
+                        return (
+                            <li
+                                key={e.name}
+                                className={classnames(styles.nav, {
+                                    [styles.selected]: selected
+                                })}>
+                                {selected ? (
+                                    <Link to={`/playlist/${encodeURIComponent(e.name)}`}>
+                                        {e.name} / {list.length} LIST
+                                    </Link>
+                                ) : (
+                                    <Link to={`/playlist/${encodeURIComponent(e.name)}`}>{e.name}</Link>
+                                )}
+                            </li>
+                        );
+                    })}
+                </ul>
 
-                    <section className={styles.list} ref={this.listRef} onScroll={() => this.loadmore()}>
-                        {this.renderList()}
-                    </section>
+                <section className={styles.list} ref={listRef} onScroll={loadmore}>
+                    {renderList()}
+                </section>
 
-                    <Controller />
-                </div>
+                <Controller />
             </div>
-        );
-    }
-}
+        </div>
+    );
+});
 
 export default Playlist;

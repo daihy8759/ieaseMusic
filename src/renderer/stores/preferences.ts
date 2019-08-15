@@ -1,9 +1,9 @@
 import { ipcRenderer, remote } from 'electron';
-import { action, observable } from 'mobx';
+import { action, observable, runInAction } from 'mobx';
 import * as path from 'path';
+import lastfm from 'utils/lastfm';
 import * as pkg from '../../../package.json';
 import storage from '../../shared/storage';
-import lastfm from 'utils/lastfm';
 import controller from './controller';
 
 class Preferences {
@@ -29,7 +29,8 @@ class Preferences {
 
     @observable lastFm = {
         username: '', // Your last.fm username
-        password: '' // Your last.fm password
+        password: '', // Your last.fm password
+        connected: ''
     };
 
     @observable connecting = false;
@@ -527,8 +528,9 @@ class Preferences {
                 connected: `${username}:${password}`
             });
         }
-
-        this.connecting = false;
+        runInAction(() => {
+            this.connecting = false;
+        });
     };
 
     @action

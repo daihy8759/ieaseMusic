@@ -1,10 +1,10 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import FadeImage from 'components/FadeImage';
 import Indicator from 'components/Indicator';
 import IArtist from 'interface/IArtist';
 import ISong from 'interface/ISong';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import colors from 'utils/colors';
@@ -20,47 +20,24 @@ interface IPlayingProps {
     search?: any;
 }
 
-@inject((stores: IStore) => ({
-    show: stores.playing.show,
-    search: stores.playing.filter,
-    filtered: stores.playing.filtered,
-    songs: stores.controller.playlist.songs,
-    song: stores.controller.song,
-    play: stores.controller.play,
-    close: () => stores.playing.toggle(false)
-}))
-class Playing extends React.Component<IPlayingProps, {}> {
-    list: HTMLUListElement;
-    search: HTMLInputElement;
-    container: HTMLDivElement;
-
-    componentDidUpdate(prevProps: IPlayingProps) {
-        const { show, song, filtered } = this.props;
-
-        if (show) {
-            const playing = Array.from(this.list.querySelectorAll('[data-id]')).find(
-                (e: any) => e.dataset.id === song.id
-            );
-
-            if (playing) {
-                playing.scrollIntoView();
-            }
-        }
-        if (filtered.length !== prevProps.filtered.length) {
-            this.list.scrollTop = 0;
-        }
+const Playing: React.SFC = observer(() => {
+    const { playing, controller } = useStore();
+    if (!playing.show) {
+        return null;
     }
 
-    pressEscExit(e: any) {
-        const { close } = this.props;
+    const listRef = React.useRef<HTMLUListElement>();
+    const containerRef = React.useRef<HTMLDivElement>();
+    const searchRef = React.useRef<HTMLInputElement>();
+
+    const pressEscExit = (e: any) => {
         if (e.keyCode === 27) {
-            close();
+            playing.toggle(false);
         }
-    }
+    };
 
-    highlight(offset: number) {
-        const { list } = this;
-        const songs = Array.from(list.querySelectorAll('[data-id]'));
+    const highlight = (offset: number) => {
+        const songs = Array.from(listRef.current.querySelectorAll('[data-id]'));
         let index = songs.findIndex(e => e.classList.contains(styles.active));
 
         if (index > -1) {
@@ -85,9 +62,9 @@ class Playing extends React.Component<IPlayingProps, {}> {
             // @ts-ignore
             list.scrollTop = active.offsetTop + active.offsetHeight - list.offsetHeight;
         }
-    }
+    };
 
-    navigation(e: any) {
+    const navigation = (e: any) => {
         const { keyCode } = e;
         // @ts-ignore
         const offset = {
@@ -98,35 +75,35 @@ class Playing extends React.Component<IPlayingProps, {}> {
         }[keyCode];
 
         if (offset) {
-            this.highlight(offset);
+            highlight(offset);
         }
 
         if (keyCode !== 13) {
             return;
         }
-        const { play } = this.props;
-        const active = this.list.querySelector(`.${styles.active}`);
+        const active = listRef.current.querySelector(`.${styles.active}`);
 
         if (active) {
             // @ts-ignore
             const songid = active.dataset.id;
-            play(songid);
+            controller.play(songid);
         }
-    }
+    };
 
-    renderList() {
-        const { songs = [], filtered, song = {}, play, close } = this.props;
+    const renderList = () => {
+        const {
+            playlist: { songs = [] },
+            song = {},
+            play
+        } = controller;
+        const { filtered } = playing;
         let list = songs;
-
-        // Show the search result
-        if (this.search && this.search.value.trim()) {
+        if (searchRef.current && searchRef.current.value.trim()) {
             list = filtered;
         }
-
         if (list.length === 0) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
-
         return list.map((e, index) => {
             const playing = e.id === song.id;
 
@@ -170,49 +147,46 @@ class Playing extends React.Component<IPlayingProps, {}> {
                 </li>
             );
         });
-    }
+    };
 
-    render() {
-        const { show, search, close } = this.props;
+    React.useEffect(() => {
+        listRef.current.scrollTop = 0;
+    }, [playing.filtered]);
 
-        if (!show) {
-            return false;
+    React.useEffect(() => {
+        if (playing.show) {
+            const { song } = controller;
+            const playing = Array.from(listRef.current.querySelectorAll('[data-id]')).find(
+                (e: any) => e.dataset.id === song.id
+            );
+
+            if (playing) {
+                playing.scrollIntoView();
+            }
         }
+    }, [playing.show, playing]);
 
-        return (
-            <div
-                className={styles.container}
-                onKeyUp={e => this.pressEscExit(e)}
-                ref={ele => {
-                    this.container = ele;
-                }}
-                tabIndex={-1}>
-                <div className={styles.overlay} onClick={close} />
+    return (
+        <div className={styles.container} onKeyUp={e => pressEscExit(e)} ref={containerRef} tabIndex={-1}>
+            <div className={styles.overlay} onClick={close} />
 
-                <section>
-                    <header>
-                        <input
-                            onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value)}
-                            onKeyUp={e => this.navigation(e)}
-                            placeholder="Search..."
-                            ref={ele => {
-                                this.search = ele;
-                            }}
-                            type="text"
-                        />
-                    </header>
+            <section>
+                <header>
+                    <input
+                        onInput={(e: React.ChangeEvent<HTMLInputElement>) => playing.filter(e.target.value)}
+                        onKeyUp={navigation}
+                        placeholder="Search..."
+                        ref={searchRef}
+                        type="text"
+                    />
+                </header>
 
-                    <ul
-                        className={styles.list}
-                        ref={ele => {
-                            this.list = ele;
-                        }}>
-                        {this.renderList()}
-                    </ul>
-                </section>
-            </div>
-        );
-    }
-}
+                <ul className={styles.list} ref={listRef}>
+                    {renderList()}
+                </ul>
+            </section>
+        </div>
+    );
+});
 
 export default Playing;

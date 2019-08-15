@@ -1,3 +1,4 @@
+import { useStore } from '@/context';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import FadeImage from 'components/FadeImage';
@@ -5,9 +6,7 @@ import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
-import ISong from 'interface/ISong';
-import IStore from 'interface/IStore';
-import { inject } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import colors from 'utils/colors';
@@ -16,57 +15,111 @@ import * as styles from './index.less';
 import Search from './Search';
 
 interface IPlayerProps {
-    loading: boolean;
-    meta: any;
-    playing: any;
-    recommend: any;
-    canifav: any;
-    searching: any;
-    showSearch: any;
-    hideSearch: any;
-    filter: any;
-    play: any;
-    canitoggle: any;
-    song: ISong;
-    keywords: string;
-    filtered: ISong[];
-    list: ISong[];
-    hasLogin?: any;
-    users: any;
-    artists: any;
-    showLoading: any;
-    hideLoading: any;
-    getRelated: any;
     match: any;
-    getList: any;
 }
 
-@inject((stores: IStore) => ({
-    loading: stores.player.loading,
-    showLoading: () => stores.player.toggleLoading(true),
-    hideLoading: () => setTimeout(() => stores.player.toggleLoading(false), 500),
-    searching: stores.player.searching,
-    keywords: stores.player.keywords,
-    showSearch: () => stores.player.toggleSearch(true),
-    hideSearch: () => stores.player.toggleSearch(false),
-    meta: stores.player.meta,
-    getList: async (args: any) => {
+const Player: React.FC<IPlayerProps> = observer(props => {
+    const { player, controller, me } = useStore();
+    const { song, playing } = controller;
+    const searchingRef = React.useRef<HTMLUListElement>();
+    const listRef = React.useRef<HTMLUListElement>();
+
+    const showLoading = () => {
+        player.toggleLoading(true);
+    };
+
+    const hideLoading = () => {
+        setTimeout(() => player.toggleLoading(false), 500);
+    };
+
+    const getList = async (args: any) => {
         const { id, type } = args;
-        await stores.player.getDetail(type, id);
-    },
-    list: stores.player.songs,
-    filter: stores.player.filter,
-    filtered: stores.player.filtered,
-    recommend: stores.player.recommend,
-    artists: stores.player.artists,
-    users: stores.player.users,
-    getRelated: stores.player.getRelated,
-    song: stores.controller.song,
-    playing: stores.controller.playing,
-    toggle: stores.controller.toggle,
-    canitoggle: () => stores.controller.playlist.id === stores.player.meta.id,
-    play: async (songid: number) => {
-        const { controller, player } = stores;
+        await player.getDetail(type, id);
+    };
+
+    const load = async () => {
+        const { getRelated } = player;
+        const { song } = controller;
+        const {
+            match: { params }
+        } = props;
+
+        showLoading();
+        await getList(params);
+        await getRelated(song);
+        hideLoading();
+    };
+
+    React.useEffect(() => {
+        load();
+    }, []);
+
+    React.useEffect(() => {
+        player.getRelated(song);
+    }, [song.id]);
+
+    React.useEffect(() => {
+        load();
+    }, [props.match.params.id]);
+
+    React.useEffect(() => {
+        const { searching } = player;
+        const ele = searching ? searchingRef.current : listRef.current;
+        if (!ele) {
+            return;
+        }
+        const playing = ele.querySelector(styles.active);
+
+        if (playing) {
+            playing.scrollIntoViewIfNeeded();
+        }
+    }, [playing]);
+
+    const renderPeople = () => {
+        const { artists, users } = player;
+        const { hasLogin } = me;
+        const content = [];
+
+        if (!hasLogin()) {
+            return <div className={styles.nothing}>Nothing ...</div>;
+        }
+
+        if (users.length) {
+            content.push(
+                <div className={styles.users} key="users">
+                    <h3>Listening history</h3>
+                    {users.map((e: any, index: number) => {
+                        return (
+                            <Link className="clearfix tooltip" data-text={e.name} key={e.name + index} to={e.link}>
+                                <FadeImage src={e.avatar} title={e.name} />
+                            </Link>
+                        );
+                    })}
+                </div>
+            );
+        }
+
+        content.push(
+            <div className={styles.artists} key="artists">
+                <h3>Similar artist</h3>
+                {artists.slice(0, content.length ? 5 : 10).map((e: IArtist, index: number) => {
+                    return (
+                        <Link className="clearfix tooltip" data-text={e.name} key={e.name + index} to={e.link}>
+                            <FadeImage src={e.avatar} title={e.name} />
+                        </Link>
+                    );
+                })}
+            </div>
+        );
+
+        return content;
+    };
+
+    const canToggle = () => {
+        return controller.playlist.id === player.meta.id;
+    };
+
+    const play = async (songid?: number) => {
         const { meta } = player;
         const currentPlayId = controller.playlist.id;
         const sameToPlaying = currentPlayId && currentPlayId === player.meta.id;
@@ -108,107 +161,17 @@ interface IPlayerProps {
             songs: player.songs
         });
         await controller.play(songid);
-    },
-    canifav: () => {
-        const { player, me } = stores;
-
-        // The type must be a playlist
-        return (
-            player.meta.type === 0 &&
-            // And the playlist is not likes
-            me.likes.get('id') !== player.meta.id
-        );
-    },
-
-    hasLogin: stores.me.hasLogin
-}))
-class Player extends React.Component<IPlayerProps, {}> {
-    private searchingRef = React.createRef<HTMLUListElement>();
-    private listRef = React.createRef<HTMLUListElement>();
-
-    componentDidMount() {
-        this.load();
-    }
-
-    componentDidUpdate(prevProps: IPlayerProps) {
-        const { searching, song, match } = this.props;
-        if (prevProps.match.params.id !== match.params.id) {
-            this.load();
-        }
-        if (prevProps.song.id !== song.id) {
-            this.props.getRelated(song);
-        }
-        const ele = searching ? this.searchingRef.current : this.listRef.current;
-        if (!ele) {
-            return;
-        }
-        const playing = ele.querySelector(styles.active);
-
-        if (playing) {
-            playing.scrollIntoViewIfNeeded();
-        }
-    }
-
-    load = async () => {
-        const {
-            showLoading,
-            hideLoading,
-            getRelated,
-            match: { params },
-            song
-        } = this.props;
-
-        showLoading();
-        await this.props.getList(params);
-        await getRelated(song);
-        hideLoading();
     };
 
-    renderPeople() {
-        const { hasLogin, users, artists } = this.props;
-        const content = [];
+    const canifav = () => {
+        return player.meta.type === 0 && me.likes.get('id') !== player.meta.id;
+    };
 
-        if (!hasLogin()) {
-            return <div className={styles.nothing}>Nothing ...</div>;
-        }
-
-        if (users.length) {
-            content.push(
-                <div className={styles.users} key="users">
-                    <h3>Listening history</h3>
-                    {users.map((e: any, index: number) => {
-                        return (
-                            <Link className="clearfix tooltip" data-text={e.name} key={e.name + index} to={e.link}>
-                                <FadeImage src={e.avatar} title={e.name} />
-                            </Link>
-                        );
-                    })}
-                </div>
-            );
-        }
-
-        content.push(
-            <div className={styles.artists} key="artists">
-                <h3>Similar artist</h3>
-                {artists.slice(0, content.length ? 5 : 10).map((e: IArtist, index: number) => {
-                    return (
-                        <Link className="clearfix tooltip" data-text={e.name} key={e.name + index} to={e.link}>
-                            <FadeImage src={e.avatar} title={e.name} />
-                        </Link>
-                    );
-                })}
-            </div>
-        );
-
-        return content;
-    }
-
-    renderList() {
-        const { playing, canitoggle, song, searching, keywords, filtered, play } = this.props;
-        let { list } = this.props;
-        const sameToPlaylist = canitoggle();
-
-        list = searching && keywords ? filtered : list;
+    const renderList = () => {
+        let { songs, keywords, searching, filtered } = player;
+        const { song } = controller;
+        const sameToPlaylist = canToggle();
+        let list = searching && keywords ? filtered : songs;
 
         if (list.length === 0) {
             return (
@@ -248,134 +211,120 @@ class Player extends React.Component<IPlayerProps, {}> {
                 </li>
             );
         });
-    }
+    };
 
-    render() {
-        const {
-            loading,
-            meta,
-            playing,
-            recommend,
-            canifav,
-            searching,
-            showSearch,
-            hideSearch,
-            filter,
-            play,
-            canitoggle
-        } = this.props;
+    const { loading, meta, recommend, filter, searching } = player;
 
-        return (
-            <div className={styles.container}>
-                <Loader show={loading} />
+    return (
+        <div className={styles.container}>
+            <Loader show={loading} />
 
-                <Header transparent showFav={canifav()} />
+            <Header transparent showFav={canifav()} />
 
-                <section>
-                    <div
-                        className={styles.hero}
-                        style={{
-                            backgroundImage: colors.randomGradient()
-                        }}>
-                        <ProgressImage
-                            {...{
-                                height: 260,
-                                width: 260,
-                                src: meta.cover
-                            }}
-                        />
-
-                        <summary className={styles.summary}>
-                            <p className={styles.title}>
-                                <span>{meta.name}</span>
-                            </p>
-
-                            <p className={styles.author}>
-                                <span>
-                                    {meta.author.map((e: any, index: number) => {
-                                        return (
-                                            <Link key={e.name + index} to={e.link}>
-                                                {e.name}
-                                            </Link>
-                                        );
-                                    })}
-                                </span>
-                            </p>
-
-                            <p
-                                className={styles.subtitle}
-                                style={{
-                                    marginTop: 20
-                                }}>
-                                <span>{meta.company || `${helper.humanNumber(meta.played)} Played`}</span>
-                            </p>
-                        </summary>
-
-                        <div className={styles.recommend}>
-                            <div
-                                style={{
-                                    position: 'relative',
-                                    display: 'inline-block',
-                                    height: 260 / 3,
-                                    width: 260 / 3,
-                                    marginTop: -2
-                                }}>
-                                <div className={styles.play} onClick={() => play()}>
-                                    {canitoggle() && playing ? (
-                                        <i className="remixicon-pause-fill" />
-                                    ) : (
-                                        <i className="remixicon-play-fill" />
-                                    )}
-                                </div>
-                            </div>
-
-                            {recommend.map((e: any, index: number) => {
-                                return (
-                                    <Link className="clearfix" key={e.link + index} to={e.link}>
-                                        <ProgressImage
-                                            {...{
-                                                height: 260 / 3,
-                                                width: 260 / 3,
-                                                src: e.cover
-                                            }}
-                                        />
-                                    </Link>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className={styles.body}>
-                        <div className={styles.people}>{this.renderPeople()}</div>
-
-                        <div className={styles.list}>
-                            <header>
-                                <span onClick={showSearch}>Track/SEARCH</span>
-                                <span>Time</span>
-                            </header>
-                            <ul ref={this.listRef}>{this.renderList()}</ul>
-                        </div>
-                    </div>
-
-                    <Search
+            <section>
+                <div
+                    className={styles.hero}
+                    style={{
+                        backgroundImage: colors.randomGradient()
+                    }}>
+                    <ProgressImage
                         {...{
-                            filter,
-                            show: searching,
-                            close: () => {
-                                hideSearch();
-                                filter();
-                            }
-                        }}>
-                        <div className={styles.list}>
-                            <ul ref={this.searchingRef}>{this.renderList()}</ul>
-                        </div>
-                    </Search>
-                </section>
+                            height: 260,
+                            width: 260,
+                            src: meta.cover
+                        }}
+                    />
 
-                <Controller />
-            </div>
-        );
-    }
-}
+                    <summary className={styles.summary}>
+                        <p className={styles.title}>
+                            <span>{meta.name}</span>
+                        </p>
+
+                        <p className={styles.author}>
+                            <span>
+                                {meta.author.map((e: any, index: number) => {
+                                    return (
+                                        <Link key={e.name + index} to={e.link}>
+                                            {e.name}
+                                        </Link>
+                                    );
+                                })}
+                            </span>
+                        </p>
+
+                        <p
+                            className={styles.subtitle}
+                            style={{
+                                marginTop: 20
+                            }}>
+                            <span>{meta.company || `${helper.humanNumber(meta.played)} Played`}</span>
+                        </p>
+                    </summary>
+
+                    <div className={styles.recommend}>
+                        <div
+                            style={{
+                                position: 'relative',
+                                display: 'inline-block',
+                                height: 260 / 3,
+                                width: 260 / 3,
+                                marginTop: -2
+                            }}>
+                            <div className={styles.play} onClick={() => play()}>
+                                {canToggle() && playing ? (
+                                    <i className="remixicon-pause-fill" />
+                                ) : (
+                                    <i className="remixicon-play-fill" />
+                                )}
+                            </div>
+                        </div>
+
+                        {recommend.map((e: any, index: number) => {
+                            return (
+                                <Link className="clearfix" key={e.link + index} to={e.link}>
+                                    <ProgressImage
+                                        {...{
+                                            height: 260 / 3,
+                                            width: 260 / 3,
+                                            src: e.cover
+                                        }}
+                                    />
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className={styles.body}>
+                    <div className={styles.people}>{renderPeople()}</div>
+
+                    <div className={styles.list}>
+                        <header>
+                            <span onClick={() => player.toggleSearch(true)}>Track/SEARCH</span>
+                            <span>Time</span>
+                        </header>
+                        <ul ref={listRef}>{renderList()}</ul>
+                    </div>
+                </div>
+
+                <Search
+                    {...{
+                        filter,
+                        show: searching,
+                        close: () => {
+                            player.toggleSearch(false);
+                            filter();
+                        }
+                    }}>
+                    <div className={styles.list}>
+                        <ul ref={searchingRef}>{renderList()}</ul>
+                    </div>
+                </Search>
+            </section>
+
+            <Controller />
+        </div>
+    );
+});
 
 export default Player;

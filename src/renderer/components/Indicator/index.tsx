@@ -7,7 +7,8 @@ interface IIndicatorProps {
     style?: any;
 }
 
-function Indicator({ className, style }: IIndicatorProps) {
+const Indicator: React.SFC<IIndicatorProps> = props => {
+    const { className, style } = props;
     return (
         <div className={classnames(styles.container, className)} style={style}>
             <span />
@@ -16,6 +17,6 @@ function Indicator({ className, style }: IIndicatorProps) {
             <span />
         </div>
     );
-}
+};
 
 export default Indicator;
