@@ -22,10 +22,23 @@ interface IArtistProps {
 
 const Artist: React.FC<IArtistProps> = observer(props => {
     const { artist, controller, me } = useStore();
-
+    const { loading, profile, follow } = artist;
+    const size = profile.size || {};
+    const { followed } = profile;
+    const [renderTab, setRenderTab] = React.useState('renderSongs');
     const headerRef = React.useRef<HTMLHeadElement>();
     const canvasRef = React.useRef<HTMLCanvasElement>();
     const listRef = React.useRef<HTMLUListElement>();
+
+    useEffectOnce(() => {
+        const navs = Array.from(headerRef.current.querySelectorAll('nav'));
+
+        delegate(headerRef.current, 'nav', 'click', (e: any) => {
+            navs.map(d => d.classList.remove(styles.selected));
+            e.target.classList.add(styles.selected);
+        });
+        artist.getArtist(props.match.params.id);
+    });
 
     const sameToPlaying = () => {
         return controller.playlist.id === artist.playlist.id;
@@ -178,20 +191,18 @@ const Artist: React.FC<IArtistProps> = observer(props => {
         );
     };
 
-    useEffectOnce(() => {
-        const navs = Array.from(headerRef.current.querySelectorAll('nav'));
-
-        delegate(headerRef.current, 'nav', 'click', (e: any) => {
-            navs.map(d => d.classList.remove(styles.selected));
-            e.target.classList.add(styles.selected);
-        });
-        artist.getArtist(props.match.params.id);
-    });
-
-    const { loading, profile, follow } = artist;
-    const size = profile.size || {};
-    const { followed } = profile;
-    const [tabContent, setTabContent] = React.useState();
+    const renderTabContent = () => {
+        switch (renderTab) {
+            case 'renderAlbums':
+                return renderAlbums();
+            case 'renderDesc':
+                return renderDesc();
+            case 'renderArtists':
+                return renderArtists();
+            default:
+                return renderSongs();
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -200,7 +211,6 @@ const Artist: React.FC<IArtistProps> = observer(props => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true,
                     showPlaylist: true
                 }}
             />
@@ -250,16 +260,16 @@ const Artist: React.FC<IArtistProps> = observer(props => {
 
             <div className={styles.body}>
                 <header ref={headerRef}>
-                    <nav onClick={() => setTabContent(renderSongs())} className={styles.selected}>
+                    <nav onClick={() => setRenderTab('renderSongs')} className={styles.selected}>
                         Top 50
                     </nav>
 
-                    <nav onClick={() => setTabContent(renderAlbums())}>专辑</nav>
-                    <nav onClick={() => setTabContent(renderDesc())}>歌手详情</nav>
-                    <nav onClick={() => setTabContent(renderArtists())}>相似歌手</nav>
+                    <nav onClick={() => setRenderTab('renderAlbums')}>专辑</nav>
+                    <nav onClick={() => setRenderTab('renderDesc')}>歌手详情</nav>
+                    <nav onClick={() => setRenderTab('renderArtists')}>相似歌手</nav>
                 </header>
 
-                <div className={styles.content}>{tabContent()}</div>
+                <div className={styles.content}>{renderTabContent()}</div>
             </div>
         </div>
     );
