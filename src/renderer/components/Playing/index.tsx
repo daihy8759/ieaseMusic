@@ -7,6 +7,7 @@ import ISong from 'interface/ISong';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import * as styles from './index.less';
 
@@ -149,11 +150,11 @@ const Playing: React.SFC = observer(() => {
         });
     };
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         listRef.current.scrollTop = 0;
     }, [playing.filtered]);
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         if (playing.show) {
             const { song } = controller;
             const playing = Array.from(listRef.current.querySelectorAll('[data-id]')).find(

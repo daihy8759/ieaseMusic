@@ -3,46 +3,45 @@ import Header from 'components/Header';
 import Hero from 'components/Hero';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import ISong from 'interface/ISong';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { useEffectOnce, useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
 interface ILyricsProps {
-    getLyrics: any;
-    song: ISong;
-    lyrics: any;
-    loading: boolean;
+    history: any;
     location: any;
 }
 
-const Lyrics: React.SFC<ILyricsProps> = props => {
+const Lyrics: React.SFC<ILyricsProps> = observer(props => {
     const { lyrics, controller } = useStore();
     const { loading, list: lyricsList } = lyrics;
     const { song } = controller;
 
-    if (loading || !song.id) {
-        return <Loader show />;
-    }
-
-    React.useEffect(() => {
+    useEffectOnce(() => {
+        if (!song.id) {
+            props.history.replace('/');
+        }
         lyrics.getLyrics();
-    }, []);
+    });
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         lyrics.getLyrics();
     }, [song.id]);
 
-    const renderLyrics = () => {
-        const times = Object.keys(lyricsList);
+    if (loading) {
+        return <Loader show />;
+    }
 
-        if (times.length === 0) {
+    const renderLyrics = () => {
+        const times = lyricsList && Object.keys(lyricsList);
+        if (!times || times.length === 0) {
             return (
                 <div className={styles.placeholder}>
                     <span>Nothing ...</span>
                 </div>
             );
         }
-
         return times.map(e => {
             return (
                 <p data-times={e} key={e}>
@@ -52,13 +51,11 @@ const Lyrics: React.SFC<ILyricsProps> = props => {
         });
     };
 
-    const { location } = props;
-
     return (
         <div className={styles.container}>
             <Header transparent showBack />
 
-            <Hero location={location} />
+            <Hero location={props.location} />
 
             <aside id="lyrics" className={styles.lyrics}>
                 <ProgressImage
@@ -88,6 +85,6 @@ const Lyrics: React.SFC<ILyricsProps> = props => {
             </aside>
         </div>
     );
-};
+});
 
 export default Lyrics;

@@ -12,6 +12,7 @@ import ISong from 'interface/ISong';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
@@ -177,7 +178,7 @@ const Artist: React.FC<IArtistProps> = observer(props => {
         );
     };
 
-    React.useEffect(() => {
+    useEffectOnce(() => {
         const navs = Array.from(headerRef.current.querySelectorAll('nav'));
 
         delegate(headerRef.current, 'nav', 'click', (e: any) => {
@@ -185,7 +186,7 @@ const Artist: React.FC<IArtistProps> = observer(props => {
             e.target.classList.add(styles.selected);
         });
         artist.getArtist(props.match.params.id);
-    }, []);
+    });
 
     const { loading, profile, follow } = artist;
     const size = profile.size || {};

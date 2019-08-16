@@ -9,6 +9,7 @@ import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useEffectOnce, useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
 import * as styles from './index.less';
@@ -50,19 +51,19 @@ const Player: React.FC<IPlayerProps> = observer(props => {
         hideLoading();
     };
 
-    React.useEffect(() => {
+    useEffectOnce(() => {
         load();
-    }, []);
+    });
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         player.getRelated(song);
     }, [song.id]);
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         load();
     }, [props.match.params.id]);
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         const { searching } = player;
         const ele = searching ? searchingRef.current : listRef.current;
         if (!ele) {

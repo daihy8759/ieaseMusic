@@ -4,6 +4,7 @@ import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
 import * as styles from './index.less';
@@ -16,7 +17,7 @@ const Singleton: React.SFC = observer(() => {
     const { song, playing } = controller;
     const liked = isLiked(song.id);
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         let ele = circleRef.current;
         if (!ele) return;
         if (playing) {

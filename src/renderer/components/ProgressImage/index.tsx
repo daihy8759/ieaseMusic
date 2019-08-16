@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import * as React from 'react';
+import { useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
 interface ProgressImageProps {
@@ -39,7 +40,9 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
     };
 
     const handleLoad = () => {
-        thumbRef.current.style.paddingBottom = '0%';
+        if (thumbRef.current) {
+            thumbRef.current.style.paddingBottom = '0%';
+        }
         if (containerRef.current) {
             setTimeout(() => {
                 containerRef!.current.classList.add(styles.loaded);
@@ -47,7 +50,7 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
         }
     };
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         if (containerRef.current) {
             containerRef.current.classList.remove(styles.loaded);
         }

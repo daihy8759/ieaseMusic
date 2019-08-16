@@ -116,7 +116,7 @@ const Comments: React.SFC<ICommentsProps> = observer(props => {
         <div className={styles.container}>
             <Header transparent showBack />
 
-            <Hero />
+            <Hero location={props.location} />
 
             <aside ref={listRef} className={styles.list} onScroll={loadmore}>
                 <div className={styles.scroller}>

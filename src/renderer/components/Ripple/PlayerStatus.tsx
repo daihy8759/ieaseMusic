@@ -1,6 +1,7 @@
 import { useStore } from '@/context';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
 const PlayerStatus: React.SFC = observer(() => {
@@ -14,7 +15,7 @@ const PlayerStatus: React.SFC = observer(() => {
         containerRef.current.classList.remove(styles.animated);
     };
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         containerRef.current.classList.add(styles.animated);
         animationDone();
     }, [playing]);

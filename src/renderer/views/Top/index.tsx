@@ -8,25 +8,20 @@ import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import * as styles from './index.less';
-
-interface ITopProps {
-    loading: boolean;
-    getList: any;
-    list: any;
-}
 
 const Top: React.SFC = observer(() => {
     const { top } = useStore();
-    const { loading, getList } = top;
+    const { loading } = top;
 
     if (loading) {
         return <Loader show />;
     }
 
-    React.useEffect(() => {
+    useEffectOnce(() => {
         top.getList();
-    }, []);
+    });
 
     const renderItem = (item: any) => {
         if (!item) {
