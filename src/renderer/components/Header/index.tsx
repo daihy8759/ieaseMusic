@@ -18,7 +18,7 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
     const goBack = () => window.history.back();
 
     const renderBack = () => {
-        const { showBack } = props;
+        const { showBack = true } = props;
         if (!showBack) {
             return false;
         }

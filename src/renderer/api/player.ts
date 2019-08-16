@@ -1,3 +1,4 @@
+import albumList from './common/album';
 import playListDetail from './common/playlist_detail';
 import simiArtist from './common/simi_artist';
 import simiPlaylist from './common/simi_playlist';
@@ -128,6 +129,22 @@ async function getPlayListDetail(type: string, id: number) {
             ],
             played: meta.playCount,
             subscribed: meta.subscribed
+        };
+    } else {
+        const res = await albumList({ id });
+        songs = res.data.songs;
+        const meta = res.data.album;
+        resData.meta = {
+            name: meta.name,
+            size: meta.size,
+            cover: meta.picUrl,
+            author: meta.artists.map((e: any) => ({
+                id: e.id,
+                name: e.name,
+                link: e.id ? `/artist/${e.id}` : ''
+            })),
+            company: meta.company,
+            subscribed: meta.info.liked
         };
     }
     resData.songs = songs.map((d: any) => {
