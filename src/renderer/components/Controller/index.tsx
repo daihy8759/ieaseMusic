@@ -155,7 +155,7 @@ const Controller: React.FC = observer(() => {
                                 className={classnames('remixicon-heart-2-fill', {
                                     [styles.liked]: liked
                                 })}
-                                onClick={e => (liked ? unlike(song) : like(song))}
+                                onClick={() => (liked ? unlike(song) : like(song))}
                             />
                         )}
 
@@ -165,7 +165,7 @@ const Controller: React.FC = observer(() => {
                                 'remixicon-order-play-fill': mode === PLAYER_REPEAT,
                                 'remixicon-repeat-fill': mode === PLAYER_LOOP
                             })}
-                            onClick={_ => changeMode()}
+                            onClick={() => changeMode()}
                         />
                         <i className="remixicon-download-2-fill" onClick={prev} />
 
@@ -186,7 +186,7 @@ const Controller: React.FC = observer(() => {
                             </span>
                             <i
                                 className="remixicon-speed-fill"
-                                onClick={_ => next()}
+                                onClick={() => next()}
                                 style={{
                                     marginRight: 0
                                 }}

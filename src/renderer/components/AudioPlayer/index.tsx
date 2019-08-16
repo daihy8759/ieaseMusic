@@ -1,6 +1,6 @@
 import { useStore } from '@/context';
 import { ipcRenderer } from 'electron';
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
@@ -52,7 +52,7 @@ const AudioPlayer: React.FC = observer(() => {
 
     const setPosition = (percent: number, ele = document.getElementById('progress')) => {
         if (!ele) return;
-        let firstElementChild = ele.firstElementChild;
+        const firstElementChild = ele.firstElementChild;
         if (firstElementChild) {
             // @ts-ignore
             firstElementChild.style.transform = `translate3d(${-100 + percent * 100}%, 0, 0)`;
@@ -97,14 +97,14 @@ const AudioPlayer: React.FC = observer(() => {
             return;
         }
         const { list: lyrics } = store.lyrics;
-        let newEle = lyricsEle.firstElementChild;
+        const newEle = lyricsEle.firstElementChild;
         if (newEle) {
             const key = helper.getLyricsKey(currentTime * 1000, lyrics);
 
             if (key) {
-                let playingEleArray = newEle.querySelectorAll('[playing]');
+                const playingEleArray = newEle.querySelectorAll('[playing]');
                 Array.from(playingEleArray).forEach((e: HTMLElement) => e.removeAttribute('playing'));
-                let playing = newEle.querySelector(`[data-times='${key}']`);
+                const playing = newEle.querySelector(`[data-times='${key}']`);
                 if (!playing.getAttribute('playing')) {
                     playing.setAttribute('playing', 'true');
                     if (newEle.querySelector('section').getAttribute('scrolling')) {

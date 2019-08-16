@@ -14,7 +14,7 @@ import MainRouter from './routes';
 const { Menu } = remote;
 configure({ enforceActions: 'observed' });
 
-const App: React.FC = observer(props => {
+const App: React.SFC = observer(() => {
     const navigatorRef = React.useRef<any>();
     const store = useStore();
     const { controller, playing } = store;

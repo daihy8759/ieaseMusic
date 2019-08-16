@@ -21,7 +21,7 @@ const Share: React.SFC = observer(() => {
 
     const renderContent = () => {
         const url = `https://music.163.com/#/song?id=${song.id}`;
-        const text = `${song.name} - ${song.artists.map((e: IArtist, index: number) => e.name).join()}`;
+        const text = `${song.name} - ${song.artists.map((e: IArtist) => e.name).join()}`;
 
         return (
             <div className={styles.container}>

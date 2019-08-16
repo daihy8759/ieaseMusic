@@ -31,7 +31,7 @@ const UpNext: React.SFC = observer(() => {
                         <i
                             role="presentation"
                             className={classnames('remixicon-play-fill', styles.play)}
-                            onClick={e => {
+                            onClick={() => {
                                 close();
                                 controller.play(song.id);
                             }}
@@ -50,7 +50,7 @@ const UpNext: React.SFC = observer(() => {
                     <svg className={styles.svg} width="140" height="140">
                         <circle
                             className={styles.outter}
-                            onAnimationEnd={e => {
+                            onAnimationEnd={() => {
                                 if (!upnext.show) {
                                     return;
                                 }

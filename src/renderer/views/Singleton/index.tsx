@@ -18,7 +18,7 @@ const Singleton: React.SFC = observer(() => {
     const liked = isLiked(song.id);
 
     useUpdateEffect(() => {
-        let ele = circleRef.current;
+        const ele = circleRef.current;
         if (!ele) return;
         if (playing) {
             ele.firstElementChild.classList.remove(styles.pause);
@@ -41,7 +41,7 @@ const Singleton: React.SFC = observer(() => {
                     className={classnames('remixicon-heart-fill', {
                         [styles.liked]: liked
                     })}
-                    onClick={e => (liked ? unlike(song) : like(song))}
+                    onClick={() => (liked ? unlike(song) : like(song))}
                     style={{
                         cursor: 'pointer',
                         display: 'table'

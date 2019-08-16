@@ -45,7 +45,7 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
         }
         if (containerRef.current) {
             setTimeout(() => {
-                containerRef!.current.classList.add(styles.loaded);
+                containerRef.current.classList.add(styles.loaded);
             }, 50);
         }
     };

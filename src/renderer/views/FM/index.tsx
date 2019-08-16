@@ -13,9 +13,9 @@ import * as styles from './index.less';
 import { useEffectOnce } from 'react-use';
 import { RouteChildrenProps } from 'react-router';
 
-interface FMProps extends RouteChildrenProps {}
+interface IFMProps extends RouteChildrenProps {}
 
-const FM: React.SFC<FMProps> = observer(props => {
+const FM: React.SFC<IFMProps> = observer(props => {
     const { fm, me, comments, controller } = useStore();
 
     useEffectOnce(() => {
@@ -152,12 +152,12 @@ const FM: React.SFC<FMProps> = observer(props => {
                         className={classnames('remixicon-heart-fill', {
                             [styles.liked]: liked
                         })}
-                        onClick={e => (liked ? unlike(song) : like(song))}
+                        onClick={() => (liked ? unlike(song) : like(song))}
                     />
 
-                    <i className="remixicon-arrow-down-circle-fill" onClick={e => ban(song.id)} />
+                    <i className="remixicon-arrow-down-circle-fill" onClick={() => ban(song.id)} />
 
-                    <span onClick={e => play()}>
+                    <span onClick={() => play()}>
                         {isPlaying() ? <i className="remixicon-pause-fill" /> : <i className="remixicon-play-fill" />}
                     </span>
 

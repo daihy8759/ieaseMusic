@@ -14,7 +14,7 @@ import helper from 'utils/helper';
 import * as styles from './index.less';
 
 interface IStatusProps {
-    playing: boolean;
+    playing?: boolean;
 }
 
 const Status: React.SFC<IStatusProps> = props => {

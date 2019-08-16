@@ -235,7 +235,7 @@ const Artist: React.FC<IArtistProps> = observer(props => {
                             className={classnames(styles.follow, {
                                 [styles.followed]: followed
                             })}
-                            onClick={e => follow(followed)}>
+                            onClick={() => follow(followed)}>
                             {followed ? 'Followed' : 'Follow'}
                         </button>
 
@@ -250,7 +250,7 @@ const Artist: React.FC<IArtistProps> = observer(props => {
 
             <div className={styles.body}>
                 <header ref={headerRef}>
-                    <nav onClick={e => setTabContent(renderSongs())} className={styles.selected}>
+                    <nav onClick={() => setTabContent(renderSongs())} className={styles.selected}>
                         Top 50
                     </nav>
 

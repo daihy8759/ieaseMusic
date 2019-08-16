@@ -15,8 +15,13 @@ interface IPlaylistProps {
 }
 
 const Playlist: React.SFC<IPlaylistProps> = observer(props => {
+    const { match } = props;
     const { playlist, controller } = useStore();
     const listRef = React.useRef<HTMLElement>();
+
+    React.useEffect(() => {
+        loadList();
+    }, [match.params.type]);
 
     const isPlaying = (id: number) => {
         return controller.playlist.id === id;

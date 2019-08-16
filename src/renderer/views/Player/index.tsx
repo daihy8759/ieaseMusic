@@ -169,10 +169,10 @@ const Player: React.FC<IPlayerProps> = observer(props => {
     };
 
     const renderList = () => {
-        let { songs, keywords, searching, filtered } = player;
+        const { songs, keywords, searching, filtered } = player;
         const { song } = controller;
         const sameToPlaylist = canToggle();
-        let list = searching && keywords ? filtered : songs;
+        const list = searching && keywords ? filtered : songs;
 
         if (list.length === 0) {
             return (
@@ -193,7 +193,7 @@ const Player: React.FC<IPlayerProps> = observer(props => {
                     className={classnames({
                         [styles.active]: sameToPlaylist && e.id === song.id
                     })}
-                    onClick={async ev => {
+                    onClick={async () => {
                         await play(e.id);
                     }}>
                     {sameToPlaylist && e.id === song.id ? (

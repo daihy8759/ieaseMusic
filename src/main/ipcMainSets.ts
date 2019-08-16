@@ -3,7 +3,7 @@ import { BrowserWindow, globalShortcut, ipcMain, powerMonitor, session } from 'e
 import IPreferences from 'src/shared/interface/IPreferences';
 import storage from '../shared/storage';
 
-let debug = _debug('dev:main');
+const debug = _debug('dev:main');
 let mainWindow: BrowserWindow;
 
 const goodbye = () => {
@@ -29,6 +29,15 @@ const registerGlobalShortcut = () => {
     });
 };
 
+function setProxy(proxyRules: string) {
+    debug('Apply proxy: %s', proxyRules);
+    session.defaultSession.setProxy({
+        proxyRules,
+        pacScript: '',
+        proxyBypassRules: ''
+    });
+}
+
 function setProxyFromStore() {
     // @ts-ignore
     const preferences: IPreferences = storage.get('preferences');
@@ -38,15 +47,6 @@ function setProxyFromStore() {
             setProxy(proxy);
         }
     }
-}
-
-function setProxy(proxyRules: string) {
-    debug('Apply proxy: %s', proxyRules);
-    session.defaultSession.setProxy({
-        proxyRules,
-        pacScript: '',
-        proxyBypassRules: ''
-    });
 }
 
 export default (win: BrowserWindow) => {

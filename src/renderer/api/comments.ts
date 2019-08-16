@@ -30,6 +30,12 @@ async function getMusicComments(songId: number, offset = 0): Promise<MusicCommen
     return {};
 }
 
-async function getCommentLike() {}
+async function getCommentLike() {
+    // try {
+    //     const res = await commentLike();
+    // } catch (e) {
+    //     console.error(e);
+    // }
+}
 
 export { getMusicComments, getCommentLike };

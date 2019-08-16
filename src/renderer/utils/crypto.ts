@@ -42,7 +42,6 @@ const linuxApi = (data: any) => {
             .toUpperCase()
     };
 };
-const eapi = (data: any) => {};
 
 function md5(text: string) {
     return crypto

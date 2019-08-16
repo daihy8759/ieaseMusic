@@ -44,12 +44,12 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
             return (
                 <i
                     className={classnames('remixicon-star-fill', styles.subscribed)}
-                    onClick={e => player.subscribe(false)}
+                    onClick={() => player.subscribe(false)}
                 />
             );
         }
 
-        return <i className="remixicon-star-fill" onClick={e => player.subscribe(true)} />;
+        return <i className="remixicon-star-fill" onClick={() => player.subscribe(true)} />;
     };
 
     const renderMenu = () => {

@@ -87,7 +87,7 @@ const Comments: React.SFC<ICommentsProps> = observer(props => {
                                 [styles.liked]: item.liked
                             })}
                             data-text={`${helper.humanNumber(item.likedCount)} liked`}
-                            onClick={_ => like(item.commentId, !item.liked)}>
+                            onClick={() => like(item.commentId, !item.liked)}>
                             <i className="remixicon-thumb-up-fill" />
                         </span>
 

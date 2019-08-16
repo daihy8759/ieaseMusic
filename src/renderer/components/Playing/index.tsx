@@ -105,7 +105,7 @@ const Playing: React.SFC = observer(() => {
         if (list.length === 0) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
-        return list.map((e, index) => {
+        return list.map(e => {
             const playing = e.id === song.id;
 
             return (

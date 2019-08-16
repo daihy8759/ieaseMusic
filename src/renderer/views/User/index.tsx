@@ -12,6 +12,8 @@ import * as styles from './index.less';
 
 const User: React.FC = observer(() => {
     const { user, controller, me } = useStore();
+    const [hovered, setHovered] = React.useState();
+
     if (user.loading) {
         return <Loader show />;
     }
@@ -38,8 +40,8 @@ const User: React.FC = observer(() => {
                     })}
                     to={e.link}
                     key={e.id}
-                    onMouseEnter={ev => setHovered(e)}
-                    onMouseLeave={ev => setHovered(null)}>
+                    onMouseEnter={() => setHovered(e)}
+                    onMouseLeave={() => setHovered(null)}>
                     <h2>
                         <span>{e.name}</span>
                     </h2>
@@ -57,7 +59,6 @@ const User: React.FC = observer(() => {
 
     const { profile, follow } = user;
     const { followed } = profile;
-    const [hovered, setHovered] = React.useState();
 
     return (
         <div className={styles.container}>
@@ -77,7 +78,7 @@ const User: React.FC = observer(() => {
                     [styles.followed]: followed
                 })}
                 type="button"
-                onClick={e => follow(followed)}>
+                onClick={() => follow(followed)}>
                 {followed ? 'Followed' : 'Follow'}
             </button>
 

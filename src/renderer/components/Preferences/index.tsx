@@ -341,7 +341,7 @@ const Preferences: React.SFC = observer(() => {
                             <input
                                 className={styles.textInput}
                                 defaultValue={lastFm.username}
-                                onBlur={ev => saveLastfm()}
+                                onBlur={() => saveLastfm()}
                                 placeholder="Your last.fm username"
                                 ref={usernameRef}
                                 type="text"
@@ -353,7 +353,7 @@ const Preferences: React.SFC = observer(() => {
                             <input
                                 className={styles.textInput}
                                 defaultValue={lastFm.password}
-                                onBlur={ev => saveLastfm()}
+                                onBlur={() => saveLastfm()}
                                 placeholder="Your last.fm password"
                                 ref={passwordRef}
                                 type="password"
@@ -365,7 +365,7 @@ const Preferences: React.SFC = observer(() => {
                                 [styles.connected]: isConnected()
                             })}
                             disabled={isConnected() || connecting || !lastFm.username || !lastFm.password}
-                            onClick={e => connect()}>
+                            onClick={() => connect()}>
                             {renderFm()}
                         </button>
                     </article>

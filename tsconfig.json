@@ -8,6 +8,7 @@
         "jsx": "react",
         "baseUrl": "./",
         "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
         "paths": {
             "@/*": ["src/renderer/*"],
             "stores/*": ["src/renderer/stores/*"],

@@ -15,13 +15,13 @@ const Top: React.SFC = observer(() => {
     const { top } = useStore();
     const { loading } = top;
 
-    if (loading) {
-        return <Loader show />;
-    }
-
     useEffectOnce(() => {
         top.getList();
     });
+
+    if (loading) {
+        return <Loader show />;
+    }
 
     const renderItem = (item: any) => {
         if (!item) {

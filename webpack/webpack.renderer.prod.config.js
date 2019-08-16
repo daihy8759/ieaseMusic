@@ -22,19 +22,29 @@ module.exports = merge.smart(baseConfig, {
     optimization: {
         minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
         splitChunks: {
-            chunks: 'initial',
+            chunks: 'all',
+            minSize: 0,
             cacheGroups: {
-                priority: '0',
+                default: false,
+                vendors: false,
                 vendor: {
-                    chunks: 'initial',
-                    test: /react/,
-                    minSize: 0,
-                    minChunks: 1,
-                    enforce: true,
-                    reuseExistingChunk: true
+                    name: 'vendor',
+                    test: /node_modules/,
+                    priority: 20
+                },
+                common: {
+                    name: 'common',
+                    minChunks: 2,
+                    priority: 10,
+                    reuseExistingChunk: true,
+                    enforce: true
                 }
             }
         }
+    },
+    output: {
+        filename: '[name].[contentHash].js',
+        chunkFilename: '[name].[contentHash].chunk.js'
     },
     plugins
 });

@@ -5,7 +5,6 @@ import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { RouteChildrenProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
@@ -48,7 +47,7 @@ const Hero: React.SFC<IHeroProps> = observer(props => {
                     className={classnames('remixicon-heart-fill', {
                         [styles.liked]: liked
                     })}
-                    onClick={e => (liked ? unlike(song) : like(song))}
+                    onClick={() => (liked ? unlike(song) : like(song))}
                     style={{
                         cursor: 'pointer',
                         display: 'table'

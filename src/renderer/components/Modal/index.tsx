@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import * as React from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { useEffectOnce, useKey } from 'react-use';
+import { useKey } from 'react-use';
 import './index.css';
 
 interface ITransitionPortalProps {
@@ -50,7 +50,7 @@ interface IModalProps {
 }
 
 const Modal: React.SFC<IModalProps> = props => {
-    const handleEscKey = (e: any) => {
+    const handleEscKey = () => {
         const { show, onCancel } = props;
         if (show) {
             onCancel();

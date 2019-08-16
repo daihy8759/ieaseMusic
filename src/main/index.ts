@@ -8,19 +8,18 @@ import ipcMainSets from './ipcMainSets';
 
 const _PLATFORM = process.platform;
 const isOsx = _PLATFORM === 'darwin';
-const isLinux = _PLATFORM === 'linux';
-let showMenuBarOnLinux = false;
+// const isLinux = _PLATFORM === 'linux';
+const showMenuBarOnLinux = false;
 let win: BrowserWindow;
 let menu;
 
 const installExtensions = async () => {
-    const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
     const extensions = [REACT_DEVELOPER_TOOLS];
 
-    return Promise.all(extensions.map(name => installer(name, forceDownload)));
+    return Promise.all(extensions.map(name => installer(name, false)));
 };
 
-let mainMenu = [
+const mainMenu = [
     {
         label: 'ieaseMusic',
         submenu: [
@@ -277,7 +276,7 @@ let mainMenu = [
     }
 ];
 
-function updateMenu(playing: boolean = false) {
+function updateMenu(playing = false) {
     if (!isOsx && !showMenuBarOnLinux) {
         return;
     }
@@ -289,10 +288,6 @@ function updateMenu(playing: boolean = false) {
 }
 
 const createWindow = async () => {
-    if (process.env.NODE_ENV !== 'production') {
-        await installExtensions();
-    }
-
     const mainWindowState = windowStateKeeper({
         defaultWidth: 800,
         defaultHeight: 520
@@ -363,11 +358,15 @@ const createWindow = async () => {
         }
     );
     // open devTools
-    win.webContents.once('dom-ready', () => {
-        if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production') {
+        win.webContents.on('did-frame-finish-load', () => {
+            win.webContents.once('devtools-opened', () => {
+                win.focus();
+            });
             win.webContents.openDevTools();
-        }
-    });
+        });
+        await installExtensions();
+    }
 };
 
 app.on('ready', createWindow);

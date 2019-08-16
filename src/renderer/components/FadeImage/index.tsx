@@ -4,7 +4,7 @@ import { useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
 interface FadeImageProps {
-    src: string;
+    src?: string;
     className?: string;
     fallback?: string;
     title?: string;
@@ -12,6 +12,11 @@ interface FadeImageProps {
 
 const FadeImage: React.SFC<FadeImageProps> = props => {
     const { src, className, fallback = 'https://source.unsplash.com/random' } = props;
+
+    useUpdateEffect(() => {
+        imgRef.current.classList.add(styles.fadein);
+    }, [src]);
+
     if (!src) return null;
 
     const handleError = (e: any) => {
@@ -21,12 +26,7 @@ const FadeImage: React.SFC<FadeImageProps> = props => {
     const handleLoad = (e: any) => {
         e.target.classList.remove(styles.fadein);
     };
-
     const imgRef = React.useRef<HTMLImageElement>();
-
-    useUpdateEffect(() => {
-        imgRef.current.classList.add(styles.fadein);
-    }, [src]);
 
     return (
         <img

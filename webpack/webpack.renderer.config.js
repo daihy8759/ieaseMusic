@@ -24,6 +24,13 @@ module.exports = merge.smart(baseConfig, {
     module: {
         rules: [
             {
+                test: /\.tsx$/,
+                enforce: 'pre',
+                loader: 'eslint-loader',
+                include: [path.resolve(__dirname, '../src/renderer')],
+                exclude: /node_modules/
+            },
+            {
                 test: /\.css$/,
                 use: [
                     {
