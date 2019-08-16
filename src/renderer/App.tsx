@@ -17,7 +17,7 @@ configure({ enforceActions: 'observed' });
 const App: React.SFC = observer(() => {
     const navigatorRef = React.useRef<any>();
     const store = useStore();
-    const { controller, playing } = store;
+    const { controller, playing, fm, menu } = store;
 
     useEffectOnce(() => {
         ipcRenderer.on('player-toggle', () => {
@@ -31,7 +31,41 @@ const App: React.SFC = observer(() => {
                 controller.toggle();
             }
         });
+        // Play the next song
+        ipcRenderer.on('player-next', () => {
+            const FMPlaying = isFMPlaying();
+
+            if (FMPlaying) {
+                fm.next();
+            } else {
+                controller.next();
+            }
+        });
+        // Like a song
+        ipcRenderer.on('player-like', () => toggleLike());
+        // Go the home screen
+        ipcRenderer.on('show-home', () => {
+            navigatorRef.current.history.push('/');
+        });
+        // Show personal FM channel
+        ipcRenderer.on('show-fm', () => {
+            navigatorRef.current.history.push('/fm');
+        });
+        // Show preferences screen
+        ipcRenderer.on('show-preferences', () => {
+            togglePreferences();
+        });
+        // SHow slide menu panel
+        ipcRenderer.on('show-menu', () => {
+            menu.toggle(true);
+        });
+        // Show the next up
+        ipcRenderer.on('show-playing', () => {
+            playing.toggle(true);
+        });
     });
+
+    const isFMPlaying = () => controller.playlist.id === fm.playlist.id;
 
     const toggleLike = () => {
         const { controller, me } = store;
