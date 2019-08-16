@@ -1,5 +1,5 @@
-import { app, BrowserWindow, session, shell, Menu } from 'electron';
-import installer, { MOBX_DEVTOOLS, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+import { app, BrowserWindow, Menu, session, shell } from 'electron';
+import installer, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import * as windowStateKeeper from 'electron-window-state';
 import * as path from 'path';
 import * as agent from 'random-useragent';
@@ -15,7 +15,7 @@ let menu;
 
 const installExtensions = async () => {
     const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-    const extensions = [REACT_DEVELOPER_TOOLS, MOBX_DEVTOOLS];
+    const extensions = [REACT_DEVELOPER_TOOLS];
 
     return Promise.all(extensions.map(name => installer(name, forceDownload)));
 };
