@@ -3,35 +3,38 @@ import { ipcRenderer } from 'electron';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { useAudio, useEffectOnce } from 'react-use';
+import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
 import helper from 'utils/helper';
 
 const AudioPlayer: React.FC = observer(() => {
     const store = useStore();
     const { controller, preferences } = store;
     const { song, tryTheNext, playing, scrobble, next } = controller;
-    const [passed, setPassed] = React.useState(0);
-    const [bufferedDone, setBufferedDone] = React.useState(false);
+    const [passed, setPassed] = React.useState(0.0);
     let timer: number;
 
     const [audio, state, controls, ref] = useAudio({
         src: song.data ? song.data.src : null,
         autoPlay: true
     });
+    const throttled = React.useRef(
+        throttle(throttledValue => {
+            onProgress(throttledValue);
+            onScrollerLyrics(throttledValue);
+        }, 1000)
+    );
 
-    React.useEffect(() => {
-        onProgress(state.time);
-        onScrollerLyrics(state.time);
+    useUpdateEffect(() => {
+        throttled.current(state.time);
     }, [state.time]);
 
     // buffered
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         const [buffered] = state.buffered;
         if (buffered) {
             let bufferedTransform = buffered.end;
             if (bufferedTransform >= 100) {
                 bufferedTransform = 100;
-                setBufferedDone(true);
             }
             const progress = document.getElementById('progress');
             if (progress) {
@@ -43,7 +46,7 @@ const AudioPlayer: React.FC = observer(() => {
 
     const resetProgress = () => {
         clearTimeout(timer);
-        setPassed(0);
+        setPassed(0.0);
         setPosition(0);
     };
 
@@ -61,32 +64,32 @@ const AudioPlayer: React.FC = observer(() => {
         if (playing) {
             try {
                 await controls.play();
+                controls.unmute();
             } catch (e) {
                 // play failed
             }
-            controls.unmute();
         } else {
             controls.pause();
         }
     };
 
-    // TODO: hight cpu usage
-    const onProgress = throttle((currentTime = 0) => {
-        const { duration } = song;
+    const onProgress = (currentTime = 0) => {
+        const { duration } = store.controller.song;
         const progress = document.getElementById('progress');
         if (progress) {
-            if (currentTime * 1000 - passed < 1000) {
+            const passedTime = currentTime * 1000;
+            if (passedTime - passed < 1000) {
                 return;
             }
-            const percent = (currentTime * 1000) / duration;
+            const percent = passedTime / duration;
             setPosition(percent, progress);
             progress.firstElementChild.setAttribute(
                 'data-time',
-                `${helper.getTime(currentTime * 1000)} / ${helper.getTime(duration)}`
+                `${helper.getTime(passedTime)} / ${helper.getTime(duration)}`
             );
-            setPassed(currentTime * 1000);
+            setPassed(passedTime);
         }
-    }, 1000);
+    };
 
     const onScrollerLyrics = (currentTime = 0) => {
         const lyricsEle = document.getElementById('lyrics');
@@ -130,17 +133,17 @@ const AudioPlayer: React.FC = observer(() => {
         };
 
         ref.current.onseeked = () => {
-            setPassed(0);
+            setPassed(0.0);
         };
         const { volume, setVolume } = preferences;
         controls.volume(volume);
+
         ipcRenderer.on('player-volume-up', () => {
             const volumeUp = state.volume + 0.1;
 
             controls.volume(volumeUp > 1 ? 1 : volumeUp);
             setVolume(state.volume);
         });
-
         ipcRenderer.on('player-volume-down', () => {
             const volumeDown = state.volume - 0.1;
             controls.volume(volumeDown < 0 ? 0 : volumeDown);
@@ -148,11 +151,7 @@ const AudioPlayer: React.FC = observer(() => {
         });
     });
 
-    React.useEffect(() => {
-        setBufferedDone(false);
-    }, [song.id]);
-
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         const { autoPlay } = preferences;
         if (!ref.current.src && !autoPlay) {
             controller.play(song.id);

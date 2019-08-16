@@ -8,6 +8,9 @@ interface ILoaderProps {
 }
 
 const Loader: React.SFC<ILoaderProps> = ({ show = false }) => {
+    if (!show) {
+        return null;
+    }
     return (
         <div
             className={classnames(styles.container, {

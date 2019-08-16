@@ -2,7 +2,7 @@ import { useStore } from '@/context';
 import { ipcRenderer } from 'electron';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { useEffectOnce } from 'react-use';
+import { useEffectOnce, useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
 const VolumeUpDown: React.SFC = observer(() => {
@@ -23,9 +23,9 @@ const VolumeUpDown: React.SFC = observer(() => {
         });
     });
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         containerRef.current.classList.add(styles.animated);
-    });
+    }, [direction]);
 
     const animationDone = () => {
         containerRef.current.classList.remove(styles.animated);

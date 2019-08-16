@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import * as React from 'react';
+import { useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
 interface FadeImageProps {
@@ -23,7 +24,7 @@ const FadeImage: React.SFC<FadeImageProps> = props => {
 
     const imgRef = React.useRef<HTMLImageElement>();
 
-    React.useEffect(() => {
+    useUpdateEffect(() => {
         imgRef.current.classList.add(styles.fadein);
     }, [src]);
 
