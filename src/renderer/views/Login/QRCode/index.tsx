@@ -3,13 +3,15 @@ import * as qrcodePlaceholder from 'assets/qrcode-placeholder.png';
 import FadeImage from 'components/FadeImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import * as styles from './index.less';
 
-interface IQRCodeProps {
-    history: any;
-    match: any;
+interface MatchParams {
+    fm: string;
+    type: '10' | '2';
 }
+
+interface IQRCodeProps extends RouteComponentProps<MatchParams> {}
 
 const QRCode: React.SFC<IQRCodeProps> = observer(props => {
     const { me } = useStore();

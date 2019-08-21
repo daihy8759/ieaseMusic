@@ -11,16 +11,18 @@ import IArtist from 'interface/IArtist';
 import ISong from 'interface/ISong';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-interface IArtistProps {
-    match: any;
+interface MatchParams {
+    id: string;
 }
 
-const Artist: React.FC<IArtistProps> = observer(props => {
+interface ArtistProps extends RouteComponentProps<MatchParams> {}
+
+const Artist: React.FC<ArtistProps> = observer(props => {
     const { artist, controller, me } = useStore();
     const { loading, profile, follow } = artist;
     const size = profile.size || {};
@@ -37,7 +39,7 @@ const Artist: React.FC<IArtistProps> = observer(props => {
             navs.map(d => d.classList.remove(styles.selected));
             e.target.classList.add(styles.selected);
         });
-        artist.getArtist(props.match.params.id);
+        artist.getArtist(parseInt(props.match.params.id));
     });
 
     const sameToPlaying = () => {

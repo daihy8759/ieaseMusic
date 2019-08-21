@@ -7,15 +7,14 @@ import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { RouteChildrenProps } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-interface ICommentsProps extends RouteChildrenProps {}
+interface CommentsProps extends RouteComponentProps {}
 
-const Comments: React.SFC<ICommentsProps> = observer(props => {
+const Comments: React.SFC<CommentsProps> = observer(props => {
     const { comments } = useStore();
     const { loading, song, like, loadMore, hotList, newestList } = comments;
 

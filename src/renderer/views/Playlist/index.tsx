@@ -6,13 +6,15 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-interface IPlaylistProps {
-    match: any;
+interface MatchParams {
+    type: string;
 }
+
+interface IPlaylistProps extends RouteComponentProps<MatchParams> {}
 
 const Playlist: React.SFC<IPlaylistProps> = observer(props => {
     const { match } = props;

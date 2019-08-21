@@ -5,13 +5,11 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
-interface ILyricsProps {
-    history: any;
-    location: any;
-}
+interface ILyricsProps extends RouteComponentProps {}
 
 const Lyrics: React.SFC<ILyricsProps> = observer(props => {
     const { lyrics, controller } = useStore();

@@ -2,13 +2,14 @@ import { useStore } from '@/context';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import * as styles from './index.less';
 
-interface ILegacyProps {
-    history: any;
-    match: any;
+interface MatchParams {
+    fm: string;
 }
+
+interface ILegacyProps extends RouteComponentProps<MatchParams> {}
 
 const Legacy: React.FC<ILegacyProps> = observer(props => {
     const {

@@ -7,13 +7,12 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 import { useEffectOnce } from 'react-use';
-import { RouteChildrenProps } from 'react-router';
 
-interface IFMProps extends RouteChildrenProps {}
+interface IFMProps extends RouteComponentProps {}
 
 const FM: React.SFC<IFMProps> = observer(props => {
     const { fm, me, comments, controller } = useStore();

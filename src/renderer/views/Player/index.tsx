@@ -8,18 +8,20 @@ import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 import Search from './Search';
 
-interface IPlayerProps {
-    match: any;
+interface MatchParams {
+    id: string;
 }
 
-const Player: React.FC<IPlayerProps> = observer(props => {
+interface PlayerProps extends RouteComponentProps<MatchParams> {}
+
+const Player: React.FC<PlayerProps> = observer(props => {
     const { player, controller, me } = useStore();
     const { song, playing } = controller;
     const searchingRef = React.useRef<HTMLUListElement>();
