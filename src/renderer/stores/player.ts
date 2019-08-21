@@ -37,7 +37,6 @@ class Player {
     @action
     getDetail = async (type: string, id: number) => {
         const detail = await getPlayListDetail(type, id);
-        console.log(detail);
         if (detail && detail.meta) {
             const pallet = await helper.getPallet(detail.meta.cover);
             detail.meta.pallet = pallet;

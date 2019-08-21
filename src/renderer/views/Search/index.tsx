@@ -12,7 +12,7 @@ import * as styles from './index.less';
 interface ISearchState {
     renderContent: any;
     search: any;
-    loadmore: any;
+    loadMore: () => void;
 }
 
 const Search: React.FC = observer(() => {
@@ -21,15 +21,15 @@ const Search: React.FC = observer(() => {
     const searchRef = React.useRef<HTMLInputElement>();
     const [searchInfo, setSearchInfo] = React.useState<ISearchState>();
 
-    const loadmore = () => {
+    const loadMore = () => {
         const container = listRef.current;
-        const { loading, loadmorePlaylists } = search;
+        const { loading } = search;
         if (loading) {
             return;
         }
 
         if (container.scrollTop + container.offsetHeight + 50 > container.scrollHeight) {
-            loadmorePlaylists();
+            searchInfo.loadMore();
         }
     };
 
@@ -47,7 +47,7 @@ const Search: React.FC = observer(() => {
         setSearchInfo({
             renderContent: renderPlaylist,
             search: getPlaylists,
-            loadmore: loadmorePlaylists
+            loadMore: loadMorePlaylists
         });
     };
 
@@ -241,13 +241,13 @@ const Search: React.FC = observer(() => {
     const {
         loading,
         getPlaylists,
-        loadmorePlaylists,
+        loadMorePlaylists,
         getAlbums,
-        loadmoreAlbums,
+        loadMoreAlbums,
         getArtists,
-        loadmoreArtists,
+        loadMoreArtists,
         getUsers,
-        loadmoreUsers
+        loadMoreUsers
     } = search;
 
     return (
@@ -270,7 +270,7 @@ const Search: React.FC = observer(() => {
                         onClick={e =>
                             selected(e.target, {
                                 search: getPlaylists,
-                                loadmore: loadmorePlaylists,
+                                loadMore: loadMorePlaylists,
                                 renderContent: () => renderPlaylist()
                             })
                         }>
@@ -280,7 +280,7 @@ const Search: React.FC = observer(() => {
                         onClick={e =>
                             selected(e.target, {
                                 search: getAlbums,
-                                loadmore: loadmoreAlbums,
+                                loadMore: loadMoreAlbums,
                                 renderContent: () => renderAlbums()
                             })
                         }>
@@ -290,7 +290,7 @@ const Search: React.FC = observer(() => {
                         onClick={e =>
                             selected(e.target, {
                                 search: getArtists,
-                                loadmore: loadmoreArtists,
+                                loadMore: loadMoreArtists,
                                 renderContent: () => renderArtists()
                             })
                         }>
@@ -300,7 +300,7 @@ const Search: React.FC = observer(() => {
                         onClick={e =>
                             selected(e.target, {
                                 search: getUsers,
-                                loadmore: loadmoreUsers,
+                                loadMore: loadMoreUsers,
                                 renderContent: () => renderUsers()
                             })
                         }>
@@ -308,7 +308,7 @@ const Search: React.FC = observer(() => {
                     </span>
                 </nav>
 
-                <section className={styles.list} onScroll={loadmore} ref={listRef}>
+                <section className={styles.list} onScroll={loadMore} ref={listRef}>
                     {loading ? (
                         <div className={styles.placeholder}>
                             <span>Loading ...</span>

@@ -1,18 +1,19 @@
 import { useStore } from '@/context';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { useUpdateEffect } from 'react-use';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import * as styles from './index.less';
-
-interface IPlayerModeProps {
-    mode?: number;
-}
 
 const PlayerMode: React.SFC = observer(() => {
     const {
         controller: { mode }
     } = useStore();
     const containerRef = React.useRef<HTMLDivElement>();
+
+    useUpdateEffect(() => {
+        containerRef.current.classList.add(styles.animated);
+    }, [mode]);
 
     const animationDone = () => {
         containerRef.current.classList.remove(styles.animated);

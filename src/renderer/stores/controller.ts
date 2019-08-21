@@ -1,8 +1,8 @@
 import { getSongUrl } from 'api/player';
 import { ipcRenderer } from 'electron';
-import { action, observable, runInAction } from 'mobx';
 import IPlayList from 'interface/IPlayList';
 import ISong from 'interface/ISong';
+import { action, observable, runInAction } from 'mobx';
 import lastfm from 'utils/lastfm';
 import comments from './comments';
 import fm from './fm';
@@ -239,13 +239,19 @@ class Controller {
     };
 
     @action
-    changeMode = (mode = PLAYER_REPEAT) => {
+    changeMode = (mode?: 0 | 1 | 2) => {
         let index = MODES.indexOf(this.mode);
 
+        if (mode === undefined) {
+            if (++index < MODES.length) {
+                this.mode = MODES[index];
+            } else {
+                this.mode = MODES[0];
+            }
+            return;
+        }
         if (MODES.includes(mode)) {
             this.mode = mode;
-        } else if (++index < MODES.length) {
-            this.mode = MODES[index];
         } else {
             this.mode = PLAYER_SHUFFLE;
         }

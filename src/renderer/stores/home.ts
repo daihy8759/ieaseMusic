@@ -57,15 +57,15 @@ class Home {
             this.list = list;
         });
         // Get the color pallets
-        list.map(async (e, index: number) => {
-            if (!e.cover) return;
+        // list.map(async (e, index: number) => {
+        //     if (!e.cover) return;
 
-            const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
-            e.pallet = pallet;
+        //     const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
+        //     e.pallet = pallet;
 
-            // Force update list
-            this.updateShadow(e, index);
-        });
+        //     // Force update list
+        //     this.updateShadow(e, index);
+        // });
     }
 
     @action async getList() {

@@ -1,8 +1,7 @@
-import { observable, action } from 'mobx';
 import searchByType from 'api/search';
-import axios from 'axios';
-import IArtist from 'interface/IArtist';
 import IAlbum from 'interface/IAlbum';
+import IArtist from 'interface/IArtist';
+import { action, observable, runInAction } from 'mobx';
 
 class Search {
     @observable loading = false;
@@ -15,110 +14,103 @@ class Search {
 
     @observable users: any = [];
 
-    nextHref4playlists = '';
+    keyword = '';
 
-    nextHref4albums = '';
+    nextPlaylistsOffset = 0;
 
-    nextHref4artists = '';
+    nextAlbumsOffset = 0;
 
-    nextHref4users = '';
+    nextArtistsOffset = 0;
+
+    nextUsersOffset = 0;
 
     @action
     getPlaylists = async (keyword: string) => {
         this.loading = true;
-
+        this.keyword = keyword;
         const data = await searchByType('1000', keyword);
-        this.playlists = data.playlists;
-        this.nextHref4playlists = data.nextHref;
-        this.loading = false;
+        runInAction(() => {
+            this.playlists = data.playlists;
+            this.nextPlaylistsOffset = data.nextOffset;
+            this.loading = false;
+        });
     };
 
     @action
-    loadmorePlaylists = async () => {
-        if (!this.nextHref4playlists) {
+    loadMorePlaylists = async () => {
+        if (this.nextPlaylistsOffset === -1) {
             return;
         }
-
-        const response = await axios.get(this.nextHref4playlists);
-        const { data } = response;
-
-        this.playlists.push(...data.playlists);
-        this.nextHref4playlists = data.nextHref;
+        const data = await searchByType('1000', this.keyword, this.nextPlaylistsOffset);
+        runInAction(() => {
+            this.playlists.push(...data.playlists);
+            this.nextPlaylistsOffset = data.nextOffset;
+        });
     };
 
     @action
     getAlbums = async (keyword: string) => {
         this.loading = true;
-
-        const response = await axios.get(`/api/search/10/0/${keyword}`);
-        const { data } = response;
-
-        this.albums = data.albums;
-        this.nextHref4albums = data.nextHref;
-        this.loading = false;
+        const data = await searchByType('10', keyword);
+        runInAction(() => {
+            // this.albums = data.albums;
+            this.nextAlbumsOffset = data.nextOffset;
+            this.loading = false;
+        });
     };
 
     @action
-    loadmoreAlbums = async () => {
-        if (!this.nextHref4albums) {
+    loadMoreAlbums = async () => {
+        if (this.nextAlbumsOffset === -1) {
             return;
         }
-
-        const response = await axios.get(this.nextHref4albums);
-        const { data } = response;
-
-        this.albums.push(...data.albums);
-        this.nextHref4albums = data.nextHref;
+        const data = await searchByType('10', this.keyword, this.nextAlbumsOffset);
+        runInAction(() => {
+            // this.albums.push(...data.albums);
+            this.nextAlbumsOffset = data.nextOffset;
+        });
     };
 
     @action
     getArtists = async (keyword: string) => {
         this.loading = true;
-
-        const response = await axios.get(`/api/search/100/0/${keyword}`);
-        const { data } = response;
-
-        this.artists = data.artists;
-        this.nextHref4artists = data.nextHref;
-        this.loading = false;
+        const data = await searchByType('100', keyword);
+        runInAction(() => {
+            // this.artists = data.artists;
+            this.nextArtistsOffset = data.nextOffset;
+            this.loading = false;
+        });
     };
 
     @action
-    loadmoreArtists = async () => {
-        if (!this.nextHref4artists) {
+    loadMoreArtists = async () => {
+        if (this.nextArtistsOffset === -1) {
             return;
         }
-
-        const response = await axios.get(this.nextHref4artists);
-        const { data } = response;
-
-        this.artists.push(...data.artists);
-        this.nextHref4artists = data.nextHref;
+        const data = await searchByType('100', this.keyword, this.nextArtistsOffset);
+        // this.artists.push(...data.artists);
+        this.nextArtistsOffset = data.nextOffset;
     };
 
     @action
     getUsers = async (keyword: string) => {
         this.loading = true;
-
-        const response = await axios.get(`/api/search/1002/0/${keyword}`);
-        const { data } = response;
-
-        this.users = data.users;
-        this.nextHref4users = data.nextHref;
-        this.loading = false;
+        const data = await searchByType('1002', keyword);
+        runInAction(() => {
+            // this.users = data.users;
+            this.nextUsersOffset = data.nextOffset;
+            this.loading = false;
+        });
     };
 
     @action
-    loadmoreUsers = async () => {
-        if (!this.nextHref4users) {
+    loadMoreUsers = async () => {
+        if (this.nextUsersOffset === -1) {
             return;
         }
-
-        const response = await axios.get(this.nextHref4users);
-        const { data } = response;
-
-        this.users.push(...data.users);
-        this.nextHref4users = data.nextHref;
+        const data = await searchByType('1002', this.keyword, this.nextUsersOffset);
+        // this.users.push(...data.users);
+        this.nextUsersOffset = data.nextOffset;
     };
 }
 

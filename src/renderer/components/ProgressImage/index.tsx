@@ -80,7 +80,6 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
                     width
                 }}
             />
-
             <div
                 className={styles.thumb}
                 ref={thumbRef}
