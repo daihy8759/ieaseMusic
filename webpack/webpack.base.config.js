@@ -1,7 +1,5 @@
 const path = require('path');
 
-const { CheckerPlugin } = require('awesome-typescript-loader');
-
 module.exports = {
     output: {
         path: path.resolve(__dirname, '../dist'),
@@ -16,16 +14,7 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
-                loader: [
-                    'babel-loader',
-                    {
-                        loader: 'awesome-typescript-loader',
-                        options: {
-                            moduleResolution: 'node',
-                            module: 'esnext'
-                        }
-                    }
-                ]
+                loader: 'babel-loader'
             }
         ]
     },
