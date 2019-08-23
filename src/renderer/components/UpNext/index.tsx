@@ -54,7 +54,7 @@ const UpNext: React.SFC = observer(() => {
                                 if (!upnext.show) {
                                     return;
                                 }
-                                this.close();
+                                close();
                                 controller.play(song.id);
                             }}
                             cx="70"
