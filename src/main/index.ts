@@ -299,9 +299,6 @@ const createWindow = async () => {
         show: false,
         width: 800,
         height: 520,
-        resizable: false,
-        maximizable: false,
-        fullscreenable: false,
         backgroundColor: 'none',
         titleBarStyle: 'hiddenInset',
         webPreferences: {

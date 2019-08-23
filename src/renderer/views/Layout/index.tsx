@@ -15,7 +15,7 @@ import Share from 'components/Share';
 import UpNext from 'components/UpNext';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { useNetwork, useEffectOnce } from 'react-use';
+import { useNetwork, useEffectOnce, useWindowSize } from 'react-use';
 import lastfm from 'utils/lastfm';
 import * as styles from './index.less';
 
@@ -23,10 +23,11 @@ interface IBackgroundProps {
     controller?: any;
 }
 
-const Background: React.SFC<IBackgroundProps> = observer(() => {
+const Background: React.FC<IBackgroundProps> = observer(() => {
     const {
         controller: { song }
     } = useStore();
+    const { width } = useWindowSize();
 
     return (
         <div className={styles.cover}>
@@ -34,7 +35,7 @@ const Background: React.SFC<IBackgroundProps> = observer(() => {
                 <ProgressImage
                     className={styles.background}
                     {...{
-                        width: window.innerWidth,
+                        width,
                         src: `${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`
                     }}
                 />
