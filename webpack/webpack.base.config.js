@@ -23,6 +23,5 @@ module.exports = {
         alias: {
             shared: path.resolve(__dirname, '../src/shared')
         }
-    },
-    plugins: [new CheckerPlugin()]
+    }
 };
