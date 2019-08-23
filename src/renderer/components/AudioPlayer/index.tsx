@@ -20,7 +20,7 @@ const AudioPlayer: React.FC = observer(() => {
     const throttled = React.useRef(
         throttle(throttledValue => {
             onProgress(throttledValue);
-            onScrollerLyrics(throttledValue);
+            onScrollLyrics(throttledValue);
         }, 1000)
     );
 
@@ -91,23 +91,22 @@ const AudioPlayer: React.FC = observer(() => {
         }
     };
 
-    const onScrollerLyrics = (currentTime = 0) => {
+    const onScrollLyrics = (currentTime = 0) => {
         const lyricsEle = document.getElementById('lyrics');
         if (!lyricsEle) {
             return;
         }
         const { list: lyrics } = store.lyrics;
-        const newEle = lyricsEle.firstElementChild;
-        if (newEle) {
+        if (lyricsEle) {
             const key = helper.getLyricsKey(currentTime * 1000, lyrics);
 
             if (key) {
-                const playingEleArray = newEle.querySelectorAll('[playing]');
+                const playingEleArray = lyricsEle.querySelectorAll('[playing]');
                 Array.from(playingEleArray).forEach((e: HTMLElement) => e.removeAttribute('playing'));
-                const playing = newEle.querySelector(`[data-times='${key}']`);
-                if (!playing.getAttribute('playing')) {
+                const playing = lyricsEle.querySelector(`[data-times='${key}']`);
+                if (playing && !playing.getAttribute('playing')) {
                     playing.setAttribute('playing', 'true');
-                    if (newEle.querySelector('section').getAttribute('scrolling')) {
+                    if (lyricsEle.querySelector('section').getAttribute('scrolling')) {
                         return;
                     }
                     // @ts-ignore
