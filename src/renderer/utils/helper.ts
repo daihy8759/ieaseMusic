@@ -26,7 +26,6 @@ const helper = {
     },
     getLyricsKey(times: any, lyrics: any) {
         const keys = Object.keys(lyrics);
-
         return keys.find((e, index) => times > +e && index < keys.length - 1 && times < +keys[index + 1]);
     },
     formatPhone(phone: string) {

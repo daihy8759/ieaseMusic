@@ -24,14 +24,12 @@ async function getLyric(id: number) {
                     .replace(/\D/g, ':')
                     .replace(/^:|:$/g, '')
                     .split(':');
-                const content = e.replace(/\[.+\]/, '');
                 if (!timestamp[0]) {
                     return;
                 }
+                const content = e.replace(/\[.+\]/, '');
                 const times =
-                    parseInt((timestamp[0] * 60 * 1000).toString(), 10) +
-                    parseInt((timestamp[1] * 1000, 10).toString(), 10) +
-                    parseInt(timestamp[2].toString(), 10);
+                    parseInt(timestamp[0]) * 60 * 1000 + parseInt(timestamp[1]) * 1000 + parseInt(timestamp[2]);
 
                 result[times] = content;
             });

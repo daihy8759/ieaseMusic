@@ -20,12 +20,17 @@ const AudioPlayer: React.FC = observer(() => {
     const throttled = React.useRef(
         throttle(throttledValue => {
             onProgress(throttledValue);
-            onScrollLyrics(throttledValue);
         }, 1000)
+    );
+    const throttledLyrics = React.useRef(
+        throttle(throttledValue => {
+            onScrollLyrics(throttledValue);
+        }, 200)
     );
 
     useUpdateEffect(() => {
         throttled.current(state.time);
+        throttledLyrics.current(state.time);
     }, [state.time]);
 
     // buffered
@@ -92,6 +97,9 @@ const AudioPlayer: React.FC = observer(() => {
     };
 
     const onScrollLyrics = (currentTime = 0) => {
+        if (window.location.hash !== '#/lyrics') {
+            return false;
+        }
         const lyricsEle = document.getElementById('lyrics');
         if (!lyricsEle) {
             return;
@@ -99,11 +107,15 @@ const AudioPlayer: React.FC = observer(() => {
         const { list: lyrics } = store.lyrics;
         if (lyricsEle) {
             const key = helper.getLyricsKey(currentTime * 1000, lyrics);
-
+            const currentPlaying = lyricsEle.querySelector(`[playing][data-times='${key}']`);
+            // 减少dom更新
+            if (currentPlaying) {
+                return;
+            }
             if (key) {
                 const playingEleArray = lyricsEle.querySelectorAll('[playing]');
-                Array.from(playingEleArray).forEach((e: HTMLElement) => e.removeAttribute('playing'));
                 const playing = lyricsEle.querySelector(`[data-times='${key}']`);
+                Array.from(playingEleArray).forEach((e: HTMLElement) => e.removeAttribute('playing'));
                 if (playing && !playing.getAttribute('playing')) {
                     playing.setAttribute('playing', 'true');
                     if (lyricsEle.querySelector('section').getAttribute('scrolling')) {
