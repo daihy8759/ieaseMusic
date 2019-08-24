@@ -1,4 +1,5 @@
 import { useStore } from '@/context';
+import Grid from '@material-ui/core/Grid';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Header from 'components/Header';
@@ -53,33 +54,38 @@ const Playlist: React.SFC<IPlaylistProps> = observer(props => {
     const renderList = () => {
         const { list } = playlist;
 
-        return list.map((e: any, index: number) => {
-            return (
-                <article
-                    className={classnames(styles.item, {
-                        [styles.playing]: isPlaying(e.id)
-                    })}
-                    key={index}>
-                    <Link to={e.link}>
-                        <ProgressImage
-                            {...{
-                                height: 64,
-                                width: 64,
-                                src: e.cover
-                            }}
-                        />
-                    </Link>
+        return (
+            <Grid container>
+                {list.map((e: any, index: number) => {
+                    return (
+                        <Grid item xs={6} key={index}>
+                            <article
+                                className={classnames(styles.item, {
+                                    [styles.playing]: isPlaying(e.id)
+                                })}>
+                                <Link to={e.link}>
+                                    <ProgressImage
+                                        {...{
+                                            height: 64,
+                                            width: 64,
+                                            src: e.cover
+                                        }}
+                                    />
+                                </Link>
 
-                    <aside className={styles.info}>
-                        <p title={e.name}>{e.name}</p>
-                        <p>
-                            <Link to={e.user.link}>{e.user.name}</Link>
-                        </p>
-                        <span>{helper.humanNumber(e.played)} Played</span>
-                    </aside>
-                </article>
-            );
-        });
+                                <aside className={styles.info}>
+                                    <p title={e.name}>{e.name}</p>
+                                    <p>
+                                        <Link to={e.user.link}>{e.user.name}</Link>
+                                    </p>
+                                    <span>{helper.humanNumber(e.played)} Played</span>
+                                </aside>
+                            </article>
+                        </Grid>
+                    );
+                })}
+            </Grid>
+        );
     };
 
     const {

@@ -6,13 +6,24 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-const User: React.FC = observer(() => {
+interface MatchParams {
+    id: string;
+}
+
+interface UserProps extends RouteComponentProps<MatchParams> {}
+
+const User: React.FC<UserProps> = observer(props => {
     const { user, controller, me } = useStore();
     const [hovered, setHovered] = React.useState();
+
+    useEffectOnce(() => {
+        user.getUser(parseInt(props.match.params.id));
+    });
 
     if (user.loading) {
         return <Loader show />;
@@ -47,10 +58,7 @@ const User: React.FC = observer(() => {
                     </h2>
 
                     <p className={styles.played}>
-                        <span>
-                            {helper.humanNumber(e.played)}
-                            Played
-                        </span>
+                        <span>{helper.humanNumber(e.played)} Played</span>
                     </p>
                 </Link>
             );

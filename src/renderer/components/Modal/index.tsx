@@ -1,94 +1,81 @@
-import classnames from 'classnames';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
 import * as React from 'react';
-import { CSSTransition } from 'react-transition-group';
-import { useKey } from 'react-use';
-import './index.css';
+import { TransitionProps } from 'react-transition-group/Transition';
+import { Zoom } from '@material-ui/core';
 
-interface ITransitionPortalProps {
-    classNames?: string;
-    timeout: number | { appear?: number; enter?: number; exit?: number };
+const styles = (theme: Theme) =>
+    createStyles({
+        root: {
+            margin: 0,
+            padding: theme.spacing(2)
+        },
+        closeButton: {
+            position: 'absolute',
+            right: theme.spacing(1),
+            top: theme.spacing(1),
+            color: theme.palette.grey[500]
+        }
+    });
+
+const Transition = React.forwardRef<unknown, TransitionProps>(function Transition(props, ref) {
+    return <Zoom ref={ref} {...props} />;
+});
+
+export interface DialogTitleProps extends WithStyles<typeof styles> {
+    id: string;
+    children: React.ReactNode;
+    onCancel: () => void;
 }
 
-const TransitionPortal: React.SFC<ITransitionPortalProps> = props => {
-    const { children } = props;
-    if (!children) {
-        return <div />;
-    }
+const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
+    const { children, classes, onCancel } = props;
     return (
-        <div>
-            <CSSTransition {...props}>{children}</CSSTransition>
-        </div>
+        <MuiDialogTitle disableTypography className={classes.root}>
+            <Typography variant="h6">{children}</Typography>
+            {onCancel ? (
+                <IconButton aria-label="close" className={classes.closeButton} onClick={onCancel}>
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </MuiDialogTitle>
+    );
+});
+
+const DialogContent = withStyles(() => ({
+    root: {}
+}))(MuiDialogContent);
+
+interface ModalProps {
+    visible: boolean;
+    title?: string;
+    fullScreen?: boolean;
+    content: React.ReactNode | string;
+    onCancel?: () => void;
+}
+
+const Modal: React.SFC<ModalProps> = props => {
+    const { visible, title, content, fullScreen, onCancel } = props;
+    return (
+        <Dialog
+            fullScreen={fullScreen}
+            onClose={onCancel}
+            TransitionComponent={Transition}
+            aria-labelledby="customized-dialog-title"
+            open={visible}>
+            {title && (
+                <DialogTitle id="customized-dialog-title" onCancel={onCancel}>
+                    {title}
+                </DialogTitle>
+            )}
+            <DialogContent>{content}</DialogContent>
+        </Dialog>
     );
 };
 
-interface IModalBodyProps {
-    className?: string;
-}
-
-const ModalBody: React.SFC<IModalBodyProps> = props => {
-    const { className, children } = props;
-
-    return (
-        <CSSTransition classNames="fade" timeout={{ enter: 1000, exit: 1000 }}>
-            <div className={classnames('Modal-body', className)}>{children}</div>
-        </CSSTransition>
-    );
-};
-
-interface IModalHeaderProps {
-    className?: string;
-}
-
-const ModalHeader: React.SFC<IModalHeaderProps> = props => {
-    const { className, children } = props;
-    return <div className={classnames('Modal-header', className)}>{children}</div>;
-};
-
-interface IModalProps {
-    show: boolean;
-    onCancel?: any;
-}
-
-const Modal: React.SFC<IModalProps> = props => {
-    const handleEscKey = () => {
-        const { show, onCancel } = props;
-        if (show) {
-            onCancel();
-        }
-    };
-
-    const renderOverlay = () => {
-        const { show, onCancel } = props;
-        if (!show) {
-            return <div />;
-        }
-        return <div className="Modal-overlay" onClick={onCancel} />;
-    };
-
-    const renderBody = () => {
-        const { show, children } = props;
-        if (!show) {
-            return <div />;
-        }
-
-        return <div className="Modal-content">{children}</div>;
-    };
-
-    useKey('Esc', handleEscKey);
-
-    const { show } = props;
-    document.body.style.overflow = show ? 'hidden' : null;
-    return (
-        <div>
-            <CSSTransition classNames="Modal-overlay" timeout={{ enter: 200, exit: 200 }}>
-                {renderOverlay()}
-            </CSSTransition>
-
-            <TransitionPortal classNames="Modal-body" timeout={{ enter: 200, exit: 140 }}>
-                {renderBody()}
-            </TransitionPortal>
-        </div>
-    );
-};
-
-export { Modal, ModalBody, ModalHeader };
+export default Modal;

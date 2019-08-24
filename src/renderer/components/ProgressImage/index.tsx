@@ -44,7 +44,9 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
             thumbRef.current.style.paddingBottom = '0%';
         }
         if (containerRef.current) {
-            containerRef.current.classList.add(styles.loaded);
+            setTimeout(() => {
+                containerRef.current.classList.add(styles.loaded);
+            }, 50);
         }
     };
 

@@ -1,10 +1,11 @@
 import { useStore } from '@/context';
+import { PauseCircleOutlineTwoTone, PlayCircleOutlineTwoTone } from '@material-ui/icons';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
 import * as styles from './index.less';
 
-const PlayerStatus: React.SFC = observer(() => {
+const PlayerStatus: React.FC = observer(() => {
     const {
         controller: { playing }
     } = useStore();
@@ -17,12 +18,14 @@ const PlayerStatus: React.SFC = observer(() => {
 
     useUpdateEffect(() => {
         containerRef.current.classList.add(styles.animated);
-        animationDone();
+        setTimeout(() => {
+            animationDone();
+        }, 1000);
     }, [playing]);
 
     return (
         <div className={styles.container} onAnimationEnd={animationDone} ref={containerRef}>
-            {playing ? <i className="remixicon-play-fill" /> : <i className="remixicon-pause-fill" />}
+            {playing ? <PlayCircleOutlineTwoTone /> : <PauseCircleOutlineTwoTone />}
         </div>
     );
 });

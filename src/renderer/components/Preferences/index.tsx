@@ -1,8 +1,7 @@
 import { useStore } from '@/context';
-import * as closePng from 'assets/close.png';
+import { Button, Switch } from '@material-ui/core';
 import classnames from 'classnames';
-import { Modal, ModalBody, ModalHeader } from 'components/Modal';
-import Switch from 'components/Switch';
+import Modal from 'components/Modal';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import * as styles from './index.less';
@@ -255,9 +254,7 @@ const Preferences: React.SFC = observer(() => {
                                 <p onClick={e => choiceDownloadDir(e)}>{downloads}</p>
                             </aside>
 
-                            <button type="button" onClick={e => choiceDownloadDir(e)}>
-                                Change
-                            </button>
+                            <Button onClick={e => choiceDownloadDir(e)}>Change</Button>
                         </label>
                     </article>
 
@@ -399,18 +396,7 @@ const Preferences: React.SFC = observer(() => {
         );
     };
 
-    return (
-        <Modal show={preferences.show} onCancel={close}>
-            <ModalHeader className={styles.header}>
-                Preferences...
-                <i className={styles.close} onClick={close}>
-                    <img alt="Close Menus" className={styles.close} src={closePng} />
-                </i>
-            </ModalHeader>
-
-            <ModalBody className={styles.modal}>{renderOptions()}</ModalBody>
-        </Modal>
-    );
+    return <Modal title="Preferences..." visible={preferences.show} onCancel={close} content={renderOptions()} />;
 });
 
 export default Preferences;

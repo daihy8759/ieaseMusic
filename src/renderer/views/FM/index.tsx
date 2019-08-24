@@ -1,5 +1,16 @@
 import { useStore } from '@/context';
-import classnames from 'classnames';
+import { IconButton } from '@material-ui/core';
+import { red } from '@material-ui/core/colors';
+import {
+    CloudDownloadTwoTone,
+    FastForwardTwoTone,
+    FavoriteBorderTwoTone,
+    FavoriteTwoTone,
+    PauseCircleOutlineTwoTone,
+    PlayCircleOutlineTwoTone,
+    DeleteForeverTwoTone
+} from '@material-ui/icons';
+import { makeStyles } from '@material-ui/styles';
 import Controller from 'components/Controller';
 import FadeImage from 'components/FadeImage';
 import Header from 'components/Header';
@@ -8,15 +19,23 @@ import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
-import { useEffectOnce } from 'react-use';
+
+const useStyles = makeStyles({
+    liked: {
+        color: red[900],
+        textShadow: `0 0 24px ${red[900]}`
+    }
+});
 
 interface IFMProps extends RouteComponentProps {}
 
 const FM: React.SFC<IFMProps> = observer(props => {
     const { fm, me, comments, controller } = useStore();
-
+    // @ts-ignore
+    const classes = useStyles();
     useEffectOnce(() => {
         if (!me.hasLogin()) {
             props.history.replace('/login/1');
@@ -146,27 +165,22 @@ const FM: React.SFC<IFMProps> = observer(props => {
                     )}
                 </div>
 
-                <div className={styles.controls}>
-                    <i
-                        className={classnames('remixicon-heart-fill', {
-                            [styles.liked]: liked
-                        })}
-                        onClick={() => (liked ? unlike(song) : like(song))}
-                    />
-
-                    <i className="remixicon-arrow-down-circle-fill" onClick={() => ban(song.id)} />
-
-                    <span onClick={() => play()}>
-                        {isPlaying() ? <i className="remixicon-pause-fill" /> : <i className="remixicon-play-fill" />}
-                    </span>
-
-                    <i
-                        className="remixicon-speed-fill"
-                        onClick={next}
-                        style={{
-                            marginRight: 0
-                        }}
-                    />
+                <div>
+                    <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
+                        {liked ? <FavoriteTwoTone className={classes.liked} /> : <FavoriteBorderTwoTone />}
+                    </IconButton>
+                    <IconButton onClick={_ => ban(song.id)}>
+                        <DeleteForeverTwoTone />
+                    </IconButton>
+                    <IconButton>
+                        <CloudDownloadTwoTone />
+                    </IconButton>
+                    <IconButton onClick={() => play()}>
+                        {isPlaying() ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
+                    </IconButton>
+                    <IconButton onClick={() => next()}>
+                        <FastForwardTwoTone />
+                    </IconButton>
                 </div>
             </section>
         </div>

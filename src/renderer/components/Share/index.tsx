@@ -1,5 +1,5 @@
 import { useStore } from '@/context';
-import { Modal, ModalBody } from 'components/Modal';
+import Modal from 'components/Modal';
 import { shell } from 'electron';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
@@ -97,11 +97,7 @@ const Share: React.SFC = observer(() => {
         );
     };
 
-    return (
-        <Modal show={share.show}>
-            <ModalBody className={styles.modal}>{renderContent()}</ModalBody>
-        </Modal>
-    );
+    return <Modal visible={share.show} fullScreen content={renderContent()} onCancel={close} />;
 });
 
 export default Share;

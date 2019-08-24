@@ -88,8 +88,8 @@
 .list {
     width: calc(100vw - 200px);
     height: calc(100vh - 110px);
-    padding-left: 20;
-    padding-top: 20;
+    padding-left: 20px;
+    padding-top: 20px;
     overflow: hidden;
     overflow-y: auto;
 }
@@ -113,21 +113,6 @@
 
     &.playing figure {
         box-shadow: 0 0 24px 0 @color-primary;
-    }
-
-    &:nth-child(n) {
-        float: left;
-        clear: none;
-        margin-right: 10px;
-    }
-
-    &:nth-child(2n + 1) {
-        clear: left;
-    }
-
-    &:nth-child(2n) {
-        float: right;
-        margin-right: 0;
     }
 
     p {

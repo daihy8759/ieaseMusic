@@ -1,7 +1,8 @@
 import { useStore } from '@/context';
+import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
-import FadeImage from 'components/FadeImage';
 import Indicator from 'components/Indicator';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
@@ -31,8 +32,22 @@ const Status: React.SFC<IStatusProps> = props => {
     );
 };
 
+const useStyles = makeStyles({
+    bigAvatar: {
+        margin: 10,
+        width: 64,
+        height: 64
+    }
+});
+
+const ListItemLink = (props: any) => {
+    return <ListItem button component="a" {...props} />;
+};
+
 const Welcome: React.SFC = observer(() => {
     const { me, controller, home } = useStore();
+    // @ts-ignore
+    const classes = useStyles();
     useEffectOnce(() => {
         home.getList();
     });
@@ -51,7 +66,7 @@ const Welcome: React.SFC = observer(() => {
         return (
             <article className={styles.profile}>
                 <Link className="clearfix" to={link}>
-                    <FadeImage src={profile.avatarUrl} />
+                    <Avatar alt="" src={profile.avatarUrl} className={classes.bigAvatar} />
                 </Link>
 
                 <div className={styles.info}>
@@ -208,29 +223,24 @@ const Welcome: React.SFC = observer(() => {
                         </Link>
                     )}
 
-                    <nav className={styles.menu}>
-                        <p>
-                            <Link to="/search">Search</Link>
-                        </p>
-
-                        <p>
-                            <Link to="/playlist/全部">Playlist</Link>
-                        </p>
-
-                        <p>
-                            <Link to="/top">Top podcasts</Link>
-                        </p>
-
-                        <p>
-                            <Link
-                                className={classnames({
-                                    [styles.playing]: controller.playlist.id === 'PERSONAL_FM'
-                                })}
-                                to="/fm">
-                                Made For You
-                            </Link>
-                        </p>
-                    </nav>
+                    <List component="nav" className={styles.menu}>
+                        <ListItemLink href="#/search">
+                            <ListItemText primary="Search" />
+                        </ListItemLink>
+                        <ListItemLink href="#/playlist/全部">
+                            <ListItemText primary="Playlist" />
+                        </ListItemLink>
+                        <ListItemLink href="#/top">
+                            <ListItemText primary="Top podcasts" />
+                        </ListItemLink>
+                        <ListItemLink
+                            href="#/fm"
+                            className={classnames({
+                                [styles.playing]: controller.playlist.id === 'PERSONAL_FM'
+                            })}>
+                            <ListItemText primary="Made For You" />
+                        </ListItemLink>
+                    </List>
                 </aside>
 
                 {list.length ? (

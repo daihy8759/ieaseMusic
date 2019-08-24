@@ -1,4 +1,5 @@
 import personalFm from './common/personal_fm';
+import fmTrashApi from './common/fm_trash';
 import IArtist from 'interface/IArtist';
 import ISong from 'interface/ISong';
 
@@ -53,4 +54,13 @@ async function getPlaylist(): Promise<PlaylistResponse> {
     };
 }
 
-export { getPlaylist };
+async function fmTrash(id: number) {
+    try {
+        const res = await fmTrashApi({ id });
+        return res.data;
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export { getPlaylist, fmTrash };

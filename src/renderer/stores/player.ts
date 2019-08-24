@@ -66,14 +66,14 @@ class Player {
     @action
     subscribe = async (subscribed: boolean) => {
         const { meta }: any = this;
-        const response = await axios.get(
-            subscribed ? `/api/player/subscribe/${meta.id}` : `/api/player/unsubscribe/${meta.id}`
-        );
-        const { data } = response;
+        // const response = await axios.get(
+        //     subscribed ? `/api/player/subscribe/${meta.id}` : `/api/player/unsubscribe/${meta.id}`
+        // );
+        // const { data } = response;
 
-        if (data.success) {
-            this.meta.subscribed = subscribed;
-        }
+        // if (data.success) {
+        //     this.meta.subscribed = subscribed;
+        // }
     };
 
     @action

@@ -21,13 +21,6 @@
 }
 
 .container {
-    background: #fff;
-    color: #333;
-    overflow: hidden;
-    overflow-y: auto;
-    height: 100%;
-    width: 80vw;
-
     h4 {
         margin: 0;
         font-weight: normal;
@@ -63,8 +56,6 @@
     & section {
         font-family: @google-font;
         font-size: 14px;
-        padding: 32px;
-        padding-top: 24px;
     }
 
     label {
@@ -73,11 +64,6 @@
         justify-content: space-between;
         align-items: center;
     }
-}
-
-.close {
-    height: 32px;
-    cursor: pointer;
 }
 
 .field {
@@ -146,21 +132,5 @@
 
     input {
         display: none;
-    }
-
-    button {
-        padding: 8px 12px;
-        text-transform: uppercase;
-        border: 0;
-        border-radius: 1px;
-        background: none;
-        color: rgb(117, 117, 117);
-        cursor: pointer;
-        outline: 0;
-        transition: 0.2s;
-    }
-
-    & button:hover {
-        background: rgba(0, 0, 0, 0.1);
     }
 }

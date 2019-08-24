@@ -1,4 +1,6 @@
 import { useStore } from '@/context';
+import { IconButton } from '@material-ui/core';
+import { BarChartTwoTone, MoreVertTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
@@ -29,7 +31,11 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
         const { showPlaylist } = props;
 
         if (showPlaylist) {
-            return <i className="remixicon-bar-chart-fill" onClick={() => playing.toggle(true)} />;
+            return (
+                <IconButton onClick={() => player.subscribe(true)}>
+                    <BarChartTwoTone />
+                </IconButton>
+            );
         }
 
         return false;
@@ -42,18 +48,25 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
 
         if (player.meta.subscribed) {
             return (
-                <i
-                    className={classnames('remixicon-star-fill', styles.subscribed)}
-                    onClick={() => player.subscribe(false)}
-                />
+                <IconButton className="styles.subscribed" onClick={() => player.subscribe(false)}>
+                    <BarChartTwoTone />
+                </IconButton>
             );
         }
 
-        return <i className="remixicon-star-fill" onClick={() => player.subscribe(true)} />;
+        return (
+            <IconButton onClick={() => player.subscribe(true)}>
+                <BarChartTwoTone />
+            </IconButton>
+        );
     };
 
     const renderMenu = () => {
-        return <i className="remixicon-more-2-fill" onClick={() => menu.toggle(true)} />;
+        return (
+            <IconButton onClick={() => menu.toggle(true)}>
+                <MoreVertTwoTone />
+            </IconButton>
+        );
     };
 
     const { transparent, className } = props;

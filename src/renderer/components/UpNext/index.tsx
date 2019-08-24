@@ -1,11 +1,12 @@
 import { useStore } from '@/context';
 import classnames from 'classnames';
-import { Modal, ModalBody } from 'components/Modal';
+import Modal from 'components/Modal';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import * as styles from './index.less';
+import { Button } from '@material-ui/core';
 
 const UpNext: React.SFC = observer(() => {
     const { upnext, controller } = useStore();
@@ -19,8 +20,6 @@ const UpNext: React.SFC = observer(() => {
 
         return (
             <div className={styles.container}>
-                <h2>Up Next</h2>
-
                 <p>
                     {song.name} - {song.artists.map((e: IArtist) => e.name).join()}
                 </p>
@@ -65,23 +64,18 @@ const UpNext: React.SFC = observer(() => {
                     </svg>
                 </figure>
 
-                <button
-                    type="button"
+                <Button
                     onClick={() => {
                         upnext.cancel();
                         controller.pause();
                     }}>
                     Cancel
-                </button>
+                </Button>
             </div>
         );
     };
 
-    return (
-        <Modal show={upnext.show}>
-            <ModalBody className={styles.modal}>{renderContent()}</ModalBody>
-        </Modal>
-    );
+    return <Modal visible={upnext.show} content={renderContent()} />;
 });
 
 export default UpNext;

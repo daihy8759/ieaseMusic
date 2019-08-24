@@ -1,5 +1,19 @@
 import { useStore } from '@/context';
-import classnames from 'classnames';
+import { IconButton } from '@material-ui/core';
+import { red } from '@material-ui/core/colors';
+import {
+    CloudDownloadTwoTone,
+    FastForwardTwoTone,
+    FastRewindTwoTone,
+    FavoriteBorderTwoTone,
+    FavoriteTwoTone,
+    PauseCircleOutlineTwoTone,
+    PlayCircleOutlineTwoTone,
+    ReorderTwoTone,
+    RepeatTwoTone,
+    ShuffleTwoTone
+} from '@material-ui/icons';
+import { makeStyles } from '@material-ui/styles';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
@@ -9,6 +23,13 @@ import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
 import * as styles from './index.less';
+
+const useStyles = makeStyles({
+    liked: {
+        color: red[900],
+        textShadow: `0 0 24px ${red[900]}`
+    }
+});
 
 const Controller: React.FC = observer(() => {
     const { controller, me, comments } = useStore();
@@ -39,6 +60,21 @@ const Controller: React.FC = observer(() => {
     if (!song.id) {
         return null;
     }
+
+    const renderPlayMode = () => {
+        if (mode === PLAYER_SHUFFLE) {
+            return <ShuffleTwoTone />;
+        }
+        if (mode === PLAYER_REPEAT) {
+            return <ReorderTwoTone />;
+        }
+        if (mode === PLAYER_LOOP) {
+            return <RepeatTwoTone />;
+        }
+    };
+
+    // @ts-ignore
+    const classes = useStyles();
 
     return (
         <div
@@ -141,56 +177,33 @@ const Controller: React.FC = observer(() => {
                         ) : (
                             false
                         )}
-
                         <Link className={styles.text} to="/lyrics">
                             LRC
                         </Link>
-
                         <Link className={styles.text} to="/comments">
                             {helper.humanNumber(commentsTotal)} Comments
                         </Link>
-
-                        {hasLogin() && (
-                            <i
-                                className={classnames('remixicon-heart-2-fill', {
-                                    [styles.liked]: liked
-                                })}
-                                onClick={() => (liked ? unlike(song) : like(song))}
-                            />
-                        )}
-
-                        <i
-                            className={classnames({
-                                'remixicon-shuffle-fill': mode === PLAYER_SHUFFLE,
-                                'remixicon-order-play-fill': mode === PLAYER_REPEAT,
-                                'remixicon-repeat-fill': mode === PLAYER_LOOP
-                            })}
-                            onClick={() => changeMode()}
-                        />
-                        <i className="remixicon-download-2-fill" onClick={prev} />
-
                         <div className={styles.controls}>
-                            <i className="remixicon-rewind-fill" onClick={prev} />
-
-                            <span className={styles.toggle} onClick={toggle}>
-                                {playing ? (
-                                    <i className="remixicon-pause-fill" />
+                            <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
+                                {hasLogin() && liked ? (
+                                    <FavoriteTwoTone className={classes.liked} />
                                 ) : (
-                                    <i
-                                        className="remixicon-play-fill"
-                                        style={{
-                                            color: 'inherit'
-                                        }}
-                                    />
+                                    <FavoriteBorderTwoTone />
                                 )}
-                            </span>
-                            <i
-                                className="remixicon-speed-fill"
-                                onClick={() => next()}
-                                style={{
-                                    marginRight: 0
-                                }}
-                            />
+                            </IconButton>
+                            <IconButton onClick={() => changeMode()}>{renderPlayMode()}</IconButton>
+                            <IconButton>
+                                <CloudDownloadTwoTone />
+                            </IconButton>
+                            <IconButton onClick={prev}>
+                                <FastRewindTwoTone />
+                            </IconButton>
+                            <IconButton onClick={toggle}>
+                                {playing ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
+                            </IconButton>
+                            <IconButton onClick={() => next()}>
+                                <FastForwardTwoTone />
+                            </IconButton>
                         </div>
                     </div>
                 </aside>

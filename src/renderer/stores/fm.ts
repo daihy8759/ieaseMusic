@@ -1,5 +1,5 @@
 import ISong from '@/interface/ISong';
-import { getPlaylist } from 'api/fm';
+import { getPlaylist, fmTrash } from 'api/fm';
 import axios from 'axios';
 import IPlayList from 'interface/IPlayList';
 import { action, observable, runInAction } from 'mobx';
@@ -49,9 +49,8 @@ class FM {
     // Ban a song
     @action
     ban = async (id: number) => {
-        const response = await axios.get(`/fm_trash?id=${id}`);
-
-        if (response.data.code === 200) {
+        const data = await fmTrash(id);
+        if (data.code === 200) {
             this.next();
         }
     };
