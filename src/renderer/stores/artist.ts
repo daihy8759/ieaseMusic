@@ -1,10 +1,9 @@
-import { getArtist } from 'api/artist';
-import axios from 'axios';
-import { action, observable, runInAction } from 'mobx';
+import { followUser, getArtist, unFollowUser } from 'api/artist';
 import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
-import IPlayList from 'interface/IPlayList';
 import IArtistProfile from 'interface/IArtistProfile';
+import IPlayList from 'interface/IPlayList';
+import { action, observable, runInAction } from 'mobx';
 
 class Artist {
     @observable loading = true;
@@ -45,8 +44,12 @@ class Artist {
 
     @action
     follow = async (followed: boolean, id = this.profile.id) => {
-        const response = await axios.get(followed ? `/api/artist/unfollow/${id}` : `/api/artist/follow/${id}`);
-        const { data } = response;
+        let data;
+        if (followed) {
+            data = await unFollowUser(id);
+        } else {
+            data = await followUser(id);
+        }
 
         if (data.success) {
             runInAction(() => {

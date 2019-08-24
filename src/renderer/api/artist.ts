@@ -3,6 +3,7 @@ import artistList from './common/artists';
 import artistDesc from './common/artist_desc';
 import artistAlbum from './common/artist_album';
 import simiArtist from './common/simi_artist';
+import artistSub from './common/artist_sub';
 import IArtist from 'interface/IArtist';
 import IAlbum from 'interface/IAlbum';
 
@@ -153,4 +154,32 @@ async function getArtist(id: number) {
     };
 }
 
-export { getArtist };
+async function followUser(id: number) {
+    try {
+        const res = await artistSub({ id, t: 1 });
+        if (res.data.code === 200) {
+            return {
+                success: false
+            };
+        }
+    } catch (e) {
+        console.error(e);
+    }
+    return { success: false };
+}
+
+async function unFollowUser(id: number) {
+    try {
+        const res = await artistSub({ id, t: 0 });
+        if (res.data.code === 200) {
+            return {
+                success: false
+            };
+        }
+    } catch (e) {
+        console.error(e);
+    }
+    return { success: false };
+}
+
+export { getArtist, followUser, unFollowUser };
