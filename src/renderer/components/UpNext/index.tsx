@@ -1,5 +1,5 @@
 import { useStore } from '@/context';
-import { Button, IconButton } from '@material-ui/core';
+import classnames from 'classnames';
 import { PlayArrowSharp } from '@material-ui/icons';
 import Modal from 'components/Modal';
 import ProgressImage from 'components/ProgressImage';
@@ -27,13 +27,13 @@ const UpNext: React.SFC = observer(() => {
                 <figure className={styles.circle} data-percent="75">
                     <div>
                         <i className={styles.mask} />
-                        <IconButton
+                        <PlayArrowSharp
+                            className={classnames('remixicon-play-fill', styles.play)}
                             onClick={() => {
                                 close();
                                 controller.play(song.id);
-                            }}>
-                            <PlayArrowSharp className={styles.play} />
-                        </IconButton>
+                            }}
+                        />
 
                         <ProgressImage
                             {...{
@@ -63,13 +63,14 @@ const UpNext: React.SFC = observer(() => {
                     </svg>
                 </figure>
 
-                <Button
+                <button
+                    type="button"
                     onClick={() => {
                         upnext.cancel();
                         controller.pause();
                     }}>
                     Cancel
-                </Button>
+                </button>
             </div>
         );
     };
