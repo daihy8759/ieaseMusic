@@ -1,15 +1,15 @@
-import { loginRefresh, loginWithPhone } from 'api/login';
+import { geLoginStatus, loginRefresh, loginWithPhone } from 'api/login';
 import QRCodeApi, { LoginType } from 'api/qrcode';
 import { likeSong, unlikeSong } from 'api/user';
 import { dialog } from 'electron';
 import ISong from 'interface/ISong';
+import IUserProfile from 'interface/IUserProfile';
 import { action, observable, runInAction } from 'mobx';
 import helper from 'utils/helper';
 import lastfm from 'utils/lastfm';
 import storage from '../../shared/storage';
 import home from './home';
 import player from './player';
-import IUserProfile from 'interface/IUserProfile';
 
 const { generate, polling } = QRCodeApi;
 
@@ -34,8 +34,7 @@ class Me {
             const data = await loginRefresh();
             if (data.code === 301) {
                 profile = {};
-                // @ts-ignore
-                await storage.remove('profile');
+                await storage.delete('profile');
             }
         }
         runInAction(() => {
@@ -74,10 +73,12 @@ class Me {
             return;
         }
 
-        // this.profile = await getProfile();
-        // await storage.set('profile', this.profile);
-        // await this.init();
-        // await home.load();
+        debugger;
+        const { profile } = await geLoginStatus();
+        this.profile = profile;
+        await storage.set('profile', this.profile);
+        await this.init();
+        await home.load();
         done();
         this.logining = false;
     };

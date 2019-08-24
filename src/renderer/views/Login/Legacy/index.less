@@ -58,51 +58,6 @@
         }
     }
 
-    button {
-        position: relative;
-        width: 120px;
-        height: 40px;
-        font-size: 14px;
-        line-height: 40px;
-        border: none;
-        border-radius: 1;
-        background: @color-google;
-        font-weight: 300;
-        color: #fff;
-        outline: 0;
-        overflow: hidden;
-        cursor: pointer;
-        letter-spacing: 1;
-        transition: 0.4s;
-
-        &:before {
-            position: absolute;
-            content: '';
-            top: 0;
-            left: 0;
-            display: block;
-            height: 100%;
-            width: 100%;
-            background-image: @randomGradientInt;
-            opacity: 0;
-            transition: 0.4s;
-        }
-
-        &:hover,
-        &.logining {
-            box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.5);
-        }
-
-        &:hover:before {
-            opacity: 1;
-        }
-
-        span {
-            position: relative;
-            z-index: 1;
-        }
-    }
-
     a {
         color: #000;
     }
@@ -136,17 +91,6 @@
     text-transform: uppercase;
     z-index: 9;
     transition: 0.2s;
-
-    i {
-        display: inline-block;
-        margin-right: 8px;
-        font-size: 20px;
-        transform: translateY(3px);
-    }
-
-    &:hover {
-        color: @color-primary;
-    }
 }
 
 .error {

@@ -1,4 +1,6 @@
 import { useStore } from '@/context';
+import { Button, CircularProgress, IconButton, Typography } from '@material-ui/core';
+import { ArrowBackIosTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
@@ -51,7 +53,9 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
     return (
         <div className={styles.container}>
             <Link className={styles.back} to="/">
-                <i className="remixicon-arrow-left-line" />
+                <IconButton>
+                    <ArrowBackIosTwoTone />
+                </IconButton>
                 Discover music
             </Link>
 
@@ -71,15 +75,16 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
             </section>
 
             <footer>
-                <button
-                    className={classnames({
-                        [styles.logining]: logining
-                    })}
-                    disabled={logining}
-                    type="button"
-                    onClick={doLogin}>
-                    <span>{logining ? 'Logining...' : 'Login'}</span>
-                </button>
+                <Button variant="contained" disabled={logining} color="primary" onClick={doLogin}>
+                    {logining ? (
+                        <>
+                            <CircularProgress size={14} />
+                            <Typography>Logining...</Typography>
+                        </>
+                    ) : (
+                        'Login'
+                    )}
+                </Button>
 
                 <div className={styles.sns}>
                     <Link to={`/login/qrcode/10/${+match.params.fm}`} className={styles.link}>
