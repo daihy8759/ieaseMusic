@@ -15,7 +15,7 @@
         "build-analyzer": "cross-env analyzer=1 npm run build-renderer",
         "build": "npm run build-all && electron-builder",
         "lint": "eslint --ext .ts,.tsx src/**",
-        "lint:fix": "prettier  --ext .ts,.tsx --write src/**"
+        "lint:fix": "prettier --write ./src/**/**/**/*"
     },
     "build": {
         "productName": "ieaseMusic-desktop",
