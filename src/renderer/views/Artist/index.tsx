@@ -1,4 +1,5 @@
 import { useStore } from '@/context';
+import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
@@ -15,6 +16,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
 import * as styles from './index.less';
+import { Fab } from '@material-ui/core';
 
 interface MatchParams {
     id: string;
@@ -94,11 +96,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                                 })}
                                 key={e.id}
                                 onClick={() => play(e.id)}>
-                                {isPlaying(e.id) ? (
-                                    <i className="remixicon-pause-fill" />
-                                ) : (
-                                    <i className="remixicon-play-fill" />
-                                )}
+                                {isPlaying(e.id) ? <PauseSharp /> : <PlayArrowSharp />}
 
                                 <span data-index>{index}</span>
 
@@ -227,9 +225,9 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                     }}
                 />
                 <div className={styles.inner}>
-                    <div role="presentation" className={styles.play} onClick={() => play()}>
-                        {isPlaying() ? <i className="remixicon-pause-fill" /> : <i className="remixicon-play-fill" />}
-                    </div>
+                    <Fab onClick={() => play()} className={styles.play}>
+                        {isPlaying() ? <PauseSharp /> : <PlayArrowSharp />}
+                    </Fab>
 
                     <canvas ref={canvasRef} />
 

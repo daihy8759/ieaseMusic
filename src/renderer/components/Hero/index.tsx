@@ -1,4 +1,6 @@
 import { useStore } from '@/context';
+import { Button, IconButton } from '@material-ui/core';
+import { FavoriteBorderTwoTone, FavoriteTwoTone, ShareTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import Indicator from 'components/Indicator';
 import ProgressImage from 'components/ProgressImage';
@@ -7,6 +9,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
+import AdapterLink from '../AdapterLink';
 import * as styles from './index.less';
 
 interface IHeroProps {
@@ -32,27 +35,21 @@ const Hero: React.SFC<IHeroProps> = observer(props => {
                 }}
             />
 
-            <a
-                href=""
+            <Button
                 className={styles.share}
-                onClick={e => {
+                component={AdapterLink}
+                to=""
+                onClick={(e: any) => {
                     e.preventDefault();
                     share.toggle(true);
                 }}>
-                <i className="remixicon-share-fill" />
-            </a>
+                <ShareTwoTone />
+            </Button>
 
             <summary>
-                <i
-                    className={classnames('remixicon-heart-fill', {
-                        [styles.liked]: liked
-                    })}
-                    onClick={() => (liked ? unlike(song) : like(song))}
-                    style={{
-                        cursor: 'pointer',
-                        display: 'table'
-                    }}
-                />
+                <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
+                    {liked ? <FavoriteTwoTone className={styles.liked} /> : <FavoriteBorderTwoTone />}
+                </IconButton>
 
                 <span className={styles.badge}>{helper.getRate(song)}</span>
 

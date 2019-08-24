@@ -1,6 +1,7 @@
+import AdapterLink from '@/components/AdapterLink';
 import { useStore } from '@/context';
-import { Button, CircularProgress, IconButton, Typography } from '@material-ui/core';
-import { ArrowBackIosTwoTone } from '@material-ui/icons';
+import { Button, CircularProgress, Typography } from '@material-ui/core';
+import { ArrowBackSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
@@ -52,12 +53,10 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
     const { match } = props;
     return (
         <div className={styles.container}>
-            <Link className={styles.back} to="/">
-                <IconButton>
-                    <ArrowBackIosTwoTone />
-                </IconButton>
+            <Button className={styles.back} component={AdapterLink} to="/">
+                <ArrowBackSharp />
                 Discover music
-            </Link>
+            </Button>
 
             <header>
                 <h1>Sign in</h1>

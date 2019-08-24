@@ -168,7 +168,7 @@ async function searchByType(type: any, keyword: string, offset?: number): Promis
             data = await getUsers(keyword, offset);
             break;
         default:
-            data = [];
+            data = { nextOffset: 0 };
     }
     return data;
 }

@@ -1,12 +1,12 @@
 import { useStore } from '@/context';
-import classnames from 'classnames';
+import { Button, IconButton } from '@material-ui/core';
+import { PlayArrowSharp } from '@material-ui/icons';
 import Modal from 'components/Modal';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import * as styles from './index.less';
-import { Button } from '@material-ui/core';
 
 const UpNext: React.SFC = observer(() => {
     const { upnext, controller } = useStore();
@@ -27,14 +27,13 @@ const UpNext: React.SFC = observer(() => {
                 <figure className={styles.circle} data-percent="75">
                     <div>
                         <i className={styles.mask} />
-                        <i
-                            role="presentation"
-                            className={classnames('remixicon-play-fill', styles.play)}
+                        <IconButton
                             onClick={() => {
                                 close();
                                 controller.play(song.id);
-                            }}
-                        />
+                            }}>
+                            <PlayArrowSharp className={styles.play} />
+                        </IconButton>
 
                         <ProgressImage
                             {...{

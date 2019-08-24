@@ -1,4 +1,6 @@
 import { useStore } from '@/context';
+import { Zoom } from '@material-ui/core';
+import { ReorderTwoTone, RepeatTwoTone, ShuffleTwoTone } from '@material-ui/icons';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
@@ -9,26 +11,29 @@ const PlayerMode: React.SFC = observer(() => {
     const {
         controller: { mode }
     } = useStore();
-    const containerRef = React.useRef<HTMLDivElement>();
+    const [zoom, setZoom] = React.useState(false);
 
     useUpdateEffect(() => {
-        containerRef.current.classList.add(styles.animated);
+        zoomTimeout();
     }, [mode]);
 
-    const animationDone = () => {
-        containerRef.current.classList.remove(styles.animated);
+    const zoomTimeout = () => {
+        setZoom(true);
+        setTimeout(() => {
+            setZoom(false);
+        }, 1000);
     };
 
     const renderIndicator = (mode: number) => {
         switch (mode) {
             case PLAYER_SHUFFLE:
-                return <i className="remixicon-shuffle-fill" />;
+                return <ShuffleTwoTone />;
 
             case PLAYER_REPEAT:
-                return <i className="remixicon-order-play-fill" />;
+                return <ReorderTwoTone />;
 
             case PLAYER_LOOP:
-                return <i className="remixicon-repeat-fill" />;
+                return <RepeatTwoTone />;
 
             default:
                 return <></>;
@@ -36,9 +41,9 @@ const PlayerMode: React.SFC = observer(() => {
     };
 
     return (
-        <div className={styles.container} onAnimationEnd={() => animationDone()} ref={containerRef}>
-            {renderIndicator(mode)}
-        </div>
+        <Zoom in={zoom}>
+            <div className={styles.container}>{renderIndicator(mode)}</div>
+        </Zoom>
     );
 });
 

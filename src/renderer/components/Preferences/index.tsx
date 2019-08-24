@@ -1,16 +1,31 @@
 import { useStore } from '@/context';
-import { Button, Switch } from '@material-ui/core';
+import { Button, Switch, Theme, CircularProgress, Typography } from '@material-ui/core';
+import { FlashOnTwoTone, VerifiedUserTwoTone } from '@material-ui/icons';
+import { createStyles, makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
 import Modal from 'components/Modal';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import * as styles from './index.less';
 
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        button: {
+            margin: theme.spacing(1)
+        },
+        leftIcon: {
+            marginRight: theme.spacing(1)
+        }
+    })
+);
+
 const Preferences: React.SFC = observer(() => {
     const { preferences } = useStore();
     const downloadRef = React.useRef<HTMLInputElement>();
     const usernameRef = React.useRef<HTMLInputElement>();
     const passwordRef = React.useRef<HTMLInputElement>();
+    // @ts-ignore
+    const classes = useStyles();
 
     const saveLastfm = () => {
         preferences.setLastfm({
@@ -46,25 +61,25 @@ const Preferences: React.SFC = observer(() => {
         const { connecting } = preferences;
         if (connecting) {
             return (
-                <span>
-                    <i className="remixicon-loader-2-fill" />
-                    Connecting to Last.fm
-                </span>
+                <>
+                    <CircularProgress size={14} />
+                    <Typography>Connecting to Last.fm</Typography>
+                </>
             );
         }
         if (isConnected()) {
             return (
-                <span>
-                    <i className="remixicon-checkbox-circle-fill" />
+                <>
+                    <VerifiedUserTwoTone className={classes.leftIcon} />
                     Connected to Last.fm
-                </span>
+                </>
             );
         }
         return (
-            <span>
-                <i className="remixicon-flashlight-fill" />
+            <>
+                <FlashOnTwoTone className={classes.leftIcon} />
                 Connect to Last.fm
-            </span>
+            </>
         );
     };
 
@@ -328,44 +343,43 @@ const Preferences: React.SFC = observer(() => {
                         </label>
                     </article>
 
-                    <article>
-                        <h3>
-                            Connect to Last.fm
-                            <small>Track what you listen to, whenever you listen.</small>
-                        </h3>
-                        <div className={styles.field}>
-                            <span>Username</span>
-                            <input
-                                className={styles.textInput}
-                                defaultValue={lastFm.username}
-                                onBlur={() => saveLastfm()}
-                                placeholder="Your last.fm username"
-                                ref={usernameRef}
-                                type="text"
-                            />
-                        </div>
+                    <h3>
+                        Connect to Last.fm
+                        <small>Track what you listen to, whenever you listen.</small>
+                    </h3>
+                    <div className={styles.field}>
+                        <span>Username</span>
+                        <input
+                            className={styles.textInput}
+                            defaultValue={lastFm.username}
+                            onBlur={() => saveLastfm()}
+                            placeholder="Your last.fm username"
+                            ref={usernameRef}
+                            type="text"
+                        />
+                    </div>
 
-                        <div className={styles.field}>
-                            <span>Password</span>
-                            <input
-                                className={styles.textInput}
-                                defaultValue={lastFm.password}
-                                onBlur={() => saveLastfm()}
-                                placeholder="Your last.fm password"
-                                ref={passwordRef}
-                                type="password"
-                            />
-                        </div>
-                        <button
-                            type="button"
-                            className={classnames(styles.connect, {
-                                [styles.connected]: isConnected()
-                            })}
-                            disabled={isConnected() || connecting || !lastFm.username || !lastFm.password}
-                            onClick={() => connect()}>
-                            {renderFm()}
-                        </button>
-                    </article>
+                    <div className={styles.field}>
+                        <span>Password</span>
+                        <input
+                            className={styles.textInput}
+                            defaultValue={lastFm.password}
+                            onBlur={() => saveLastfm()}
+                            placeholder="Your last.fm password"
+                            ref={passwordRef}
+                            type="password"
+                        />
+                    </div>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        className={classnames(classes.button, styles.connect, {
+                            [styles.connected]: isConnected()
+                        })}
+                        disabled={isConnected() || connecting || !lastFm.username || !lastFm.password}
+                        onClick={() => connect()}>
+                        {renderFm()}
+                    </Button>
 
                     <article>
                         <h3>Playlist Background ...</h3>

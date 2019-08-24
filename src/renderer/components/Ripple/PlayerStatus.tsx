@@ -1,5 +1,6 @@
 import { useStore } from '@/context';
-import { PauseCircleOutlineTwoTone, PlayCircleOutlineTwoTone } from '@material-ui/icons';
+import { Zoom } from '@material-ui/core';
+import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
@@ -9,24 +10,23 @@ const PlayerStatus: React.FC = observer(() => {
     const {
         controller: { playing }
     } = useStore();
-
-    const containerRef = React.useRef<HTMLDivElement>();
-
-    const animationDone = () => {
-        containerRef.current.classList.remove(styles.animated);
-    };
+    const [zoom, setZoom] = React.useState(false);
 
     useUpdateEffect(() => {
-        containerRef.current.classList.add(styles.animated);
-        setTimeout(() => {
-            animationDone();
-        }, 1000);
+        zoomTimeout();
     }, [playing]);
 
+    const zoomTimeout = () => {
+        setZoom(true);
+        setTimeout(() => {
+            setZoom(false);
+        }, 1000);
+    };
+
     return (
-        <div className={styles.container} onAnimationEnd={animationDone} ref={containerRef}>
-            {playing ? <PlayCircleOutlineTwoTone /> : <PauseCircleOutlineTwoTone />}
-        </div>
+        <Zoom in={zoom}>
+            <div className={styles.container}>{playing ? <PlayArrowSharp /> : <PauseSharp />}</div>
+        </Zoom>
     );
 });
 

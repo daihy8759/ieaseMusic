@@ -1,4 +1,5 @@
 import { useStore } from '@/context';
+import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import FadeImage from 'components/FadeImage';
@@ -24,8 +25,34 @@ interface PlayerProps extends RouteComponentProps<MatchParams> {}
 const Player: React.FC<PlayerProps> = observer(props => {
     const { player, controller, me } = useStore();
     const { song, playing } = controller;
+    const { loading, meta, recommend, filter, searching } = player;
     const searchingRef = React.useRef<HTMLUListElement>();
     const listRef = React.useRef<HTMLUListElement>();
+
+    useEffectOnce(() => {
+        load();
+    });
+
+    useUpdateEffect(() => {
+        player.getRelated(song);
+    }, [song.id]);
+
+    useUpdateEffect(() => {
+        load();
+    }, [props.match.params.id]);
+
+    useUpdateEffect(() => {
+        const { searching } = player;
+        const ele = searching ? searchingRef.current : listRef.current;
+        if (!ele) {
+            return;
+        }
+        const playing = ele.querySelector(styles.active);
+
+        if (playing) {
+            playing.scrollIntoViewIfNeeded();
+        }
+    }, [playing]);
 
     const showLoading = () => {
         player.toggleLoading(true);
@@ -52,31 +79,6 @@ const Player: React.FC<PlayerProps> = observer(props => {
         await getRelated(song);
         hideLoading();
     };
-
-    useEffectOnce(() => {
-        load();
-    });
-
-    useUpdateEffect(() => {
-        player.getRelated(song);
-    }, [song.id]);
-
-    useUpdateEffect(() => {
-        load();
-    }, [props.match.params.id]);
-
-    useUpdateEffect(() => {
-        const { searching } = player;
-        const ele = searching ? searchingRef.current : listRef.current;
-        if (!ele) {
-            return;
-        }
-        const playing = ele.querySelector(styles.active);
-
-        if (playing) {
-            playing.scrollIntoViewIfNeeded();
-        }
-    }, [playing]);
 
     const renderPeople = () => {
         const { artists, users } = player;
@@ -199,9 +201,13 @@ const Player: React.FC<PlayerProps> = observer(props => {
                         await play(e.id);
                     }}>
                     {sameToPlaylist && e.id === song.id ? (
-                        <i className={playing ? 'remixicon-pause-fill' : 'remixicon-play-fill'} />
+                        playing ? (
+                            <PauseSharp />
+                        ) : (
+                            <PlayArrowSharp />
+                        )
                     ) : (
-                        <i className="remixicon-play-fill" />
+                        <PlayArrowSharp />
                     )}
 
                     <span className={styles.index}>{index}</span>
@@ -215,8 +221,6 @@ const Player: React.FC<PlayerProps> = observer(props => {
             );
         });
     };
-
-    const { loading, meta, recommend, filter, searching } = player;
 
     return (
         <div className={styles.container}>
@@ -274,11 +278,7 @@ const Player: React.FC<PlayerProps> = observer(props => {
                                 marginTop: -2
                             }}>
                             <div className={styles.play} onClick={() => play()}>
-                                {canToggle() && playing ? (
-                                    <i className="remixicon-pause-fill" />
-                                ) : (
-                                    <i className="remixicon-play-fill" />
-                                )}
+                                {canToggle() && playing ? <PauseSharp /> : <PlayArrowSharp />}
                             </div>
                         </div>
 

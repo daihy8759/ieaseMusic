@@ -1,6 +1,6 @@
 import { useStore } from '@/context';
-import { Box, Tab, Tabs, Typography } from '@material-ui/core';
-import { StarTwoTone } from '@material-ui/icons';
+import { Box, IconButton, Tab, Tabs, Typography } from '@material-ui/core';
+import { FavoriteSharp, StarTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
@@ -76,8 +76,8 @@ const Search: React.FC = observer(() => {
         searchByKeyword(e.target.value);
     };
 
-    const searchByKeyword = (value: any) => {
-        const keyword = value && value.trim();
+    const searchByKeyword = (searchValue: any) => {
+        const keyword = searchValue && searchValue.trim();
         if (!keyword) {
             return;
         }
@@ -205,8 +205,8 @@ const Search: React.FC = observer(() => {
                             <span>{e.size} ALBUMS</span>
                         </div>
 
-                        <i
-                            className={classnames('remixicon-heart-fill', {
+                        <IconButton
+                            className={classnames({
                                 liked: e.followed
                             })}
                             onClick={async (ev: any) => {
@@ -220,8 +220,9 @@ const Search: React.FC = observer(() => {
                                         target.classList.add(styles.liked);
                                     }
                                 }
-                            }}
-                        />
+                            }}>
+                            <FavoriteSharp />
+                        </IconButton>
                     </aside>
                 </div>
             );

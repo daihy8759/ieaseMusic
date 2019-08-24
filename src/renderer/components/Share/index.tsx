@@ -1,9 +1,11 @@
 import { useStore } from '@/context';
+import * as closePng from 'assets/close.png';
+import * as socialFacebook from 'assets/social-facebook.png';
+import * as socialTwitter from 'assets/social-twitter.png';
 import Modal from 'components/Modal';
 import { shell } from 'electron';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
-import * as closePng from 'assets/close.png';
 import * as QRCode from 'qrcode';
 import * as React from 'react';
 import * as styles from './index.less';
@@ -45,7 +47,7 @@ const Share: React.SFC = observer(() => {
                                 );
                                 close();
                             }}>
-                            <img alt="Twitter" className={styles.social} src="assets/social-twitter.png" />
+                            <img alt="Twitter" className={styles.social} src={socialTwitter} />
                         </a>
                         <a
                             href=""
@@ -56,17 +58,7 @@ const Share: React.SFC = observer(() => {
                                 );
                                 close();
                             }}>
-                            <i className="remixicon-facebook-fill"></i>
-                        </a>
-
-                        <a
-                            href=""
-                            onClick={e => {
-                                e.preventDefault();
-                                shell.openExternal(`https://plus.google.com/share?url=${encodeURIComponent(url)}`);
-                                close();
-                            }}>
-                            <img alt="Google" className={styles.social} src="assets/social-google.png" />
+                            <img alt="Facebook" className={styles.social} src={socialFacebook} />
                         </a>
                     </section>
 

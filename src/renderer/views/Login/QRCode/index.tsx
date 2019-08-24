@@ -1,9 +1,12 @@
+import AdapterLink from '@/components/AdapterLink';
 import { useStore } from '@/context';
+import { Button } from '@material-ui/core';
+import { ArrowBackSharp } from '@material-ui/icons';
 import * as qrcodePlaceholder from 'assets/qrcode-placeholder.png';
 import FadeImage from 'components/FadeImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import * as styles from './index.less';
 
 interface MatchParams {
@@ -44,10 +47,10 @@ const QRCode: React.SFC<IQRCodeProps> = observer(props => {
     const { match } = props;
     return (
         <div className={styles.container}>
-            <Link className={styles.back} to={`/login/${match.params.fm}`}>
-                <i className="remixicon-arrow-left-line" />
+            <Button className={styles.back} component={AdapterLink} to={`/login/${match.params.fm}`}>
+                <ArrowBackSharp />
                 Login by Phone
-            </Link>
+            </Button>
 
             <header>
                 <h1>Sign in</h1>

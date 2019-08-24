@@ -1,4 +1,6 @@
 import { useStore } from '@/context';
+import { IconButton } from '@material-ui/core';
+import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
@@ -37,16 +39,17 @@ const Singleton: React.SFC = observer(() => {
             />
 
             <summary>
-                <i
-                    className={classnames('remixicon-heart-fill', {
+                <IconButton
+                    className={classnames({
                         [styles.liked]: liked
                     })}
-                    onClick={() => (liked ? unlike(song) : like(song))}
                     style={{
                         cursor: 'pointer',
                         display: 'table'
                     }}
-                />
+                    onClick={() => (liked ? unlike(song) : like(song))}>
+                    <FavoriteSharp />
+                </IconButton>
 
                 <span className={styles.highquality}>{helper.getRate(song)}</span>
             </summary>

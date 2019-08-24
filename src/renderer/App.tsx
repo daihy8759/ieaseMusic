@@ -3,9 +3,10 @@ import { configure } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import { HashRouter } from 'react-router-dom';
 import { useEffectOnce, useEvent } from 'react-use';
-import 'remixicon/fonts/remixicon.css';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import './App.less';
 import { useStore } from './context';
@@ -13,6 +14,10 @@ import MainRouter from './routes';
 
 const { Menu } = remote;
 configure({ enforceActions: 'observed' });
+
+const theme = createMuiTheme({
+    palette: {}
+});
 
 const App: React.SFC = observer(() => {
     const navigatorRef = React.useRef<any>();
@@ -275,7 +280,11 @@ const App: React.SFC = observer(() => {
 
     useEvent('contextmenu', handleContextMenu);
 
-    return <HashRouter ref={navigatorRef}>{MainRouter}</HashRouter>;
+    return (
+        <HashRouter ref={navigatorRef}>
+            <ThemeProvider theme={theme}>{MainRouter}</ThemeProvider>
+        </HashRouter>
+    );
 });
 
 export default hot(App);

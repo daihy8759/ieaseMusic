@@ -2,6 +2,7 @@ import { useStore } from '@/context';
 import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
+import { ArrowForwardTwoTone } from '@material-ui/icons';
 import Controller from 'components/Controller';
 import Indicator from 'components/Indicator';
 import Loader from 'components/Loader';
@@ -89,7 +90,7 @@ const Welcome: React.SFC = observer(() => {
                 {Status({ playing: controller.playlist.id === favorite.id })}
 
                 <div className={styles.hovered}>
-                    <i className="remixicon-arrow-right-line" />
+                    <ArrowForwardTwoTone />
                 </div>
 
                 <figure className={classnames(styles.item, styles.favorite)}>
@@ -129,7 +130,7 @@ const Welcome: React.SFC = observer(() => {
                 <Status playing={controller.playlist.id === recommend.id} />
 
                 <div className={styles.hovered}>
-                    <i className="remixicon-arrow-right-line" />
+                    <ArrowForwardTwoTone />
                 </div>
 
                 <figure className={classnames(styles.item, styles.recommend)}>
@@ -162,7 +163,7 @@ const Welcome: React.SFC = observer(() => {
                     <Status playing={controller.playlist.id === e.id} />
 
                     <div className={styles.hovered}>
-                        <i className="remixicon-arrow-right-line" />
+                        <ArrowForwardTwoTone />
                     </div>
 
                     <figure className={classnames(styles.item, styles.large)}>
