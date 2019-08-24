@@ -53,7 +53,7 @@ class Search {
         this.loading = true;
         const data = await searchByType('10', keyword);
         runInAction(() => {
-            // this.albums = data.albums;
+            this.albums = data.albums;
             this.nextAlbumsOffset = data.nextOffset;
             this.loading = false;
         });
@@ -66,7 +66,7 @@ class Search {
         }
         const data = await searchByType('10', this.keyword, this.nextAlbumsOffset);
         runInAction(() => {
-            // this.albums.push(...data.albums);
+            this.albums.push(...data.albums);
             this.nextAlbumsOffset = data.nextOffset;
         });
     };
@@ -76,7 +76,7 @@ class Search {
         this.loading = true;
         const data = await searchByType('100', keyword);
         runInAction(() => {
-            // this.artists = data.artists;
+            this.artists = data.artists;
             this.nextArtistsOffset = data.nextOffset;
             this.loading = false;
         });
@@ -88,7 +88,7 @@ class Search {
             return;
         }
         const data = await searchByType('100', this.keyword, this.nextArtistsOffset);
-        // this.artists.push(...data.artists);
+        this.artists.push(...data.artists);
         this.nextArtistsOffset = data.nextOffset;
     };
 
@@ -97,7 +97,7 @@ class Search {
         this.loading = true;
         const data = await searchByType('1002', keyword);
         runInAction(() => {
-            // this.users = data.users;
+            this.users = data.users;
             this.nextUsersOffset = data.nextOffset;
             this.loading = false;
         });
@@ -109,7 +109,7 @@ class Search {
             return;
         }
         const data = await searchByType('1002', this.keyword, this.nextUsersOffset);
-        // this.users.push(...data.users);
+        this.users.push(...data.users);
         this.nextUsersOffset = data.nextOffset;
     };
 }

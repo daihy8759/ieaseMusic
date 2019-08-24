@@ -1,4 +1,6 @@
 import { useStore } from '@/context';
+import { Box, Tab, Tabs, Typography } from '@material-ui/core';
+import { StarTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
@@ -9,70 +11,88 @@ import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-interface ISearchState {
-    renderContent: any;
-    search: any;
-    loadMore: () => void;
+const a11yProps = (index: any) => {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`
+    };
+};
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
 }
+
+const TabPanel = (props: TabPanelProps) => {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <Typography
+            component="div"
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}>
+            <Box p={3}>{children}</Box>
+        </Typography>
+    );
+};
 
 const Search: React.FC = observer(() => {
     const { search, artist } = useStore();
-    const listRef = React.useRef<HTMLElement>();
     const searchRef = React.useRef<HTMLInputElement>();
-    const [searchInfo, setSearchInfo] = React.useState<ISearchState>();
+    const [value, setValue] = React.useState(0);
 
-    const loadMore = () => {
-        const container = listRef.current;
+    const loadMore = (e: any) => {
         const { loading } = search;
         if (loading) {
             return;
         }
-
+        const container = e.target;
         if (container.scrollTop + container.offsetHeight + 50 > container.scrollHeight) {
-            searchInfo.loadMore();
+            switch (value) {
+                case 1:
+                    search.loadMoreAlbums();
+                    break;
+                case 2:
+                    search.loadMoreArtists();
+                    break;
+                case 3:
+                    search.loadMoreUsers();
+                default:
+                    search.loadMorePlaylists();
+            }
         }
     };
 
-    const highlight = (ele: HTMLElement) => {
-        const eles = ele.parentElement.children;
+    const reset = () => {};
 
-        Array.from(eles).forEach(e => {
-            e.classList.remove(styles.selected);
-        });
-
-        ele.classList.add(styles.selected);
-    };
-
-    const reset = () => {
-        setSearchInfo({
-            renderContent: renderPlaylist,
-            search: getPlaylists,
-            loadMore: loadMorePlaylists
-        });
-    };
-
-    const selected = (ele: any, state: ISearchState) => {
-        const keywords = searchRef.current.value.trim();
-
-        if (ele.classList.contains(styles.selected)) {
-            return;
-        }
-
-        highlight(ele);
-        setSearchInfo(state);
-
-        if (keywords) {
-            setTimeout(() => state.search(keywords));
-        }
-    };
-
-    const doSearch = (e: any) => {
+    const doSearch = async (e: any) => {
         if (e.keyCode !== 13) {
             return;
         }
-        const keyword = e.target.value.trim();
-        const { getPlaylists } = search;
-        getPlaylists(keyword);
+        searchByKeyword(e.target.value);
+    };
+
+    const searchByKeyword = (value: any) => {
+        const keyword = value && value.trim();
+        if (!keyword) {
+            return;
+        }
+        switch (value) {
+            case 1:
+                getAlbums(keyword);
+                break;
+            case 2:
+                getArtists(keyword);
+                break;
+            case 3:
+                getUsers(keyword);
+            default:
+                getPlaylists(keyword);
+        }
     };
 
     const renderPlaylist = () => {
@@ -102,9 +122,9 @@ const Search: React.FC = observer(() => {
 
                         <div>
                             <span className={styles.star}>
-                                {helper.humanNumber(e.star)}
+                                <span>{helper.humanNumber(e.star)}</span>
 
-                                <i className="remixicon-star-fill" />
+                                <StarTwoTone />
                             </span>
 
                             <span className={styles.played}>{helper.humanNumber(e.played)} Played</span>
@@ -238,17 +258,12 @@ const Search: React.FC = observer(() => {
         });
     };
 
-    const {
-        loading,
-        getPlaylists,
-        loadMorePlaylists,
-        getAlbums,
-        loadMoreAlbums,
-        getArtists,
-        loadMoreArtists,
-        getUsers,
-        loadMoreUsers
-    } = search;
+    const handleTabChange = async (_: any, newValue: any) => {
+        await setValue(newValue);
+        searchByKeyword(searchRef.current.value);
+    };
+
+    const { loading, getPlaylists, getAlbums, getArtists, getUsers } = search;
 
     return (
         <div className={styles.container}>
@@ -263,60 +278,56 @@ const Search: React.FC = observer(() => {
                 <summary>
                     <input ref={searchRef} type="text" onKeyUp={doSearch} placeholder="Search ..." />
                 </summary>
-
-                <nav>
-                    <span
-                        className={styles.selected}
-                        onClick={e =>
-                            selected(e.target, {
-                                search: getPlaylists,
-                                loadMore: loadMorePlaylists,
-                                renderContent: () => renderPlaylist()
-                            })
-                        }>
-                        Playlist
-                    </span>
-                    <span
-                        onClick={e =>
-                            selected(e.target, {
-                                search: getAlbums,
-                                loadMore: loadMoreAlbums,
-                                renderContent: () => renderAlbums()
-                            })
-                        }>
-                        Album
-                    </span>
-                    <span
-                        onClick={e =>
-                            selected(e.target, {
-                                search: getArtists,
-                                loadMore: loadMoreArtists,
-                                renderContent: () => renderArtists()
-                            })
-                        }>
-                        Singer
-                    </span>
-                    <span
-                        onClick={e =>
-                            selected(e.target, {
-                                search: getUsers,
-                                loadMore: loadMoreUsers,
-                                renderContent: () => renderUsers()
-                            })
-                        }>
-                        User
-                    </span>
-                </nav>
-
-                <section className={styles.list} onScroll={loadMore} ref={listRef}>
-                    {loading ? (
-                        <div className={styles.placeholder}>
-                            <span>Loading ...</span>
-                        </div>
-                    ) : (
-                        renderPlaylist()
-                    )}
-                </section>
+                <Tabs value={value} onChange={handleTabChange}>
+                    <Tab label="Playlist" {...a11yProps(0)} />
+                    <Tab label="Album" {...a11yProps(1)} />
+                    <Tab label="Singer" {...a11yProps(2)} />
+                    <Tab label="User" {...a11yProps(3)} />
+                </Tabs>
+                <TabPanel value={value} index={0}>
+                    <section className={styles.list} onScroll={loadMore}>
+                        {loading ? (
+                            <div className={styles.placeholder}>
+                                <span>Loading ...</span>
+                            </div>
+                        ) : (
+                            renderPlaylist()
+                        )}
+                    </section>
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <section className={styles.list} onScroll={loadMore}>
+                        {loading ? (
+                            <div className={styles.placeholder}>
+                                <span>Loading ...</span>
+                            </div>
+                        ) : (
+                            renderAlbums()
+                        )}
+                    </section>
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                    <section className={styles.list} onScroll={loadMore}>
+                        {loading ? (
+                            <div className={styles.placeholder}>
+                                <span>Loading ...</span>
+                            </div>
+                        ) : (
+                            renderArtists()
+                        )}
+                    </section>
+                </TabPanel>
+                <TabPanel value={value} index={3}>
+                    <section className={styles.list} onScroll={loadMore}>
+                        {loading ? (
+                            <div className={styles.placeholder}>
+                                <span>Loading ...</span>
+                            </div>
+                        ) : (
+                            renderUsers()
+                        )}
+                    </section>
+                </TabPanel>
             </main>
         </div>
     );

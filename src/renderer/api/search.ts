@@ -1,7 +1,14 @@
+import IAlbum from '@/interface/IAlbum';
+import IArtist from '@/interface/IArtist';
+import IPlayList from '@/interface/IPlayList';
 import search from './common/search';
+import IUserProfile from '@/interface/IUserProfile';
 
 interface SearchResult {
-    playlists: object[];
+    playlists?: IPlayList[];
+    albums?: IAlbum[];
+    artists?: IArtist[];
+    users?: IUserProfile[];
     nextOffset: number;
 }
 
@@ -15,7 +22,6 @@ async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult>
             type: 1000
         });
         if (res.data.code === 200) {
-            console.log(res.data);
             playlists = res.data.result.playlists.map((e: any) => {
                 const { creator } = e;
                 return {
@@ -44,6 +50,7 @@ async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult>
 }
 
 async function getAlbums(keywords: string, offset = 0) {
+    let albums = [];
     try {
         const res = await search({
             offset,
@@ -52,7 +59,7 @@ async function getAlbums(keywords: string, offset = 0) {
             type: 10
         });
         if (res.data.code === 200) {
-            return res.data.result.albums.map((e: any) => {
+            albums = res.data.result.albums.map((e: any) => {
                 const { artist } = e;
                 return {
                     id: e.id,
@@ -72,10 +79,14 @@ async function getAlbums(keywords: string, offset = 0) {
     } catch (e) {
         console.error(e);
     }
-    return [];
+    return {
+        albums,
+        nextOffset: offset + 30
+    };
 }
 
 async function getArtists(keywords: string, offset = 0) {
+    let artists = [];
     try {
         const res = await search({
             offset,
@@ -84,7 +95,7 @@ async function getArtists(keywords: string, offset = 0) {
             type: 100
         });
         if (res.data.code === 200) {
-            return res.data.result.artists.map((e: any) => {
+            artists = res.data.result.artists.map((e: any) => {
                 return {
                     id: e.id,
                     name: e.name,
@@ -100,10 +111,14 @@ async function getArtists(keywords: string, offset = 0) {
     } catch (e) {
         console.error(e);
     }
-    return [];
+    return {
+        artists,
+        nextOffset: offset + 30
+    };
 }
 
 async function getUsers(keywords: string, offset = 0) {
+    let users = [];
     try {
         const res = await search({
             offset,
@@ -112,7 +127,7 @@ async function getUsers(keywords: string, offset = 0) {
             type: 1002
         });
         if (res.data.code === 200) {
-            return res.data.result.userprofiles.map((e: any) => {
+            users = res.data.result.userprofiles.map((e: any) => {
                 return {
                     id: e.userId,
                     name: e.nickname,
@@ -124,7 +139,10 @@ async function getUsers(keywords: string, offset = 0) {
     } catch (e) {
         console.error(e);
     }
-    return [];
+    return {
+        users,
+        nextOffset: offset + 30
+    };
 }
 
 async function searchByType(type: any, keyword: string, offset?: number): Promise<SearchResult> {

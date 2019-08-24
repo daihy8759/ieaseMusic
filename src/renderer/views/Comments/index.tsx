@@ -1,4 +1,5 @@
 import { useStore } from '@/context';
+import { ThumbUpAltTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import Hero from 'components/Hero';
@@ -87,7 +88,7 @@ const Comments: React.SFC<CommentsProps> = observer(props => {
                             })}
                             data-text={`${helper.humanNumber(item.likedCount)} liked`}
                             onClick={() => like(item.commentId, !item.liked)}>
-                            <i className="remixicon-thumb-up-fill" />
+                            <ThumbUpAltTwoTone />
                         </span>
 
                         {formatDistance(item.time, new Date())}
