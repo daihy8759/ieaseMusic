@@ -3,23 +3,12 @@ import classnames from 'classnames';
 import FadeImage from 'components/FadeImage';
 import Indicator from 'components/Indicator';
 import IArtist from 'interface/IArtist';
-import ISong from 'interface/ISong';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import * as styles from './index.less';
-
-interface IPlayingProps {
-    show?: boolean;
-    song?: ISong;
-    songs?: ISong[];
-    filtered?: ISong[];
-    play?: any;
-    close?: any;
-    search?: any;
-}
 
 const Playing: React.SFC = observer(() => {
     const { playing, controller } = useStore();
@@ -61,7 +50,7 @@ const Playing: React.SFC = observer(() => {
             // Keep active item always in the viewport
             active.classList.add(styles.active);
             // @ts-ignore
-            list.scrollTop = active.offsetTop + active.offsetHeight - list.offsetHeight;
+            listRef.current.scrollTop = active.offsetTop + active.offsetHeight - listRef.current.offsetHeight;
         }
     };
 

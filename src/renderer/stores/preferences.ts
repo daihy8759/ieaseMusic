@@ -496,9 +496,11 @@ class Preferences {
     };
 
     @action
-    enableProxy = (proxyFlag: boolean) => {
+    enableProxy = async (proxyFlag: boolean) => {
         this.disableProxy = !proxyFlag;
-        this.save();
+        await this.save();
+        // reload
+        window.location.reload();
     };
 
     @action

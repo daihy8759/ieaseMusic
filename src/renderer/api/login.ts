@@ -35,4 +35,4 @@ async function geLoginStatus() {
     return { code: 301 };
 }
 
-export { loginWithPhone, loginRefresh };
+export { loginWithPhone, loginRefresh, geLoginStatus };
