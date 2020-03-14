@@ -13,7 +13,8 @@
         "build-renderer": "webpack --config webpack/webpack.renderer.prod.config.js",
         "build-all": "npm run build-main && npm run build-renderer",
         "build-analyzer": "cross-env analyzer=1 npm run build-renderer",
-        "build": "npm run build-all && electron-builder",
+        "clean": "rimraf dist && rimraf build",
+        "build": "npm run clean && npm run build-all && electron-builder",
         "lint": "eslint --ext .ts,.tsx src/**",
         "lint:fix": "prettier --write ./src/**/**/**/*"
     },
@@ -27,7 +28,8 @@
             "output": "release"
         },
         "files": [
-            "dist/"
+            "dist/",
+            "!node_modules"
         ],
         "win": {
             "target": "nsis"
@@ -81,8 +83,8 @@
         "babel-plugin-import": "^1.12.0",
         "cross-env": "^5.2.0",
         "css-loader": "^3.2.0",
-        "electron": "^6.0.1",
-        "electron-builder": "^21.2.0",
+        "electron": "^8.1.0",
+        "electron-builder": "^22.4.1",
         "electron-devtools-installer": "^2.2.4",
         "eslint": "^6.1.0",
         "eslint-config-prettier": "^6.0.0",
@@ -99,6 +101,7 @@
         "optimize-css-assets-webpack-plugin": "^5.0.3",
         "prettier": "^1.18.2",
         "react-hot-loader": "^4.12.10",
+        "rimraf": "^3.0.2",
         "style-loader": "^1.0.0",
         "typescript": "^3.5.3",
         "url-loader": "^2.1.0",
