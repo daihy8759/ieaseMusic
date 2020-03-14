@@ -13,7 +13,10 @@ let lastFm: any = {};
 
 async function getSession() {
     try {
-        const { username, authToken, api_key, api_secret } = lastFm;
+        const { username, connected, authToken, api_key, api_secret } = lastFm;
+        if (!connected) {
+            return;
+        }
         const sig = `api_key${api_key}authToken${authToken}methodauth.getMobileSessionusername${username}${api_secret}`;
         const apiSig = md5(sig);
         const res = await axios.post(
