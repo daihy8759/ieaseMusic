@@ -169,7 +169,7 @@ const FM: React.SFC<IFMProps> = observer(props => {
                     <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
                         {liked ? <FavoriteTwoTone className={classes.liked} /> : <FavoriteBorderTwoTone />}
                     </IconButton>
-                    <IconButton onClick={_ => ban(song.id)}>
+                    <IconButton onClick={() => ban(song.id)}>
                         <DeleteForeverTwoTone />
                     </IconButton>
                     <IconButton>

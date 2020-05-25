@@ -15,7 +15,7 @@ interface IHeaderProps {
 }
 
 const Header: React.SFC<IHeaderProps> = observer(props => {
-    const { controller, menu, playing, me, player } = useStore();
+    const { controller, menu, me, player } = useStore();
     const { song } = controller;
     const goBack = () => window.history.back();
 
