@@ -51,20 +51,22 @@ async function getAlbums(id: number) {
  * 获取相似歌手
  * ⚠️该接口需要登录
  */
-async function getSimilar(id: number) {
+async function getSimilar(id: number, cookie) {
     try {
-        const res = await simiArtist({ id });
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await Api.simi_artist({ id, cookie });
+        if (body.code === 200) {
+            const artists: any = body.artists;
+            return artists.map((e: any) => {
+                return {
+                    id: e.id,
+                    name: e.name,
+                    avatar: `${e.picUrl}?param=50y50`,
+                    publishTime: e.publishTime,
+                    // Broken link
+                    link: e.id ? `/artist/${e.id}` : ''
+                };
+            });
         }
-        const { artists } = res.data;
-        return artists.map((e: IArtist) => ({
-            id: e.id,
-            name: e.name,
-            avatar: e.picUrl,
-            publishTime: e.publishTime,
-            link: e.id ? `/artist/${e.id}` : ''
-        }));
     } catch (e) {
         console.error(e);
     }
@@ -95,7 +97,7 @@ function id2url(id: string) {
 
 async function getArtist(id: number) {
     try {
-        const { body } = await Api.artist_detail({ id });
+        const { body } = await Api.artists({ id });
         if (body.code !== 200) {
             throw body;
         }
@@ -181,4 +183,4 @@ async function unFollowUser(id: number) {
     return { success: false };
 }
 
-export { getArtist, followUser, unFollowUser };
+export { getSimilar, getArtist, followUser, unFollowUser };

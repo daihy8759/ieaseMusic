@@ -4,7 +4,6 @@ async function getTopList() {
     try {
         const { body } = await Api.toplist({});
         if (body.code === 200) {
-            debugger;
             const list: any = body.list;
             return list.map((data: any) => {
                 return {

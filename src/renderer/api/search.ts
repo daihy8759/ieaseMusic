@@ -104,7 +104,7 @@ async function getArtists(keywords: string, offset = 0) {
                     name: e.name,
                     avatar:
                         e.picUrl ||
-                        'http://p3.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=100y100',
+                        'https://p3.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=100y100',
                     followed: e.followed,
                     size: e.albumSize,
                     link: `/artist/${e.id}`

@@ -8,7 +8,6 @@ async function getLyric(id: number) {
     try {
         const { body } = await Api.lyric({ id });
         if (body.code === 200) {
-            debugger;
             const { lrc } = body;
             if (lrc === undefined) {
                 return result;

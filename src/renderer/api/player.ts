@@ -1,3 +1,4 @@
+import { getSimilar } from './artist';
 import Api from './';
 
 async function getSongUrl(query: any) {
@@ -20,27 +21,6 @@ async function getRecentUser(id: number, cookie?: string) {
                     name: e.nickname,
                     avatar: `${e.avatarUrl}?param=50y50`,
                     link: `/user/${e.userId}`
-                };
-            });
-        }
-    } catch (e) {
-        console.error(e);
-    }
-    return [];
-}
-
-async function getSimilarArtist(id: number, cookie?: string) {
-    try {
-        const { body } = await Api.simi_artist({ id, cookie });
-        if (body.code === 200) {
-            const artists: any = body.artists;
-            return artists.map((e: any) => {
-                return {
-                    id: e.id,
-                    name: e.name,
-                    avatar: `${e.picUrl}?param=50y50`,
-                    // Broken link
-                    link: e.id ? `/artist/${e.id}` : ''
                 };
             });
         }
@@ -95,7 +75,7 @@ async function getAlbumBySong(id: number, cookie?: string) {
 async function getRecommend(songid: number, artistid: number, cookie?: string) {
     const [users, artists, playlists1, playlists2] = await Promise.all([
         getRecentUser(songid, cookie),
-        getSimilarArtist(artistid),
+        getSimilar(artistid, cookie),
         getAlbumBySong(songid),
         getSimilarPlaylist(songid)
     ]);
