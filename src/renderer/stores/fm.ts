@@ -1,20 +1,23 @@
 import ISong from '@/interface/ISong';
-import { getPlaylist, fmTrash } from 'api/fm';
-import axios from 'axios';
+import { fmTrash, getPlaylist } from 'api/fm';
 import IPlayList from 'interface/IPlayList';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import controller from './controller';
 
 class FM {
-    @observable loading = true;
+    loading = true;
 
-    @observable song: ISong = {
+    song: ISong = {
         duration: 0
     };
 
-    @observable playlist: IPlayList = {
+    playlist: IPlayList = {
         songs: []
     };
+
+    constructor() {
+        makeAutoObservable(this);
+    }
 
     preload = () => {
         controller.changeMode();
@@ -22,7 +25,6 @@ class FM {
         this.preload = Function;
     };
 
-    @action
     async shuffle() {
         this.loading = true;
 
@@ -35,7 +37,6 @@ class FM {
         });
     }
 
-    @action
     play = () => {
         if (controller.playlist.id === this.playlist.id) {
             controller.toggle();
@@ -47,7 +48,7 @@ class FM {
     };
 
     // Ban a song
-    @action
+
     ban = async (id: number) => {
         const data = await fmTrash(id);
         if (data.code === 200) {
@@ -55,7 +56,6 @@ class FM {
         }
     };
 
-    @action
     next = async () => {
         let index = this.playlist.songs.findIndex(e => e.id === controller.song.id);
 

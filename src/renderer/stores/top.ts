@@ -1,12 +1,15 @@
 import { getTopList } from 'api/top';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 class Top {
-    @observable loading = true;
+    loading = false;
 
-    @observable list: any = [];
+    list: any = [];
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     getList = async () => {
         this.loading = true;
         const list = await getTopList();

@@ -13,7 +13,7 @@ export default (query: ILoginCellphoneQuery) => {
     const path = '/weapi/login/cellphone';
     const data = {
         phone: query.phone,
-        countrycode: query.countrycode,
+        countrycode: query.countrycode || '86',
         password: md5(query.password),
         rememberLogin: 'true'
     };

@@ -1,14 +1,14 @@
 import getPlayList from 'api/playlist';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 class Playlist {
-    @observable loading = true;
+    loading = true;
 
-    @observable show = false;
+    show = false;
 
-    @observable list: any = [];
+    list: any = [];
 
-    @observable types = [
+    types = [
         {
             name: '全部',
             enable: true
@@ -267,11 +267,14 @@ class Playlist {
         }
     ];
 
-    @observable type = '全部';
+    type = '全部';
 
-    @observable nextOffset = 0;
+    nextOffset = 0;
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     getList = async (type = '全部') => {
         this.loading = true;
 
@@ -286,7 +289,6 @@ class Playlist {
     };
 
     // Scroll to load more data
-    @action
     loadmore = async () => {
         if (!this.nextOffset) {
             return;
@@ -298,7 +300,7 @@ class Playlist {
         this.nextOffset = offset;
     };
 
-    @action toggle(show = !this.show) {
+    toggle(show = !this.show) {
         this.show = show;
     }
 }

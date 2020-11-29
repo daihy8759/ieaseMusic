@@ -1,16 +1,5 @@
-import loginCellPhone, { ILoginCellphoneQuery } from './common/login_cellphone';
 import loginRefreshApi from './common/login_refresh';
 import loginStatus from './common/login_status';
-
-async function loginWithPhone(query: ILoginCellphoneQuery) {
-    try {
-        const res = await loginCellPhone(query);
-        return res.data;
-    } catch (e) {
-        console.error(e);
-    }
-    return [];
-}
 
 async function loginRefresh() {
     try {
@@ -35,4 +24,4 @@ async function geLoginStatus() {
     return { code: 301 };
 }
 
-export { loginWithPhone, loginRefresh, geLoginStatus };
+export { loginRefresh, geLoginStatus };

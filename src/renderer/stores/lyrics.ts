@@ -1,13 +1,16 @@
 import getLyric from 'api/lyrics';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import controller from './controller';
 
 class Lyrics {
-    @observable loading = true;
+    loading = true;
 
-    @observable list: { [propName: string]: any } = {};
+    list: { [propName: string]: any } = {};
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     getLyrics = async () => {
         this.loading = true;
 

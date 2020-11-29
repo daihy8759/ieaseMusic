@@ -3,30 +3,33 @@ import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
 import IArtistProfile from 'interface/IArtistProfile';
 import IPlayList from 'interface/IPlayList';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 class Artist {
-    @observable loading = true;
+    loading = true;
 
     // Profile of the artist
-    @observable profile: IArtistProfile = {};
+    profile: IArtistProfile = {};
 
     // All albums of artist
-    @observable albums: IAlbum[] = [];
+    albums: IAlbum[] = [];
 
     // Similar artists
-    @observable similar: IArtist[] = [];
+    similar: IArtist[] = [];
 
     // Contains 'id' and 'songs'
-    @observable playlist: IPlayList = {
+    playlist: IPlayList = {
         songs: []
     };
 
-    @observable desc = {
+    desc = {
         briefDesc: ''
     };
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     getArtist = async (id: number) => {
         this.loading = true;
         const data = await getArtist(id);
@@ -42,7 +45,6 @@ class Artist {
         });
     };
 
-    @action
     follow = async (followed: boolean, id = this.profile.id) => {
         let data;
         if (followed) {

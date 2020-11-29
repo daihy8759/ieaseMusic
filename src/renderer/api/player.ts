@@ -1,9 +1,9 @@
 import albumList from './common/album';
-import playListDetail from './common/playlist_detail';
 import simiArtist from './common/simi_artist';
 import simiPlaylist from './common/simi_playlist';
 import simiSong from './common/simi_song';
 import simiUser from './common/simi_user';
+import NeteaseCloudMusicApi from './';
 
 async function getSongUrl(query: any) {
     const { id } = query;
@@ -107,13 +107,13 @@ async function getRecommend(songid: number, artistid: number) {
     };
 }
 
-async function getPlayListDetail(type: string, id: number) {
+async function getPlayListDetail(type: string, id: number, cookie?: string) {
     const resData: any = {};
     let songs = [];
     if (type === '0') {
-        const res = await playListDetail({ id });
-        songs = res.data.playlist.tracks;
-        const meta = res.data.playlist;
+        const { body } = await NeteaseCloudMusicApi.playlist_detail({ id, cookie });
+        const meta: any = body.playlist;
+        songs = meta.tracks;
         resData.meta = {
             id,
             type,

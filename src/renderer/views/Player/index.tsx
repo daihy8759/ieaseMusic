@@ -9,6 +9,7 @@ import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { FunctionComponent } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
@@ -22,7 +23,7 @@ interface MatchParams {
 
 interface PlayerProps extends RouteComponentProps<MatchParams> {}
 
-const Player: React.FC<PlayerProps> = observer(props => {
+const Player: FunctionComponent<PlayerProps> = observer(props => {
     const { player, controller, me } = useStore();
     const { song, playing } = controller;
     const { loading, meta, recommend, filter, searching } = player;
@@ -75,9 +76,12 @@ const Player: React.FC<PlayerProps> = observer(props => {
         } = props;
 
         showLoading();
-        await getList(params);
-        await getRelated(song);
-        hideLoading();
+        try {
+            await getList(params);
+            await getRelated(song);
+        } finally {
+            hideLoading();
+        }
     };
 
     const renderPeople = () => {

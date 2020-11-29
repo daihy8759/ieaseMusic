@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import * as styles from './index.less';
 
-const Top: React.SFC = observer(() => {
+const Top = observer(() => {
     const { top } = useStore();
     const { loading } = top;
 

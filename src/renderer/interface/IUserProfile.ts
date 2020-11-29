@@ -9,4 +9,5 @@ export default interface IUserProfile {
     following?: any;
     followed?: any;
     signature?: string;
+    cookie?: string;
 }

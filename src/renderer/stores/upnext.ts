@@ -1,11 +1,11 @@
 import ISong from 'interface/ISong';
-import { action, observable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import controller from './controller';
 
 class UpNext {
-    @observable show = false;
+    show = false;
 
-    @observable song: ISong = {
+    song: ISong = {
         album: {},
         artists: []
     };
@@ -13,17 +13,20 @@ class UpNext {
     // Save the canceled song
     canceled: ISong = null;
 
-    @action toggle(song: ISong, show = !this.show) {
+    constructor() {
+        makeAutoObservable(this);
+    }
+
+    toggle(song: ISong, show = !this.show) {
         this.song = song;
         this.show = show;
     }
 
-    @action
     hide() {
         this.show = false;
     }
 
-    @action cancel(song = controller.song) {
+    cancel(song = controller.song) {
         this.canceled = song;
 
         if (song) {

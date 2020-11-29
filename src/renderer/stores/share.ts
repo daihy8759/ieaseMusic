@@ -1,9 +1,12 @@
-import { action, observable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 class Share {
-    @observable show = false;
+    show = false;
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     toggle = (show = !this.show) => {
         this.show = show;
     };

@@ -1,5 +1,5 @@
 import homeApi from 'api/home';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import helper from 'utils/helper';
 import controller from './controller';
 import me from './me';
@@ -13,15 +13,18 @@ interface IHomeData {
 }
 
 class Home {
-    @observable loading = true;
+    loading = true;
 
-    @observable list: IHomeData[] = [];
+    list: IHomeData[] = [];
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     async load() {
         let list: IHomeData[];
         if (me.hasLogin()) {
-            list = await homeApi.getHomeData(me.profile.userId);
+            list = await homeApi.getHomeData(me.profile.userId, me.profile.cookie);
             const [favorite, recommend] = list;
 
             me.rocking(favorite);
@@ -68,17 +71,19 @@ class Home {
         });
     }
 
-    @action async getList() {
+    async getList() {
         this.loading = true;
         // @ts-ignore
         this.getList = Function;
-        await this.load();
-        runInAction(() => {
-            this.loading = false;
-        });
+        try {
+            await this.load();
+        } finally {
+            runInAction(() => {
+                this.loading = false;
+            });
+        }
     }
 
-    @action
     updateShadow = (e: IHomeData, index: number) => {
         this.list = [...this.list.slice(0, index), e, ...this.list.slice(index + 1, this.list.length)];
     };

@@ -1,5 +1,5 @@
 import { ipcRenderer, remote } from 'electron';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import * as path from 'path';
 import lastfm from 'utils/lastfm';
 import * as pkg from '../../../package.json';
@@ -7,37 +7,37 @@ import storage from '../../shared/storage';
 import controller from './controller';
 
 class Preferences {
-    @observable show = false;
+    show = false;
 
-    @observable showTray = false;
+    showTray = false;
 
-    @observable showMenuBarOnLinux = false;
+    showMenuBarOnLinux = false;
 
-    @observable revertTrayIcon = false;
+    revertTrayIcon = false;
 
-    @observable alwaysOnTop = false;
+    alwaysOnTop = false;
 
-    @observable showNotification = false;
+    showNotification = false;
 
-    @observable autoPlay = true;
+    autoPlay = true;
 
-    @observable volume = 1;
+    volume = 1;
 
-    @observable highquality = 0;
+    highquality = 0;
 
-    @observable autoupdate = false;
+    autoupdate = false;
 
-    @observable lastFm = {
+    lastFm = {
         username: '', // Your last.fm username
         password: '', // Your last.fm password
         connected: ''
     };
 
-    @observable connecting = false;
+    connecting = false;
 
-    @observable scrobble = true;
+    scrobble = true;
 
-    @observable enginers = {
+    enginers = {
         QQ: true,
         MiGu: true,
         Xiami: false,
@@ -46,13 +46,13 @@ class Preferences {
         kuwo: true
     };
 
-    @observable proxy = '';
+    proxy = '';
 
-    @observable disableProxy = false;
+    disableProxy = false;
 
-    @observable downloads = path.join(remote.app.getPath('music'), pkg.name);
+    downloads = path.join(remote.app.getPath('music'), pkg.name);
 
-    @observable backgrounds = [
+    backgrounds = [
         {
             type: '全部',
             background: ''
@@ -311,7 +311,10 @@ class Preferences {
         }
     ];
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     async init() {
         let preferences: any = storage.get('preferences');
         if (!preferences) {
@@ -358,7 +361,6 @@ class Preferences {
         return preferences;
     }
 
-    @action
     save = async () => {
         const {
             showTray,
@@ -408,94 +410,79 @@ class Preferences {
         });
     };
 
-    @action
     setShowTray = (showTray: boolean) => {
         this.showTray = showTray;
         this.save();
     };
 
-    @action
     setShowMenuBarOnLinux = (showMenuBarOnLinux: boolean) => {
         this.showMenuBarOnLinux = showMenuBarOnLinux;
         this.save();
     };
 
-    @action
     setRevertTrayIcon = (revertTrayIcon: boolean) => {
         this.revertTrayIcon = revertTrayIcon;
         this.save();
     };
 
-    @action
     setAlwaysOnTop = (alwaysOnTop: boolean) => {
         this.alwaysOnTop = alwaysOnTop;
         this.save();
     };
 
-    @action
     setShowNotification = (showNotification: boolean) => {
         this.showNotification = showNotification;
         this.save();
     };
 
-    @action
     toggle() {
         this.show = !this.show;
     }
 
-    @action
     hide() {
         this.show = false;
     }
 
-    @action
     setAutoPlay = (autoPlay: boolean) => {
         this.autoPlay = autoPlay;
         this.save();
     };
 
-    @action
     setBackground = (index: number, background: any) => {
         this.backgrounds[index] = background;
         this.save();
     };
 
-    @action
     setLastfm = (lastFm: any) => {
         this.lastFm = lastFm;
         this.save();
     };
 
-    @action
     setVolume = (volume: number) => {
         this.volume = volume;
         this.save();
     };
 
-    @action
     setHighquality = (highquality: number) => {
         this.highquality = highquality;
         this.save();
     };
 
-    @action setScrobble(scrobble: boolean) {
+    setScrobble(scrobble: boolean) {
         this.scrobble = scrobble;
         this.save();
     }
 
-    @action
     setAutoupdate = (autoupdate: boolean) => {
         this.autoupdate = autoupdate;
         this.save();
     };
 
-    @action
     setDownloads = (downloads: any) => {
         this.downloads = downloads.path;
         this.save();
     };
 
-    @action
     enableProxy = async (proxyFlag: boolean) => {
         this.disableProxy = !proxyFlag;
         await this.save();
@@ -503,7 +490,6 @@ class Preferences {
         window.location.reload();
     };
 
-    @action
     setProxy = (proxy: string) => {
         let newProxy = proxy;
         if (!/^(http(s)|socks5)?:\/\/\w+/i.test(proxy)) {
@@ -515,7 +501,6 @@ class Preferences {
         this.save();
     };
 
-    @action
     connect = async () => {
         const { username, password } = this.lastFm;
 
@@ -535,7 +520,6 @@ class Preferences {
         });
     };
 
-    @action
     setEnginers = (enginers: any) => {
         this.enginers = enginers;
         this.save();

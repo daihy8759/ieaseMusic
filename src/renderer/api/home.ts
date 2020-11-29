@@ -1,18 +1,15 @@
 import * as uuid from 'uuid/v4';
-import userPlayList from './common/user_playlist';
-import recommendResource from './common/recommend_resource';
-import recommendSongs from './common/recommend_songs';
-import personalized from './common/personalized';
-import playListDetail from './common/playlist_detail';
-import albumNewest from './common/album_newest';
+import NeteaseCloudMusicApi from './';
 
-async function getSongs(id: number) {
+async function getSongs(id: number, cookie?: string) {
     try {
-        const res = await playListDetail({ id });
-        if (res.data.code !== 200) {
-            throw res.data;
+        const res = await NeteaseCloudMusicApi.playlist_detail({ id, cookie });
+        const { body } = res;
+        if (body.code !== 200) {
+            throw body;
         }
-        return res.data.playlist.tracks.map((d: any) => {
+        // @ts-ignore
+        return body.playlist.tracks.map((d: any) => {
             const { al, ar } = d;
             return {
                 id: d.id,
@@ -37,13 +34,16 @@ async function getSongs(id: number) {
     return {};
 }
 
-async function getPersonalized() {
+async function getPersonalized(cookie?: string) {
     try {
-        const res = await personalized({});
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await NeteaseCloudMusicApi.personalized({
+            cookie
+        });
+        if (body.code !== 200) {
+            throw body;
         }
-        return res.data.result.map((d: any) => {
+        // @ts-ignore
+        return body.result.map((d: any) => {
             return {
                 id: d.id,
                 type: 0,
@@ -60,20 +60,21 @@ async function getPersonalized() {
     return [];
 }
 
-async function getDaily() {
+async function getDaily(cookie?: string) {
     let list = [];
-    const res = await recommendSongs();
-    if (res.data.code !== 200) {
-        throw res.data;
+    const { body } = await NeteaseCloudMusicApi.recommend_songs({ cookie });
+    if (body.code !== 200) {
+        throw body;
     }
-    const { recommend } = res.data;
+    // @ts-ignore
+    const dailySongs: any = body.data.dailySongs;
     list = [
         {
             id: uuid(),
             name: '每日推荐歌曲',
-            size: recommend.length,
-            songs: recommend.map((d: any) => {
-                const { album, artists } = d;
+            size: dailySongs.length,
+            songs: dailySongs.map((d: any) => {
+                const { al: album, ar: artists } = d;
                 return {
                     id: d.id,
                     name: d.name,
@@ -97,13 +98,14 @@ async function getDaily() {
     return list;
 }
 
-async function getLiked(uid: number) {
+async function getLiked(uid: number, cookie?: string) {
     try {
-        const res = await userPlayList({ uid });
-        if (res.data.code !== 200) {
-            console.error('Failed to get liked: {}', res.data);
+        const { body } = await NeteaseCloudMusicApi.user_playlist({ uid, cookie });
+        if (body.code !== 200) {
+            console.error('Failed to get liked: {}', body);
         } else {
-            const [liked] = res.data.playlist;
+            // @ts-ignore
+            const [liked] = body.playlist;
             const songs = await getSongs(liked.id);
             return [
                 {
@@ -125,13 +127,14 @@ async function getLiked(uid: number) {
     return [];
 }
 
-async function getRecommend() {
+async function getRecommend(cookie?: string) {
     try {
-        const res = await recommendResource();
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await NeteaseCloudMusicApi.recommend_resource({ cookie });
+        if (body.code !== 200) {
+            throw body;
         } else {
-            return res.data.recommend.map((e: any) => {
+            const recommend: any = body.recommend;
+            return recommend.map((e: any) => {
                 return {
                     id: e.id,
                     type: 0,
@@ -149,13 +152,14 @@ async function getRecommend() {
     return [];
 }
 
-async function getNewest() {
+async function getNewest(cookie?: string) {
     try {
-        const res = await albumNewest();
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await NeteaseCloudMusicApi.album_newest({ cookie });
+        if (body.code !== 200) {
+            throw body;
         } else {
-            return res.data.albums.map((e: any) => {
+            const albums: any = body.albums;
+            return albums.map((e: any) => {
                 return {
                     id: e.id,
                     type: 1,
@@ -173,18 +177,18 @@ async function getNewest() {
     return [];
 }
 
-async function getHomeData(id?: number) {
+async function getHomeData(id?: number, cookie?: string) {
     if (id) {
         const [liked, daily, recommend, personalizedList, newest] = await Promise.all([
-            getLiked(id),
-            getDaily(),
-            getRecommend(),
-            getPersonalized(),
-            getNewest()
+            getLiked(id, cookie),
+            getDaily(cookie),
+            getRecommend(cookie),
+            getPersonalized(cookie),
+            getNewest(cookie)
         ]);
         return [...liked, ...daily, ...recommend, ...personalizedList, ...newest];
     }
-    const list = await getPersonalized();
+    const list = await getPersonalized(cookie);
     if (list.length > 0) {
         list[0].songs = await getSongs(list[0].id);
     }

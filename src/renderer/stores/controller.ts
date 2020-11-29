@@ -2,7 +2,7 @@ import { getSongUrl } from 'api/player';
 import { ipcRenderer } from 'electron';
 import IPlayList from 'interface/IPlayList';
 import ISong from 'interface/ISong';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import lastfm from 'utils/lastfm';
 import comments from './comments';
 import fm from './fm';
@@ -15,20 +15,24 @@ const PLAYER_LOOP = 2;
 const MODES = [PLAYER_SHUFFLE, PLAYER_REPEAT, PLAYER_LOOP];
 
 class Controller {
-    @observable playing = false;
+    playing = false;
 
-    @observable mode = PLAYER_SHUFFLE;
+    mode = PLAYER_SHUFFLE;
 
     // A struct should contains 'id' and 'songs'
-    @observable playlist: IPlayList = {};
+    playlist: IPlayList = {};
 
     // Currently played song
-    @observable song: ISong = {};
+    song: ISong = {};
 
     // Keep a history with current playlist
     history: number[] = [];
 
-    @action async setup(playlist: any) {
+    constructor() {
+        makeAutoObservable(this);
+    }
+
+    async setup(playlist: any) {
         if (this.playlist.id === playlist.id && playlist.id !== 'PERSONAL_FM') {
             return;
         }
@@ -42,11 +46,10 @@ class Controller {
         this.song = song;
 
         ipcRenderer.send('update-playing', {
-            songs: playlist.songs.slice()
+            songs: playlist.songs.slice().map((d: any) => toJS(d))
         });
     }
 
-    @action
     async play(songId?: number, forward = true) {
         if (!this.playlist || !this.playlist.songs) {
             return;
@@ -68,9 +71,9 @@ class Controller {
         // Save to history list
         if (!this.history.includes(songId)) {
             this.history[forward ? 'push' : 'unshift'](song.id);
-
+            const songs = this.playlist.songs.filter(e => this.history.includes(e.id)).map(song => toJS(song));
             ipcRenderer.send('update-history', {
-                songs: this.playlist.songs.filter(e => this.history.includes(e.id))
+                songs
             });
         }
 
@@ -98,7 +101,6 @@ class Controller {
         await lastfm.playing(song);
     }
 
-    @action
     resolveSong = async () => {
         const { song } = this;
 
@@ -114,7 +116,6 @@ class Controller {
         }
     };
 
-    @action
     pause = () => {
         this.playing = false;
     };
@@ -226,7 +227,6 @@ class Controller {
         }
     };
 
-    @action
     toggle = async () => {
         this.playing = !this.playing;
 
@@ -238,7 +238,6 @@ class Controller {
         this.updateStatus();
     };
 
-    @action
     changeMode = (mode?: 0 | 1 | 2) => {
         let index = MODES.indexOf(this.mode);
 
@@ -266,7 +265,7 @@ class Controller {
     updateStatus() {
         ipcRenderer.send('update-status', {
             playing: this.playing,
-            song: this.song,
+            song: toJS(this.song),
             modes: MODES.map(e => {
                 return {
                     mode: e,

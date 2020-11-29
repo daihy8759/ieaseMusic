@@ -1,54 +1,55 @@
 import { getPlayListDetail, getRecommend } from 'api/player';
-import axios from 'axios';
 import ISong from 'interface/ISong';
-import { action, observable, runInAction } from 'mobx';
+import me from './me';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import * as pinyin from 'tiny-pinyin';
 import helper from 'utils/helper';
 import IArtist from 'interface/IArtist';
 
 class Player {
-    @observable loading = true;
+    loading = false;
 
-    @observable songs: ISong[] = [];
+    songs: ISong[] = [];
 
-    @observable filtered: ISong[] = [];
+    filtered: ISong[] = [];
 
-    @observable meta: any = {
+    meta: any = {
         pallet: [[0, 0, 0]],
         author: []
     };
 
     // Show filter
-    @observable searching = false;
+    searching = false;
 
-    @observable keywords: string;
+    keywords: string;
 
     // Recommend albums and playlist
-    @observable recommend: any = [];
+    recommend: any = [];
 
     // Recent user
-    @observable users: any = [];
+    users: any = [];
 
     // Similar artist
-    @observable artists: IArtist[] = [];
+    artists: IArtist[] = [];
 
     timer: number;
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     getDetail = async (type: string, id: number) => {
-        const detail = await getPlayListDetail(type, id);
+        const detail = await getPlayListDetail(type, id, me.profile.cookie);
         if (detail && detail.meta) {
             const pallet = await helper.getPallet(detail.meta.cover);
             detail.meta.pallet = pallet;
             runInAction(() => {
                 this.meta = detail.meta;
-                // @ts-ignore
-                this.songs.replace(detail.songs);
+                this.songs = detail.songs;
             });
         }
     };
 
-    @action
     getRelated = async (song: ISong) => {
         if (!song.id || song.artists.length === 0) {
             return;
@@ -63,7 +64,6 @@ class Player {
         }
     };
 
-    @action
     subscribe = async (subscribed: boolean) => {
         const { meta }: any = this;
         // const response = await axios.get(
@@ -76,17 +76,14 @@ class Player {
         // }
     };
 
-    @action
     toggleLoading(show = !this.loading) {
         this.loading = show;
     }
 
-    @action
     toggleSearch(show = !this.searching) {
         this.searching = show;
     }
 
-    @action
     doFilter(text: string) {
         let songs = [];
 

@@ -10,6 +10,7 @@ import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
@@ -19,7 +20,7 @@ interface IStatusProps {
     playing?: boolean;
 }
 
-const Status: React.SFC<IStatusProps> = props => {
+const Status: FunctionComponent<IStatusProps> = props => {
     const { playing } = props;
 
     if (!playing) {
@@ -45,9 +46,8 @@ const ListItemLink = (props: any) => {
     return <ListItem button component="a" {...props} />;
 };
 
-const Welcome: React.SFC = observer(() => {
+const Welcome = observer(() => {
     const { me, controller, home } = useStore();
-    // @ts-ignore
     const classes = useStyles();
     useEffectOnce(() => {
         home.getList();

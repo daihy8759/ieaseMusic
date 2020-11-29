@@ -288,6 +288,7 @@ function updateMenu(playing = false) {
 }
 
 const createWindow = async () => {
+    await app.whenReady();
     const mainWindowState = windowStateKeeper({
         defaultWidth: 800,
         defaultHeight: 520
@@ -303,7 +304,8 @@ const createWindow = async () => {
         titleBarStyle: 'hiddenInset',
         webPreferences: {
             webSecurity: false,
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true
         }
     });
 

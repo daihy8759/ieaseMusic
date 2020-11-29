@@ -1,18 +1,18 @@
 import searchByType from 'api/search';
 import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 class Search {
-    @observable loading = false;
+    loading = false;
 
-    @observable playlists: any = [];
+    playlists: any = [];
 
-    @observable albums: IAlbum[] = [];
+    albums: IAlbum[] = [];
 
-    @observable artists: IArtist[] = [];
+    artists: IArtist[] = [];
 
-    @observable users: any = [];
+    users: any = [];
 
     keyword = '';
 
@@ -24,7 +24,10 @@ class Search {
 
     nextUsersOffset = 0;
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     getPlaylists = async (keyword: string) => {
         this.loading = true;
         this.keyword = keyword;
@@ -36,7 +39,6 @@ class Search {
         });
     };
 
-    @action
     loadMorePlaylists = async () => {
         if (this.nextPlaylistsOffset === -1) {
             return;
@@ -48,7 +50,6 @@ class Search {
         });
     };
 
-    @action
     getAlbums = async (keyword: string) => {
         this.loading = true;
         const data = await searchByType('10', keyword);
@@ -59,7 +60,6 @@ class Search {
         });
     };
 
-    @action
     loadMoreAlbums = async () => {
         if (this.nextAlbumsOffset === -1) {
             return;
@@ -71,7 +71,6 @@ class Search {
         });
     };
 
-    @action
     getArtists = async (keyword: string) => {
         this.loading = true;
         const data = await searchByType('100', keyword);
@@ -82,7 +81,6 @@ class Search {
         });
     };
 
-    @action
     loadMoreArtists = async () => {
         if (this.nextArtistsOffset === -1) {
             return;
@@ -92,7 +90,6 @@ class Search {
         this.nextArtistsOffset = data.nextOffset;
     };
 
-    @action
     getUsers = async (keyword: string) => {
         this.loading = true;
         const data = await searchByType('1002', keyword);
@@ -103,7 +100,6 @@ class Search {
         });
     };
 
-    @action
     loadMoreUsers = async () => {
         if (this.nextUsersOffset === -1) {
             return;

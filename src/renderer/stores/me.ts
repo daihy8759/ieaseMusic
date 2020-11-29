@@ -1,38 +1,44 @@
-import { geLoginStatus, loginRefresh, loginWithPhone } from 'api/login';
+import { dialog } from 'electron';
 import QRCodeApi, { LoginType } from 'api/qrcode';
 import { likeSong, unlikeSong } from 'api/user';
-import { dialog } from 'electron';
 import ISong from 'interface/ISong';
 import IUserProfile from 'interface/IUserProfile';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import helper from 'utils/helper';
 import lastfm from 'utils/lastfm';
 import storage from '../../shared/storage';
 import home from './home';
 import player from './player';
+import Api from '../api';
 
 const { generate, polling } = QRCodeApi;
 
 class Me {
-    @observable initialized = false;
+    initialized = false;
 
-    @observable logining = false;
+    logining = false;
 
-    @observable profile: IUserProfile = {};
+    profile: IUserProfile = {};
 
-    @observable qrcode: any = {};
+    qrcode: any = {};
 
-    @observable likes = new Map();
+    likes = new Map();
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     async init() {
-        let profile = storage.get('profile');
+        let profile: IUserProfile = storage.get('profile');
 
         if (!profile) {
             profile = {};
         } else {
-            const data = await loginRefresh();
-            if (data.code === 301) {
+            try {
+                await Api.login_refresh({
+                    cookie: profile.cookie
+                });
+            } catch (e) {
                 profile = {};
                 await storage.delete('profile');
             }
@@ -43,7 +49,6 @@ class Me {
         });
     }
 
-    @action
     generate = async (type: LoginType) => {
         const data: any = await generate(type);
 
@@ -73,35 +78,40 @@ class Me {
             return;
         }
 
-        debugger;
-        const { profile } = await geLoginStatus();
-        this.profile = profile;
-        await storage.set('profile', this.profile);
+        const { body } = await Api.login_status({});
+        // @ts-ignore
+        this.profile = body.profile;
+        await storage.set('profile', {
+            ...this.profile,
+            cookie: body.cookie
+        });
         await this.init();
         await home.load();
         done();
         this.logining = false;
     };
 
-    @action
     login = async (phone: string, password: string) => {
         this.logining = true;
 
         const formatter = helper.formatPhone(phone);
-        const data = await loginWithPhone({
+        const { body } = await Api.login_cellphone({
             countrycode: formatter.code.toString(),
             phone: formatter.phone.toString(),
             password
         });
-
-        if (data.code !== 200) {
-            console.error(`Failed to login: ${data.msg}`);
+        if (body.code !== 200) {
+            console.error(`Failed to login: ${body.msg}`);
             this.logining = false;
             return false;
         }
 
         runInAction(() => {
-            this.profile = data.profile;
+            const accountProfile: {} = body.profile || {};
+            this.profile = {
+                ...accountProfile,
+                cookie: body.cookie
+            };
         });
         await storage.set('profile', this.profile);
         runInAction(() => {
@@ -110,7 +120,6 @@ class Me {
         return this.profile;
     };
 
-    @action
     rocking = (likes: any) => {
         const mapping = new Map();
         mapping.set('id', likes.id);
@@ -154,12 +163,11 @@ class Me {
         return data.code === 200;
     }
 
-    @action async logout() {
+    async logout() {
         // @ts-ignore
         await storage.remove('profile');
     }
 
-    @action
     like = async (song: ISong) => {
         await lastfm.love(song);
         const result = await this.exeLike(song, true);
@@ -170,7 +178,6 @@ class Me {
         });
     };
 
-    @action
     unlike = async (song: ISong) => {
         await lastfm.unlove(song);
         const result = await this.exeLike(song, false);

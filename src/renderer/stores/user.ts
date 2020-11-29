@@ -1,16 +1,19 @@
 import { getUserDetail } from 'api/user';
 import axios from 'axios';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import IUserProfile from 'interface/IUserProfile';
 
 class User {
-    @observable loading = true;
+    loading = false;
 
-    @observable profile: IUserProfile = {};
+    profile: IUserProfile = {};
 
-    @observable playlists: any = [];
+    playlists: any = [];
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     getUser = async (userid: number) => {
         this.loading = true;
 
@@ -23,7 +26,7 @@ class User {
     };
 
     //  TODO: use api
-    @action
+
     follow = async (followed: boolean) => {
         const data: any = await axios.get(
             followed ? `/api/user/unfollow/${this.profile.id}` : `/api/user/follow/${this.profile.id}`

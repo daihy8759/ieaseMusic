@@ -1,21 +1,24 @@
 import { getMusicComments } from 'api/comments';
-import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import ISong from 'interface/ISong';
 
 class Comments {
-    @observable loading = true;
+    loading = true;
 
-    @observable hotList: any = [];
+    hotList: any = [];
 
-    @observable newestList: any = [];
+    newestList: any = [];
 
-    @observable total = 0;
+    total = 0;
 
-    @observable song: ISong;
+    song: ISong;
 
     nextOffset = 0;
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     async getList(song: ISong) {
         if (!song) {
             return;
@@ -32,7 +35,6 @@ class Comments {
         });
     }
 
-    @action
     like = async (id: number, liked: boolean) => {
         // const response = await axios.get(`/api/comments/like/${id}/${controller.song.id}/${+liked}`);
         // const { data } = response;
@@ -44,7 +46,6 @@ class Comments {
         // }
     };
 
-    @action
     loadMore = async (id: number) => {
         if (!this.nextOffset) {
             return;

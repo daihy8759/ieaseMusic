@@ -1,21 +1,23 @@
 import ISong from 'interface/ISong';
-import { action, observable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import * as pinyin from 'tiny-pinyin';
 import controller from './controller';
 
 class Playing {
-    @observable show = false;
+    show = false;
 
-    @observable filtered: ISong[] = [];
+    filtered: ISong[] = [];
 
     timer: number;
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     toggle = (show = !this.show) => {
         this.show = show;
     };
 
-    @action
     doFilter = (text: string) => {
         let songs = [];
 

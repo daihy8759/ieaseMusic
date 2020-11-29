@@ -33,6 +33,7 @@ const useStyles = makeStyles({
 
 const Controller: React.FC = observer(() => {
     const { controller, me, comments } = useStore();
+    const classes = useStyles();
 
     const seek = (e: any) => {
         const percent = e.clientX / window.innerWidth;
@@ -72,9 +73,6 @@ const Controller: React.FC = observer(() => {
             return <RepeatTwoTone />;
         }
     };
-
-    // @ts-ignore
-    const classes = useStyles();
 
     return (
         <div

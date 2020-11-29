@@ -1,9 +1,12 @@
-import { observable, action } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 class Menu {
-    @observable show = false;
+    show = false;
 
-    @action
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     toggle = (show = !this.show) => {
         this.show = show;
     };
