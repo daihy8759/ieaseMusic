@@ -19,17 +19,17 @@
         "lint:fix": "prettier --write ./src/**/**/**/*"
     },
     "build": {
-        "productName": "ieaseMusic-desktop",
+        "productName": "ieaseMusic",
         "appId": "com.github.daihy8759",
         "mac": {
             "category": "com.github.daihy8759"
         },
         "directories": {
-            "output": "release"
+            "output": "release",
+            "buildResources": "resources"
         },
         "files": [
-            "dist/",
-            "!node_modules"
+            "dist/"
         ],
         "win": {
             "target": "nsis"
