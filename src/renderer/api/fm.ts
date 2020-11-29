@@ -1,7 +1,6 @@
-import personalFm from './common/personal_fm';
-import fmTrashApi from './common/fm_trash';
 import IArtist from 'interface/IArtist';
 import ISong from 'interface/ISong';
+import Api from './';
 
 interface PlaylistResponse {
     id: string | number;
@@ -12,13 +11,13 @@ interface PlaylistResponse {
 }
 
 async function getPlaylist(): Promise<PlaylistResponse> {
-    let songs = [];
+    let songs: any = [];
     try {
-        const res = await personalFm();
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await Api.personal_fm({});
+        if (body.code !== 200) {
+            throw body;
         }
-        const { data } = res.data;
+        const { data } = body;
         songs = data || [];
         if (songs.length === 0) {
             return getPlaylist();
@@ -54,10 +53,10 @@ async function getPlaylist(): Promise<PlaylistResponse> {
     };
 }
 
-async function fmTrash(id: number) {
+async function fmTrash(id: number, cookie: string) {
     try {
-        const res = await fmTrashApi({ id });
-        return res.data;
+        const { body } = await Api.fm_trash({ id, cookie });
+        return body;
     } catch (e) {
         console.error(e);
     }

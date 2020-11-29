@@ -1,10 +1,12 @@
-import topList from './common/toplist';
+import Api from './';
 
 async function getTopList() {
     try {
-        const res = await topList();
-        if (res.data.code === 200) {
-            return res.data.list.map((data: any) => {
+        const { body } = await Api.toplist({});
+        if (body.code === 200) {
+            debugger;
+            const list: any = body.list;
+            return list.map((data: any) => {
                 return {
                     name: data.name,
                     played: data.playCount,

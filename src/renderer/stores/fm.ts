@@ -3,6 +3,7 @@ import { fmTrash, getPlaylist } from 'api/fm';
 import IPlayList from 'interface/IPlayList';
 import { makeAutoObservable, runInAction } from 'mobx';
 import controller from './controller';
+import me from './me';
 
 class FM {
     loading = true;
@@ -48,9 +49,9 @@ class FM {
     };
 
     // Ban a song
-
     ban = async (id: number) => {
-        const data = await fmTrash(id);
+        const cookie = me.profile.cookie;
+        const data = await fmTrash(id, cookie);
         if (data.code === 200) {
             this.next();
         }

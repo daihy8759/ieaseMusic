@@ -1,4 +1,5 @@
 import { getUserDetail } from 'api/user';
+import me from './me';
 import axios from 'axios';
 import { makeAutoObservable, runInAction } from 'mobx';
 import IUserProfile from 'interface/IUserProfile';
@@ -16,8 +17,8 @@ class User {
 
     getUser = async (userid: number) => {
         this.loading = true;
-
-        const data = await getUserDetail(userid);
+        const cookie = me.profile.cookie;
+        const data = await getUserDetail(userid, cookie);
         runInAction(() => {
             this.profile = data.profile;
             this.playlists = data.playlists;

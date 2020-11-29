@@ -1,9 +1,4 @@
-import albumList from './common/album';
-import simiArtist from './common/simi_artist';
-import simiPlaylist from './common/simi_playlist';
-import simiSong from './common/simi_song';
-import simiUser from './common/simi_user';
-import NeteaseCloudMusicApi from './';
+import Api from './';
 
 async function getSongUrl(query: any) {
     const { id } = query;
@@ -14,11 +9,12 @@ async function getSongUrl(query: any) {
 }
 
 // 相似歌手
-async function getRecentUser(id: number) {
+async function getRecentUser(id: number, cookie?: string) {
     try {
-        const res = await simiUser({ id });
-        if (res.data.code === 200) {
-            return res.data.userprofiles.map((e: any) => {
+        const { body } = await Api.simi_user({ id, cookie });
+        if (body.code === 200) {
+            const userProfiles: any = body.userprofiles;
+            return userProfiles.map((e: any) => {
                 return {
                     id: e.userId,
                     name: e.nickname,
@@ -33,11 +29,12 @@ async function getRecentUser(id: number) {
     return [];
 }
 
-async function getSimilarArtist(id: number) {
+async function getSimilarArtist(id: number, cookie?: string) {
     try {
-        const res = await simiArtist({ id });
-        if (res.data.code === 200) {
-            return res.data.artists.map((e: any) => {
+        const { body } = await Api.simi_artist({ id, cookie });
+        if (body.code === 200) {
+            const artists: any = body.artists;
+            return artists.map((e: any) => {
                 return {
                     id: e.id,
                     name: e.name,
@@ -53,11 +50,12 @@ async function getSimilarArtist(id: number) {
     return [];
 }
 
-async function getSimilarPlaylist(id: number) {
+async function getSimilarPlaylist(id: number, cookie?: string) {
     try {
-        const res = await simiPlaylist({ id });
-        if (res.data.code === 200) {
-            return res.data.playlists.map((e: any) => {
+        const { body } = await Api.simi_playlist({ id, cookie });
+        if (body.code === 200) {
+            const playlists: any = body.playlists;
+            return playlists.map((e: any) => {
                 return {
                     id: e.id,
                     name: e.name,
@@ -72,11 +70,12 @@ async function getSimilarPlaylist(id: number) {
     return [];
 }
 
-async function getAlbumBySong(id: number) {
+async function getAlbumBySong(id: number, cookie?: string) {
     try {
-        const res = await simiSong({ id });
-        if (res.data.code === 200) {
-            return res.data.songs.map((e: any) => {
+        const { body } = await Api.simi_song({ id, cookie });
+        if (body.code === 200) {
+            const songs: any = body.songs;
+            return songs.map((e: any) => {
                 const { album } = e;
 
                 return {
@@ -93,9 +92,9 @@ async function getAlbumBySong(id: number) {
     return [];
 }
 
-async function getRecommend(songid: number, artistid: number) {
+async function getRecommend(songid: number, artistid: number, cookie?: string) {
     const [users, artists, playlists1, playlists2] = await Promise.all([
-        getRecentUser(songid),
+        getRecentUser(songid, cookie),
         getSimilarArtist(artistid),
         getAlbumBySong(songid),
         getSimilarPlaylist(songid)
@@ -109,9 +108,9 @@ async function getRecommend(songid: number, artistid: number) {
 
 async function getPlayListDetail(type: string, id: number, cookie?: string) {
     const resData: any = {};
-    let songs = [];
+    let songs: any = [];
     if (type === '0') {
-        const { body } = await NeteaseCloudMusicApi.playlist_detail({ id, cookie });
+        const { body } = await Api.playlist_detail({ id, cookie });
         const meta: any = body.playlist;
         songs = meta.tracks;
         resData.meta = {
@@ -131,9 +130,9 @@ async function getPlayListDetail(type: string, id: number, cookie?: string) {
             subscribed: meta.subscribed
         };
     } else {
-        const res = await albumList({ id });
-        songs = res.data.songs;
-        const meta = res.data.album;
+        const { body } = await Api.album({ id, cookie });
+        songs = body.songs;
+        const meta: any = body.album;
         resData.meta = {
             name: meta.name,
             size: meta.size,

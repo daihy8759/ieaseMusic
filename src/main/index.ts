@@ -1,8 +1,7 @@
-import { app, BrowserWindow, Menu, session, shell } from 'electron';
+import { app, BrowserWindow, Menu, shell } from 'electron';
 import installer, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import * as windowStateKeeper from 'electron-window-state';
 import * as path from 'path';
-import * as agent from 'random-useragent';
 import * as url from 'url';
 import ipcMainSets from './ipcMainSets';
 
@@ -335,27 +334,6 @@ const createWindow = async () => {
             win.focus();
         } catch (ex) {}
     });
-    // cors
-    const ieaseUri = 'https://music.163.com';
-    win.webContents.session.webRequest.onBeforeSendHeaders(
-        {
-            urls: [`${ieaseUri}/*`]
-        },
-        async (details, callback) => {
-            const cookie = await session.defaultSession.cookies.get({ url: ieaseUri });
-            callback({
-                requestHeaders: {
-                    ...details.requestHeaders,
-                    Connection: 'keep-alive',
-                    Referer: ieaseUri,
-                    cookie,
-                    Origin: ieaseUri,
-                    Host: 'music.163.com',
-                    'User-Agent': agent.getRandom()
-                }
-            });
-        }
-    );
     // open devTools
     if (process.env.NODE_ENV !== 'production') {
         win.webContents.on('did-frame-finish-load', () => {

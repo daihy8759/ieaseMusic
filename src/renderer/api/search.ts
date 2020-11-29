@@ -1,8 +1,8 @@
 import IAlbum from '@/interface/IAlbum';
 import IArtist from '@/interface/IArtist';
 import IPlayList from '@/interface/IPlayList';
-import search from './common/search';
 import IUserProfile from '@/interface/IUserProfile';
+import Api from './';
 
 interface SearchResult {
     playlists?: IPlayList[];
@@ -15,14 +15,15 @@ interface SearchResult {
 async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult> {
     let playlists = [];
     try {
-        const res = await search({
+        const { body } = await Api.search({
             offset,
             keywords,
             limit: 30,
             type: 1000
         });
-        if (res.data.code === 200) {
-            playlists = res.data.result.playlists.map((e: any) => {
+        if (body.code === 200) {
+            const result: any = body.result;
+            playlists = result.playlists.map((e: any) => {
                 const { creator } = e;
                 return {
                     id: e.id,
@@ -52,20 +53,21 @@ async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult>
 async function getAlbums(keywords: string, offset = 0) {
     let albums = [];
     try {
-        const res = await search({
+        const { body } = await Api.search({
             offset,
             keywords,
             limit: 30,
             type: 10
         });
-        if (res.data.code === 200) {
-            albums = res.data.result.albums.map((e: any) => {
+        if (body.code === 200) {
+            const result: any = body.result;
+            albums = result.albums.map((e: any) => {
                 const { artist } = e;
                 return {
                     id: e.id,
                     name: e.name,
                     cover: e.picUrl,
-                    publish: e.publishTime,
+                    publishTime: e.publishTime,
                     size: e.size,
                     link: `/player/1/${e.id}`,
                     artist: {
@@ -88,14 +90,15 @@ async function getAlbums(keywords: string, offset = 0) {
 async function getArtists(keywords: string, offset = 0) {
     let artists = [];
     try {
-        const res = await search({
+        const { body } = await Api.search({
             offset,
             keywords,
             limit: 30,
             type: 100
         });
-        if (res.data.code === 200) {
-            artists = res.data.result.artists.map((e: any) => {
+        if (body.code === 200) {
+            const result: any = body.result;
+            artists = result.artists.map((e: any) => {
                 return {
                     id: e.id,
                     name: e.name,
@@ -120,14 +123,15 @@ async function getArtists(keywords: string, offset = 0) {
 async function getUsers(keywords: string, offset = 0) {
     let users = [];
     try {
-        const res = await search({
+        const { body } = await Api.search({
             offset,
             keywords,
             limit: 30,
             type: 1002
         });
-        if (res.data.code === 200) {
-            users = res.data.result.userprofiles.map((e: any) => {
+        if (body.code === 200) {
+            const result: any = body.result;
+            users = result.userprofiles.map((e: any) => {
                 return {
                     id: e.userId,
                     name: e.nickname,

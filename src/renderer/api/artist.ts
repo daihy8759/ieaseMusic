@@ -1,21 +1,18 @@
+// @ts-nocheck
 import CRYPTO from 'utils/crypto';
-import artistList from './common/artists';
-import artistDesc from './common/artist_desc';
-import artistAlbum from './common/artist_album';
-import simiArtist from './common/simi_artist';
-import artistSub from './common/artist_sub';
 import IArtist from 'interface/IArtist';
 import IAlbum from 'interface/IAlbum';
+import Api from './';
 
 const { md5 } = CRYPTO;
 
 async function getDesc(id: number) {
     try {
-        const res = await artistDesc({ id });
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await Api.artist_desc({ id });
+        if (body.code !== 200) {
+            throw body;
         }
-        const { briefDesc, introduction } = res.data;
+        const { briefDesc, introduction } = body;
         return {
             briefDesc,
             introduction
@@ -31,11 +28,12 @@ async function getDesc(id: number) {
 
 async function getAlbums(id: number) {
     try {
-        const res = await artistAlbum({ id });
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await Api.artist_album({ id });
+        if (body.code !== 200) {
+            throw body;
         }
-        const { hotAlbums } = res.data;
+        const { hotAlbums } = body;
+        // @ts-ignore
         return hotAlbums.map((e: IAlbum) => ({
             id: e.id,
             name: e.name,
@@ -97,11 +95,12 @@ function id2url(id: string) {
 
 async function getArtist(id: number) {
     try {
-        const res = await artistList({ id });
-        if (res.data.code !== 200) {
-            throw res.data;
+        const { body } = await Api.artist_detail({ id });
+        if (body.code !== 200) {
+            throw body;
         }
-        const { artist, hotSongs } = res.data;
+        const { artist, hotSongs } = body;
+        // @ts-ignore
         const songs = hotSongs.map((e: any) => {
             const { al, ar } = e;
             return {
@@ -156,8 +155,8 @@ async function getArtist(id: number) {
 
 async function followUser(id: number) {
     try {
-        const res = await artistSub({ id, t: 1 });
-        if (res.data.code === 200) {
+        const { body } = await Api.artist_sub({ id, t: 1 });
+        if (body.code === 200) {
             return {
                 success: false
             };
@@ -170,8 +169,8 @@ async function followUser(id: number) {
 
 async function unFollowUser(id: number) {
     try {
-        const res = await artistSub({ id, t: 0 });
-        if (res.data.code === 200) {
+        const { body } = await Api.artist_sub({ id, t: 0 });
+        if (body.code === 200) {
             return {
                 success: false
             };

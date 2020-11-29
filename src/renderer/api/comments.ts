@@ -1,5 +1,4 @@
-import commentMusic from './common/comment_music';
-import commentLike from './common/comment_like';
+import Api from './';
 
 interface MusicCommentResponse {
     newestList?: [];
@@ -10,19 +9,21 @@ interface MusicCommentResponse {
 
 async function getMusicComments(songId: number, offset = 0): Promise<MusicCommentResponse> {
     try {
-        const res = await commentMusic({
+        const { body } = await Api.comment_music({
             id: songId,
             offset
         });
-        if (res.data.code !== 200) {
-            throw res.data;
+        if (body.code !== 200) {
+            throw body;
         }
-        const { data } = res;
         return {
-            newestList: data.comments,
-            hotList: data.hotComments,
-            total: data.total,
-            nextOffset: data.more ? offset + 30 : 0
+            // @ts-ignore
+            newestList: body.comments,
+            // @ts-ignore
+            hotList: body.hotComments,
+            // @ts-ignore
+            total: body.total,
+            nextOffset: body.more ? offset + 30 : 0
         };
     } catch (e) {
         console.error(e);

@@ -1,16 +1,12 @@
-import songLike from './common/like';
-import tracksOp from './common/playlist_tracks';
-import userDetail from './common/user_detail';
-import userPlayList from './common/user_playlist';
+import Api from './';
 
-async function getUser(uid: number) {
+async function getUser(uid: number, cookie?: string) {
     try {
-        const res = await userDetail({ uid });
-        const { data } = res;
-        if (data.code !== 200) {
-            throw data;
+        const { body } = await Api.user_detail({ uid, cookie });
+        if (body.code !== 200) {
+            throw body;
         }
-        const { profile } = data;
+        const profile = body;
         return {
             id: profile.userId,
             name: profile.nickname,
@@ -26,14 +22,14 @@ async function getUser(uid: number) {
     return {};
 }
 
-async function getPlayList(uid: number) {
+async function getPlayList(uid: number, cookie?: string) {
     try {
-        const res = await userPlayList({ uid });
-        const { data } = res;
-        if (data.code !== 200) {
-            throw data;
+        const { body } = await Api.user_playlist({ uid, cookie });
+        if (body.code !== 200) {
+            throw body;
         }
-        return data.playlist.map((e: any) => ({
+        const playlist: any = body.playlist;
+        return playlist.map((e: any) => ({
             id: e.id.toString(),
             name: e.name,
             cover: e.coverImgUrl,
@@ -47,32 +43,12 @@ async function getPlayList(uid: number) {
     return [];
 }
 
-async function getUserDetail(uid: number) {
-    const [profile, playlists] = await Promise.all([getUser(uid), getPlayList(uid)]);
+async function getUserDetail(uid: number, cookie?: string) {
+    const [profile, playlists] = await Promise.all([getUser(uid, cookie), getPlayList(uid, cookie)]);
     return {
         profile,
         playlists
     };
 }
 
-async function likeSong(id: number, like: boolean) {
-    try {
-        const res = await songLike({ id, like });
-        return res.data;
-    } catch (e) {
-        console.error(e);
-    }
-    return { code: 301 };
-}
-
-async function unlikeSong(pid: number, songId: number) {
-    try {
-        const res = await tracksOp({ op: 'del', pid, tracks: songId });
-        return res.data;
-    } catch (e) {
-        console.error(e);
-    }
-    return { code: 301 };
-}
-
-export { getUserDetail, likeSong, unlikeSong };
+export { getUserDetail };

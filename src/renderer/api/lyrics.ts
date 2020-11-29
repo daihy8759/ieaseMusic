@@ -1,4 +1,4 @@
-import lyric from './common/lyric';
+import Api from './';
 
 async function getLyric(id: number) {
     if (!id) {
@@ -6,13 +6,15 @@ async function getLyric(id: number) {
     }
     const result: any = {};
     try {
-        const res = await lyric({ id });
-        if (res.data.code === 200) {
-            const { data } = res;
-            if (data.lrc === undefined) {
+        const { body } = await Api.lyric({ id });
+        if (body.code === 200) {
+            debugger;
+            const { lrc } = body;
+            if (lrc === undefined) {
                 return result;
             }
-            const lyrics = data.lrc.lyric.split('\n');
+            // @ts-ignore
+            const lyrics = lrc.lyric.split('\n');
             lyrics.forEach((e: any) => {
                 const match = e.match(/\[.+\]/);
 

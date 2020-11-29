@@ -1,6 +1,5 @@
 import { dialog } from 'electron';
 import QRCodeApi, { LoginType } from 'api/qrcode';
-import { likeSong, unlikeSong } from 'api/user';
 import ISong from 'interface/ISong';
 import IUserProfile from 'interface/IUserProfile';
 import { makeAutoObservable, runInAction } from 'mobx';
@@ -139,13 +138,8 @@ class Me {
     };
 
     async exeLike(song: ISong, like: boolean) {
-        let data;
-
-        if (like) {
-            data = await likeSong(song.id, like);
-        } else {
-            data = await unlikeSong(home.list[0].id, song.id);
-        }
+        const cookie = this.profile.cookie;
+        const { body } = await Api.like({ id: song.id, like, cookie });
 
         if (this.likes.get('id') === player.meta.id) {
             let { songs } = player;
@@ -160,7 +154,7 @@ class Me {
             player.songs = songs;
         }
 
-        return data.code === 200;
+        return body.code === 200;
     }
 
     async logout() {

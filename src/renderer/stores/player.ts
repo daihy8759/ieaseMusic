@@ -1,7 +1,7 @@
 import { getPlayListDetail, getRecommend } from 'api/player';
 import ISong from 'interface/ISong';
 import me from './me';
-import { makeAutoObservable, runInAction, toJS } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import * as pinyin from 'tiny-pinyin';
 import helper from 'utils/helper';
 import IArtist from 'interface/IArtist';
@@ -54,7 +54,7 @@ class Player {
         if (!song.id || song.artists.length === 0) {
             return;
         }
-        const data = await getRecommend(song.id, song.artists[0].id);
+        const data = await getRecommend(song.id, song.artists[0].id, me.profile.cookie);
         if (data) {
             runInAction(() => {
                 this.recommend = data.playlists;

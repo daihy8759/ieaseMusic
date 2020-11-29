@@ -1,4 +1,4 @@
-import topPlayList from './common/top_playlist';
+import Api from './';
 
 const limit = 50;
 
@@ -6,12 +6,12 @@ async function getPlayList(cat: string, offset?: number) {
     let playList = [];
     let nextOffset = offset;
     try {
-        const res = await topPlayList({ cat, offset, limit });
-        const { data } = res;
-        if (data.code !== 200) {
-            throw data;
+        const { body } = await Api.top_playlist({ cat, offset, limit });
+        if (body.code !== 200) {
+            throw body;
         }
-        playList = data.playlists.map((e: any) => {
+        // @ts-ignore
+        playList = body.playlists.map((e: any) => {
             const { creator } = e;
 
             return {
@@ -28,7 +28,7 @@ async function getPlayList(cat: string, offset?: number) {
                 }
             };
         });
-        if (data.more) {
+        if (body.more) {
             nextOffset += limit;
         }
     } catch (e) {
