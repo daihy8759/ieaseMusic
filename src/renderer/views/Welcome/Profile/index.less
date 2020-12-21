@@ -1,0 +1,70 @@
+@import '~@/theme.less';
+
+.navs {
+    padding-left: 50px;
+    padding-top: 80px;
+    font-weight: 300;
+    color: white;
+
+    a {
+        color: inherit !important;
+    }
+
+    nav {
+        a {
+            &:after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 20px;
+                width: 0;
+                background: @color-dribbble;
+                transform: translateY(10px);
+                opacity: 0;
+                transition: 0.2s ease-out;
+                z-index: -1;
+            }
+        }
+
+        a:hover:after,
+        .playing:after {
+            opacity: 1;
+            width: 110%;
+        }
+    }
+}
+
+.profile {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: @primary-font;
+    font-weight: lighter;
+    transform: translateY(-3px);
+
+    p {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+        font-size: 24px;
+        letter-spacing: 1;
+        text-indent: 0;
+        max-width: 200px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    span {
+        font-size: 14px;
+        letter-spacing: 2px;
+        color: #eee;
+    }
+}

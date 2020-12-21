@@ -1,9 +1,7 @@
-import { playListState, songState, togglePlayListState, togglePlayState } from '@/stores/controller';
+import { playListState, togglePlayListState, togglePlayState } from '@/stores/controller';
 import { homeListQuery } from '@/stores/home';
-import { loginState, profileState } from '@/stores/me';
-import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
+import { loginState } from '@/stores/me';
 import { ArrowForwardTwoTone } from '@material-ui/icons';
-import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Indicator from 'components/Indicator';
@@ -14,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
 import styles from './index.less';
+import Profile from './Profile';
 
 interface IStatusProps {
     playing?: boolean;
@@ -33,25 +32,10 @@ const Status: FunctionComponent<IStatusProps> = (props) => {
     );
 };
 
-const useStyles = makeStyles({
-    bigAvatar: {
-        margin: 10,
-        width: 64,
-        height: 64,
-    },
-});
-
-const ListItemLink = (props: any) => {
-    return <ListItem button component="a" {...props} />;
-};
-
 const Welcome = () => {
     const hasLogin = useRecoilValue(loginState);
     const homeList = useRecoilValue(homeListQuery);
-    const profile = useRecoilValue(profileState);
     const controllerPlayList = useRecoilValue(playListState);
-    const controllerSong = useRecoilValue(songState);
-    const classes = useStyles();
     const togglePlayList = useSetRecoilState(togglePlayListState);
     const togglePlay = useSetRecoilState(togglePlayState);
 
@@ -59,29 +43,13 @@ const Welcome = () => {
         togglePlayList({ playList: homeList[0] });
     }, []);
 
-    const play = (playlist: any) => {
-        if (controllerPlayList.id === playlist.id) {
+    const play = (playList: any) => {
+        if (controllerPlayList.id === playList.id) {
             togglePlay();
         }
-        togglePlayList(playlist);
-    };
-
-    const renderProfile = () => {
-        const link = `/user/${profile.userId}`;
-        return (
-            <article className={styles.profile}>
-                <Link className="clearfix" to={link}>
-                    <Avatar alt="" src={profile.avatarUrl} className={classes.bigAvatar} />
-                </Link>
-
-                <div className={styles.info}>
-                    <p title={profile.nickname}>
-                        <Link to={link}>{profile.nickname}</Link>
-                    </p>
-                    <span>{profile.signature || 'No signature~'}</span>
-                </div>
-            </article>
-        );
+        togglePlayList({
+            playList,
+        });
     };
 
     const renderFavorite = (favorite: any = {}) => {
@@ -206,45 +174,11 @@ const Welcome = () => {
         });
     };
     const hasRecommend = hasLogin && homeList.length > 1 && homeList[1].size;
-    const songId = controllerSong ? controllerSong.id : '';
 
     return (
         <div className={styles.container}>
             <main>
-                <aside className={styles.navs}>
-                    {hasLogin ? (
-                        renderProfile()
-                    ) : (
-                        <Link
-                            to="/login/0"
-                            style={{
-                                fontSize: 14,
-                                letterSpacing: 2,
-                            }}>
-                            Sign in
-                        </Link>
-                    )}
-
-                    <List component="nav" className={styles.menu}>
-                        <ListItemLink href="#/search">
-                            <ListItemText primary="Search" />
-                        </ListItemLink>
-                        <ListItemLink href="#/playlist/全部">
-                            <ListItemText primary="Playlist" />
-                        </ListItemLink>
-                        <ListItemLink href="#/top">
-                            <ListItemText primary="Top podcasts" />
-                        </ListItemLink>
-                        <ListItemLink
-                            href="#/fm"
-                            className={classnames({
-                                [styles.playing]: controllerPlayList.id === 'PERSONAL_FM',
-                            })}>
-                            <ListItemText primary="Made For You" />
-                        </ListItemLink>
-                    </List>
-                </aside>
-
+                <Profile />
                 {homeList.length ? (
                     <section className={styles.list}>
                         {hasLogin ? renderFavorite(homeList[0]) : false}
@@ -255,7 +189,7 @@ const Welcome = () => {
                     <div className={styles.placeholder} />
                 )}
             </main>
-            <Controller key={songId} />
+            <Controller />
         </div>
     );
 };

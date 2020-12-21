@@ -12,7 +12,7 @@ import {
     PlayCircleOutlineTwoTone,
     ReorderTwoTone,
     RepeatTwoTone,
-    ShuffleTwoTone
+    ShuffleTwoTone,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import ProgressImage from 'components/ProgressImage';
@@ -30,7 +30,7 @@ import {
     playModeState,
     songState,
     toggleNextState,
-    togglePrevState
+    togglePrevState,
 } from 'stores/controller';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
@@ -39,8 +39,8 @@ import styles from './index.less';
 const useStyles = makeStyles({
     liked: {
         color: red[900],
-        textShadow: `0 0 24px ${red[900]}`
-    }
+        textShadow: `0 0 24px ${red[900]}`,
+    },
 });
 
 const Controller = () => {
@@ -105,7 +105,7 @@ const Controller = () => {
     return (
         <div
             className={styles.container}
-            ref={ele => {
+            ref={(ele) => {
                 if (!ele) return;
 
                 ele.style.backgroundColor = controllerSong.id ? 'none' : 'white';
@@ -120,7 +120,7 @@ const Controller = () => {
                         width: '100%',
                         padding: 0,
                         margin: 0,
-                        overflow: 'hidden'
+                        overflow: 'hidden',
                     }}>
                     <figcaption
                         style={{
@@ -137,14 +137,14 @@ const Controller = () => {
                             )}?param=800y800`})`,
                             backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
                             filter: 'blur(10px)',
-                            zIndex: -1
+                            zIndex: -1,
                         }}
                     />
                 </figure>
             ) : (
                 false
             )}
-            <div id="progress" className={styles.bar} onClick={e => seek(e)}>
+            <div id="progress" className={styles.bar} onClick={(e) => seek(e)}>
                 <div className={styles.playing} />
                 <div className={styles.buffering} />
             </div>
@@ -157,10 +157,10 @@ const Controller = () => {
                         height: 50,
                         width: 50,
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                     to={getPlayerLink()}
-                    onClick={e => {
+                    onClick={(e) => {
                         if (e.currentTarget.href.endsWith('#/')) {
                             e.preventDefault();
                         }
@@ -171,9 +171,9 @@ const Controller = () => {
                             width: 32,
                             src: controllerSong.album.cover,
                             style: {
-                                filter: `drop-shadow(3mm 2mm 4mm ${colors.randomColor()})`
+                                filter: `drop-shadow(3mm 2mm 4mm ${colors.randomColor()})`,
                             },
-                            className: styles.cover
+                            className: styles.cover,
                         }}
                     />
                 </Link>
