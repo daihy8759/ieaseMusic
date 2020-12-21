@@ -9,7 +9,7 @@ import IArtist from 'interface/IArtist';
 import * as QRCode from 'qrcode';
 import React, { FC } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Share: FC = () => {
     const song = useRecoilValue(songState);
@@ -37,7 +37,7 @@ const Share: FC = () => {
                     <section>
                         <a
                             href=""
-                            onClick={e => {
+                            onClick={(e) => {
                                 e.preventDefault();
                                 shell.openExternal(
                                     `https://twitter.com/intent/tweet?url=${encodeURIComponent(
@@ -50,7 +50,7 @@ const Share: FC = () => {
                         </a>
                         <a
                             href=""
-                            onClick={e => {
+                            onClick={(e) => {
                                 e.preventDefault();
                                 shell.openExternal(
                                     `https://facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
@@ -64,7 +64,7 @@ const Share: FC = () => {
                     <figure className={styles.qrcode}>
                         <img
                             alt=""
-                            ref={async ele => {
+                            ref={async (ele) => {
                                 if (!ele) return;
                                 const base64 = await QRCode.toDataURL(url);
                                 ele.src = base64;
@@ -77,7 +77,7 @@ const Share: FC = () => {
                     <a
                         href=""
                         className={styles.close}
-                        onClick={e => {
+                        onClick={(e) => {
                             e.preventDefault();
                             close();
                         }}>

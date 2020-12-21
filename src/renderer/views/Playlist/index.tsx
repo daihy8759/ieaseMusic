@@ -9,13 +9,13 @@ import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     type: string;
 }
 
-const Playlist: FC<RouteComponentProps<MatchParams>> = props => {
+const Playlist: FC<RouteComponentProps<MatchParams>> = (props) => {
     const { match } = props;
     const listRef = React.useRef<HTMLElement>();
     const playList = useRecoilValue(playListState);
@@ -59,14 +59,14 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = props => {
                         <Grid item xs={6} key={index}>
                             <article
                                 className={classnames(styles.item, {
-                                    [styles.playing]: isPlaying(e.id)
+                                    [styles.playing]: isPlaying(e.id),
                                 })}>
                                 <Link to={e.link}>
                                     <ProgressImage
                                         {...{
                                             height: 64,
                                             width: 64,
-                                            src: e.cover
+                                            src: e.cover,
                                         }}
                                     />
                                 </Link>
@@ -87,7 +87,7 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = props => {
     };
 
     const {
-        match: { params }
+        match: { params },
     } = props;
     const { loading, types, list } = playlist;
 
@@ -96,7 +96,7 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = props => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
 
@@ -110,7 +110,7 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = props => {
                             <li
                                 key={e.name}
                                 className={classnames(styles.nav, {
-                                    [styles.selected]: selected
+                                    [styles.selected]: selected,
                                 })}>
                                 {selected ? (
                                     <Link to={`/playlist/${encodeURIComponent(e.name)}`}>

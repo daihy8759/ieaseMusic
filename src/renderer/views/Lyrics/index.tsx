@@ -6,9 +6,9 @@ import ProgressImage from 'components/ProgressImage';
 import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import * as styles from './index.less';
+import styles from './index.less';
 
-const Lyrics: FC<RouteComponentProps> = props => {
+const Lyrics: FC<RouteComponentProps> = (props) => {
     const song = useRecoilValue(songState);
     if (!song || !song.id) {
         props.history.replace('/');
@@ -25,7 +25,7 @@ const Lyrics: FC<RouteComponentProps> = props => {
                 </div>
             );
         }
-        return times.map(e => {
+        return times.map((e) => {
             return (
                 <p data-times={e} key={e}>
                     <span>{lyricsList[e]}</span>
@@ -45,22 +45,22 @@ const Lyrics: FC<RouteComponentProps> = props => {
                     {...{
                         height: window.innerHeight,
                         width: window.innerWidth,
-                        src: song.album.cover.replace(/\?.*$/, '')
+                        src: song.album.cover.replace(/\?.*$/, ''),
                     }}
                 />
 
                 <section
-                    onWheel={e => {
+                    onWheel={(e) => {
                         e.currentTarget.setAttribute('scrolling', 'true');
                     }}
-                    onMouseLeave={e => {
+                    onMouseLeave={(e) => {
                         e.currentTarget.removeAttribute('scrolling');
                     }}>
                     <div
                         style={{
                             position: 'relative',
                             paddingTop: '10vh',
-                            paddingBottom: '14vh'
+                            paddingBottom: '14vh',
                         }}>
                         {renderLyrics()}
                     </div>

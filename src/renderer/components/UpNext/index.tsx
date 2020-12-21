@@ -6,7 +6,7 @@ import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const UpNext = () => {
     const [show, setShow] = useRecoilState(upNextShowState);
@@ -39,7 +39,7 @@ const UpNext = () => {
                                 className: styles.cover,
                                 height: 140,
                                 width: 140,
-                                src: song.album.cover
+                                src: song.album.cover,
                             }}
                         />
                     </div>

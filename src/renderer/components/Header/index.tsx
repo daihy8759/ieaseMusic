@@ -5,7 +5,7 @@ import { BarChartTwoTone, MoreVertTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import React, { FC } from 'react';
 import { useRecoilValue } from 'recoil';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IHeaderProps {
     showBack?: boolean;
@@ -15,7 +15,7 @@ interface IHeaderProps {
     transparent?: boolean;
 }
 
-const Header: FC<IHeaderProps> = props => {
+const Header: FC<IHeaderProps> = (props) => {
     const song = useRecoilValue(songState);
     const hasLogin = useRecoilValue(loginState);
     const goBack = () => window.history.back();
@@ -87,7 +87,7 @@ const Header: FC<IHeaderProps> = props => {
                         width: '100%',
                         padding: 0,
                         margin: 0,
-                        overflow: 'hidden'
+                        overflow: 'hidden',
                     }}>
                     <figcaption
                         style={{
@@ -101,7 +101,7 @@ const Header: FC<IHeaderProps> = props => {
                             backgroundImage: `url(${`${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`})`,
                             backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
                             filter: 'blur(20px)',
-                            zIndex: -1
+                            zIndex: -1,
                         }}
                     />
                 </figure>
@@ -111,7 +111,7 @@ const Header: FC<IHeaderProps> = props => {
 
             <section
                 className={classnames({
-                    [styles.transparent]: transparent
+                    [styles.transparent]: transparent,
                 })}>
                 {renderBack()}
                 <div>

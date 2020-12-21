@@ -7,12 +7,12 @@ import format from 'date-fns/format';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const a11yProps = (index: any) => {
     return {
         id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`
+        'aria-controls': `simple-tabpanel-${index}`,
     };
 };
 
@@ -110,7 +110,7 @@ const Search: React.FC = () => {
                         {...{
                             src: e.cover,
                             height: 40,
-                            width: 40
+                            width: 40,
                         }}
                     />
 
@@ -145,14 +145,14 @@ const Search: React.FC = () => {
             );
         }
 
-        return albums.map(e => {
+        return albums.map((e) => {
             return (
                 <Link className={styles.row} key={e.link} onClick={reset} to={e.link}>
                     <ProgressImage
                         {...{
                             src: e.cover,
                             height: 40,
-                            width: 40
+                            width: 40,
                         }}
                     />
 
@@ -180,7 +180,7 @@ const Search: React.FC = () => {
             );
         }
 
-        return artists.map(e => {
+        return artists.map((e) => {
             return (
                 <div className={styles.artist} key={e.link}>
                     <Link onClick={reset} to={e.link}>
@@ -188,7 +188,7 @@ const Search: React.FC = () => {
                             {...{
                                 src: e.avatar,
                                 height: 40,
-                                width: 40
+                                width: 40,
                             }}
                         />
                     </Link>
@@ -204,7 +204,7 @@ const Search: React.FC = () => {
 
                         <IconButton
                             className={classnames({
-                                liked: e.followed
+                                liked: e.followed,
                             })}
                             onClick={async (ev: any) => {
                                 const { target } = ev;
@@ -245,7 +245,7 @@ const Search: React.FC = () => {
                             {...{
                                 src: e.avatar,
                                 height: 64,
-                                width: 64
+                                width: 64,
                             }}
                         />
                     </Link>
@@ -268,7 +268,7 @@ const Search: React.FC = () => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
 

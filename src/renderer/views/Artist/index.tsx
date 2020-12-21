@@ -5,7 +5,7 @@ import {
     songState,
     togglePlayListState,
     togglePlaySongState,
-    togglePlayState
+    togglePlayState,
 } from '@/stores/controller';
 import { loginState } from '@/stores/me';
 import { Fab } from '@material-ui/core';
@@ -24,7 +24,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     id: string;
@@ -32,7 +32,7 @@ interface MatchParams {
 
 interface ArtistProps extends RouteComponentProps<MatchParams> {}
 
-const Artist: React.FC<ArtistProps> = props => {
+const Artist: React.FC<ArtistProps> = (props) => {
     const playList = useRecoilValue(playListState);
     const playing = useRecoilValue(playingState);
     const song = useRecoilValue(songState);
@@ -53,7 +53,7 @@ const Artist: React.FC<ArtistProps> = props => {
         const navs = Array.from(headerRef.current.querySelectorAll('nav'));
 
         delegate(headerRef.current, 'nav', 'click', (e: any) => {
-            navs.map(d => d.classList.remove(styles.selected));
+            navs.map((d) => d.classList.remove(styles.selected));
             e.target.classList.add(styles.selected);
         });
     });
@@ -90,9 +90,9 @@ const Artist: React.FC<ArtistProps> = props => {
                     id: artist.playlist.id,
                     link: `/artist/${artist.profile.id}`,
                     name: artist.playlist.name,
-                    songs: artist.playlist.songs
+                    songs: artist.playlist.songs,
                 },
-                songId
+                songId,
             });
         }
     };
@@ -107,7 +107,7 @@ const Artist: React.FC<ArtistProps> = props => {
                         return (
                             <li
                                 className={classnames({
-                                    [styles.playing]: sameToPlaying() && song.id === e.id
+                                    [styles.playing]: sameToPlaying() && song.id === e.id,
                                 })}
                                 key={e.id}
                                 onClick={() => play(e.id)}>
@@ -149,7 +149,7 @@ const Artist: React.FC<ArtistProps> = props => {
                         return (
                             <div
                                 className={classnames(styles.album, {
-                                    [styles.playing]: highlightAlbum(e.id)
+                                    [styles.playing]: highlightAlbum(e.id),
                                 })}
                                 key={e.id}>
                                 <Link to={e.link}>
@@ -157,7 +157,7 @@ const Artist: React.FC<ArtistProps> = props => {
                                         {...{
                                             height: 48,
                                             width: 48,
-                                            src: e.cover
+                                            src: e.cover,
                                         }}
                                     />
                                 </Link>
@@ -194,7 +194,7 @@ const Artist: React.FC<ArtistProps> = props => {
                                     {...{
                                         height: 64,
                                         width: 64,
-                                        src: e.avatar
+                                        src: e.avatar,
                                     }}
                                 />
                             </Link>
@@ -223,7 +223,7 @@ const Artist: React.FC<ArtistProps> = props => {
             <Header
                 {...{
                     transparent: true,
-                    showPlaylist: true
+                    showPlaylist: true,
                 }}
             />
 
@@ -233,7 +233,7 @@ const Artist: React.FC<ArtistProps> = props => {
                         width: window.innerWidth,
                         height: window.innerWidth / (640 / 300),
                         src: profile.background,
-                        thumb: (profile.background || '').replace(/\?.*$/, '?param=20y10')
+                        thumb: (profile.background || '').replace(/\?.*$/, '?param=20y10'),
                     }}
                 />
                 <div className={styles.inner}>
@@ -255,7 +255,7 @@ const Artist: React.FC<ArtistProps> = props => {
                         <button
                             type="button"
                             className={classnames(styles.follow, {
-                                [styles.followed]: followed
+                                [styles.followed]: followed,
                             })}
                             onClick={() => follow(followed)}>
                             {followed ? 'Followed' : 'Follow'}

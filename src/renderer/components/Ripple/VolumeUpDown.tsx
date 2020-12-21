@@ -3,7 +3,7 @@ import { VolumeDownTwoTone, VolumeMuteTwoTone, VolumeUpTwoTone } from '@material
 import { ipcRenderer } from 'electron';
 import React, { FC } from 'react';
 import { useEffectOnce } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const VolumeUpDown: FC = () => {
     const isMuted = volume === 0;

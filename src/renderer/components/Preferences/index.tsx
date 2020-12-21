@@ -4,16 +4,16 @@ import { createStyles, makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
 import Modal from 'components/Modal';
 import React from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         button: {
-            margin: theme.spacing(1)
+            margin: theme.spacing(1),
         },
         leftIcon: {
-            marginRight: theme.spacing(1)
-        }
+            marginRight: theme.spacing(1),
+        },
     })
 );
 
@@ -28,7 +28,7 @@ const Preferences = () => {
         preferences.setLastfm({
             username: usernameRef.current.value,
             password: passwordRef.current.value,
-            connected: preferences.lastFm.connected
+            connected: preferences.lastFm.connected,
         });
     };
 
@@ -109,7 +109,7 @@ const Preferences = () => {
             enableProxy,
             setProxy,
             downloads,
-            setDownloads
+            setDownloads,
         } = preferences;
 
         return (
@@ -231,7 +231,7 @@ const Preferences = () => {
                         </label>
                         <label
                             style={{
-                                display: 'block'
+                                display: 'block',
                             }}>
                             <div style={{ display: 'inline-block' }}>
                                 <h4>HTTP proxy</h4>
@@ -248,7 +248,7 @@ const Preferences = () => {
                             <input
                                 className={styles.textInput}
                                 defaultValue={proxy}
-                                onBlur={ev => setProxy(ev.target.value)}
+                                onBlur={(ev) => setProxy(ev.target.value)}
                                 placeholder="http://your.proxy.com:port"
                             />
                         </label>
@@ -258,15 +258,15 @@ const Preferences = () => {
                                 <input
                                     // directory=""
                                     // webkitdirectory=""
-                                    onChange={e => setDownloads(e.target.files[0])}
+                                    onChange={(e) => setDownloads(e.target.files[0])}
                                     ref={downloadRef}
                                     type="file"
                                 />
                                 <h4>Downloads</h4>
-                                <p onClick={e => choiceDownloadDir(e)}>{downloads}</p>
+                                <p onClick={(e) => choiceDownloadDir(e)}>{downloads}</p>
                             </aside>
 
-                            <Button onClick={e => choiceDownloadDir(e)}>Change</Button>
+                            <Button onClick={(e) => choiceDownloadDir(e)}>Change</Button>
                         </label>
                     </article>
 
@@ -371,7 +371,7 @@ const Preferences = () => {
                         variant="contained"
                         color="primary"
                         className={classnames(classes.button, styles.connect, {
-                            [styles.connected]: isConnected()
+                            [styles.connected]: isConnected(),
                         })}
                         disabled={isConnected() || connecting || !lastFm.username || !lastFm.password}
                         onClick={() => connect()}>
@@ -389,10 +389,10 @@ const Preferences = () => {
                                         <input
                                             className={styles.textInput}
                                             defaultValue={e.background}
-                                            onBlur={ev =>
+                                            onBlur={(ev) =>
                                                 saveBackground(index, {
                                                     type: e.type,
-                                                    background: ev.target.value
+                                                    background: ev.target.value,
                                                 })
                                             }
                                             placeholder="Please entry the background address"

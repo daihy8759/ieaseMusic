@@ -9,7 +9,7 @@ import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     id: string;
@@ -17,7 +17,7 @@ interface MatchParams {
 
 interface UserProps extends RouteComponentProps<MatchParams> {}
 
-const User: FC<UserProps> = props => {
+const User: FC<UserProps> = (props) => {
     const song = useRecoilValue(songState);
     const playing = useRecoilValue(playingState);
     const playList = useRecoilValue(playListState);
@@ -45,7 +45,7 @@ const User: FC<UserProps> = props => {
             return (
                 <Link
                     className={classnames('clearfix', styles.item, {
-                        [styles.playing]: isPlaying(e.id)
+                        [styles.playing]: isPlaying(e.id),
                     })}
                     to={e.link}
                     key={e.id}
@@ -69,16 +69,16 @@ const User: FC<UserProps> = props => {
                 {...{
                     transparent: true,
                     showBack: true,
-                    showPlaylist: true
+                    showPlaylist: true,
                 }}
             />
 
             <button
                 style={{
-                    display: isme() ? 'none' : 'block'
+                    display: isme() ? 'none' : 'block',
                 }}
                 className={classnames(styles.follow, {
-                    [styles.followed]: followed
+                    [styles.followed]: followed,
                 })}
                 type="button"
                 onClick={() => follow(followed)}>
@@ -94,7 +94,7 @@ const User: FC<UserProps> = props => {
                     width: '100%',
                     padding: 0,
                     margin: 0,
-                    overflow: 'hidden'
+                    overflow: 'hidden',
                 }}>
                 <img
                     alt=""
@@ -102,7 +102,7 @@ const User: FC<UserProps> = props => {
                     className={styles.avatar}
                     style={{
                         width: window.innerWidth,
-                        height: window.innerWidth
+                        height: window.innerWidth,
                     }}
                     onLoad={(e: any) => {
                         e.target.classList.add(styles.expose);
@@ -131,7 +131,7 @@ const User: FC<UserProps> = props => {
                         {...{
                             height: 260,
                             width: 260,
-                            src: hovered && hovered.cover ? hovered.cover : profile.avatar
+                            src: hovered && hovered.cover ? hovered.cover : profile.avatar,
                         }}
                     />
                 </aside>

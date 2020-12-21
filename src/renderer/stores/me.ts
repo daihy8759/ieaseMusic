@@ -21,7 +21,7 @@ export const profileState = atom({
             } else {
                 try {
                     await Api.login_refresh({
-                        cookie: profile.cookie
+                        cookie: profile.cookie,
                     });
                 } catch (e) {
                     profile = {};
@@ -29,8 +29,8 @@ export const profileState = atom({
                 }
             }
             return profile;
-        }
-    })
+        },
+    }),
 });
 
 // 歌曲喜欢与取消喜欢
@@ -41,9 +41,8 @@ export const toggleLikeState = selector({
     },
     set: async ({ get }, params: { id: number; like: boolean }) => {
         const profile = get(profileState);
-        const data = await Api.like({ id: params.id, like: params.like, cookie: profile.cookie });
-        console.log(data);
-    }
+        await Api.like({ id: params.id, like: params.like, cookie: profile.cookie });
+    },
 });
 
 export const loginState = selector({
@@ -51,7 +50,7 @@ export const loginState = selector({
     get: ({ get }) => {
         const profile = get(profileState);
         return !!profile.userId;
-    }
+    },
 });
 
 export function logout() {
@@ -68,7 +67,7 @@ export async function login(phone: string, password: string) {
     const { body } = await Api.login_cellphone({
         countrycode: formatter.code.toString(),
         phone: formatter.phone.toString(),
-        password
+        password,
     });
     if (body.code !== 200) {
         console.error(`Failed to login: ${body.msg}`);
@@ -77,7 +76,7 @@ export async function login(phone: string, password: string) {
     const accountProfile: {} = body.profile || {};
     const profile = {
         ...accountProfile,
-        cookie: body.cookie
+        cookie: body.cookie,
     };
     storage.set('profile', profile);
     return profile;

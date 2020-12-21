@@ -1,4 +1,4 @@
-import * as uuid from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import NeteaseCloudMusicApi from './';
 
 async function getSongs(id: number, cookie?: string) {
@@ -19,13 +19,13 @@ async function getSongs(id: number, cookie?: string) {
                     id: al.id,
                     name: al.name,
                     cover: `${al.picUrl}?param=y100y100`,
-                    link: `/player/1/${al.id}`
+                    link: `/player/1/${al.id}`,
                 },
                 artists: ar.map((e: any) => ({
                     id: e.id,
                     name: e.name,
-                    link: e.id ? `/artist/${e.id}` : ''
-                }))
+                    link: e.id ? `/artist/${e.id}` : '',
+                })),
             };
         });
     } catch (e) {
@@ -37,7 +37,7 @@ async function getSongs(id: number, cookie?: string) {
 async function getPersonalized(cookie?: string) {
     try {
         const { body } = await NeteaseCloudMusicApi.personalized({
-            cookie
+            cookie,
         });
         if (body.code !== 200) {
             throw body;
@@ -51,7 +51,7 @@ async function getPersonalized(cookie?: string) {
                 played: d.playCount,
                 cover: `${d.picUrl}?param=130y130`,
                 background: `${d.picUrl}?param=500y500`,
-                link: `/player/0/${d.id}`
+                link: `/player/0/${d.id}`,
             };
         });
     } catch (e) {
@@ -70,7 +70,7 @@ async function getDaily(cookie?: string) {
     const dailySongs: any = body.data.dailySongs;
     list = [
         {
-            id: uuid(),
+            id: uuidv4(),
             name: '每日推荐歌曲',
             size: dailySongs.length,
             songs: dailySongs.map((d: any) => {
@@ -83,17 +83,17 @@ async function getDaily(cookie?: string) {
                         id: album.id,
                         name: album.name,
                         cover: `${album.picUrl}?param=100y100`,
-                        link: `/player/1/${album.id}`
+                        link: `/player/1/${album.id}`,
                     },
                     artists: artists.map((e: any) => ({
                         id: e.id,
                         name: e.name,
                         // Broken link
-                        link: e.id ? `/artist/${e.id}` : ''
-                    }))
+                        link: e.id ? `/artist/${e.id}` : '',
+                    })),
                 };
-            })
-        }
+            }),
+        },
     ];
     return list;
 }
@@ -117,8 +117,8 @@ async function getLiked(uid: number, cookie?: string) {
                     link: `/player/0/${liked.id}`,
                     cover: liked.coverImgUrl,
                     background: liked.creator.backgroundUrl,
-                    songs
-                }
+                    songs,
+                },
             ];
         }
     } catch (ex) {
@@ -142,7 +142,7 @@ async function getRecommend(cookie?: string) {
                     played: e.playcount,
                     cover: `${e.picUrl}?param=130y130`,
                     background: e.creator.backgroundUrl,
-                    link: `/player/0/${e.id}`
+                    link: `/player/0/${e.id}`,
                 };
             });
         }
@@ -167,7 +167,7 @@ async function getNewest(cookie?: string) {
                     size: e.size,
                     cover: `${e.picUrl}?param=130y130`,
                     background: `${e.artist.picUrl}?param=640y300`,
-                    link: `/player/1/${e.id}`
+                    link: `/player/1/${e.id}`,
                 };
             });
         }
@@ -184,7 +184,7 @@ async function getHomeData(id?: number, cookie?: string) {
             getDaily(cookie),
             getRecommend(cookie),
             getPersonalized(cookie),
-            getNewest(cookie)
+            getNewest(cookie),
         ]);
         return [...liked, ...daily, ...recommend, ...personalizedList, ...newest];
     }

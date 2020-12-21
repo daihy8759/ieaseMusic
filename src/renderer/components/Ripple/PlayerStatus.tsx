@@ -4,7 +4,7 @@ import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
 import { useRecoilValue } from 'recoil';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const PlayerStatus: React.FC = () => {
     const playing = useRecoilValue(playingState);

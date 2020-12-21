@@ -10,11 +10,11 @@ import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface CommentsProps extends RouteComponentProps {}
 
-const Comments: FC<CommentsProps> = props => {
+const Comments: FC<CommentsProps> = (props) => {
     const controllerSong = useRecoilValue(songState);
     if (!controllerSong || !controllerSong.id) {
         props.history.replace('/');
@@ -65,7 +65,7 @@ const Comments: FC<CommentsProps> = props => {
                         {...{
                             height: 48,
                             width: 48,
-                            src: item.user.avatarUrl
+                            src: item.user.avatarUrl,
                         }}
                     />
                 </Link>
@@ -76,7 +76,7 @@ const Comments: FC<CommentsProps> = props => {
                     <div className={styles.meta}>
                         <span
                             className={classnames('tooltip', styles.thumbsup, {
-                                [styles.liked]: item.liked
+                                [styles.liked]: item.liked,
                             })}
                             data-text={`${helper.humanNumber(item.likedCount)} liked`}
                             onClick={() => like(item.commentId, !item.liked)}>

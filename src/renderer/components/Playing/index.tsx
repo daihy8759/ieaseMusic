@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { useUpdateEffect } from 'react-use';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import colors from 'utils/colors';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Playing = () => {
     const [show, setShow] = useRecoilState(playingShowState);
@@ -33,7 +33,7 @@ const Playing = () => {
 
     const highlight = (offset: number) => {
         const songs = Array.from(listRef.current.querySelectorAll('[data-id]'));
-        let index = songs.findIndex(e => e.classList.contains(styles.active));
+        let index = songs.findIndex((e) => e.classList.contains(styles.active));
 
         if (index > -1) {
             songs[index].classList.remove(styles.active);
@@ -66,7 +66,7 @@ const Playing = () => {
             // Up
             '38': -1,
             // Down
-            '40': +1
+            '40': +1,
         }[keyCode];
 
         if (offset) {
@@ -85,7 +85,7 @@ const Playing = () => {
         }
     };
 
-    const filter = value => {};
+    const filter = (value) => {};
 
     const renderList = () => {
         // const { filtered } = playing;
@@ -96,7 +96,7 @@ const Playing = () => {
         if (list.length === 0) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
-        return list.map(e => {
+        return list.map((e) => {
             const playing = e.id === controllerSong.id;
 
             return (
@@ -105,7 +105,7 @@ const Playing = () => {
 
                     <aside
                         className={classnames(styles.song, {
-                            [styles.playing]: playing
+                            [styles.playing]: playing,
                         })}
                         data-id={e.id}
                         onClick={() => {
@@ -132,7 +132,7 @@ const Playing = () => {
                         <div
                             className={styles.mask}
                             style={{
-                                background: colors.randomGradient()
+                                background: colors.randomGradient(),
                             }}
                         />
                     </aside>
@@ -158,7 +158,7 @@ const Playing = () => {
     }, [show]);
 
     return (
-        <div className={styles.container} onKeyUp={e => pressEscExit(e)} ref={containerRef} tabIndex={-1}>
+        <div className={styles.container} onKeyUp={(e) => pressEscExit(e)} ref={containerRef} tabIndex={-1}>
             <div className={styles.overlay} onClick={close} />
 
             <section>

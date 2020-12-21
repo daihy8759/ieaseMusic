@@ -12,7 +12,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import storage from '../../../../shared/storage';
 import Api from '../../../api';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     fm: string;
@@ -21,25 +21,25 @@ interface MatchParams {
 
 interface IQRCodeProps extends RouteComponentProps<MatchParams> {}
 
-const QRCode: FC<IQRCodeProps> = props => {
+const QRCode: FC<IQRCodeProps> = (props) => {
     const [qrCode, setQrCode] = useState({ url: '', type: '' });
     const setProfile = useSetRecoilState(profileState);
     let timer: number;
     const pleaseLogin = async () => {
         const {
-            match: { params }
+            match: { params },
         } = props;
         const { type } = params;
         const result = await QRCodeApi.generate(type);
         setQrCode({
             ...result,
-            type
+            type,
         });
         const { ticket, state } = result;
         const data = await QRCodeApi.polling({
             ticket,
             state,
-            type
+            type,
         });
         if (data.success === false) {
             dialog.showErrorBox(
@@ -52,7 +52,7 @@ const QRCode: FC<IQRCodeProps> = props => {
         const profile = body.profile as IUserProfile;
         const userProfile = {
             ...profile,
-            cookie: body.cookie
+            cookie: body.cookie,
         };
         storage.set('profile', userProfile);
         setProfile(userProfile);
@@ -99,7 +99,7 @@ const QRCode: FC<IQRCodeProps> = props => {
 
                 <a
                     href=""
-                    onClick={e => {
+                    onClick={(e) => {
                         e.preventDefault();
                         refresh();
                     }}>

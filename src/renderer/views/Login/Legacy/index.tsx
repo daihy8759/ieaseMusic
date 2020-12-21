@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import React, { FC, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     fm: string;
@@ -14,7 +14,7 @@ interface MatchParams {
 
 interface ILegacyProps extends RouteComponentProps<MatchParams> {}
 
-const Legacy: FC<ILegacyProps> = props => {
+const Legacy: FC<ILegacyProps> = (props) => {
     const phoneRef = useRef<HTMLInputElement>();
     const passwordRef = useRef<HTMLInputElement>();
     const setProfile = useSetRecoilState(profileState);
@@ -74,7 +74,7 @@ const Legacy: FC<ILegacyProps> = props => {
                 <input onKeyPress={handleEnter} placeholder="Password" ref={passwordRef} type="password" />
                 <p
                     className={classnames(styles.error, {
-                        [styles.show]: showError
+                        [styles.show]: showError,
                     })}>
                     Invalid username or password, Please try again.
                 </p>

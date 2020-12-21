@@ -18,7 +18,7 @@ import React, { FC } from 'react';
 import { useNetwork, useEffectOnce, useWindowSize } from 'react-use';
 import { useRecoilValue } from 'recoil';
 import lastfm from 'utils/lastfm';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IBackgroundProps {
     controller?: any;
@@ -35,7 +35,7 @@ const Background: FC<IBackgroundProps> = () => {
                     className={styles.background}
                     {...{
                         width,
-                        src: `${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`
+                        src: `${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`,
                     }}
                 />
             ) : (
@@ -47,7 +47,7 @@ const Background: FC<IBackgroundProps> = () => {
 
 interface ILayoutProps {}
 
-const Layout: FC<ILayoutProps> = props => {
+const Layout: FC<ILayoutProps> = (props) => {
     const { children } = props;
     // const store = useStore();
     // const { me, preferences } = store;
@@ -70,7 +70,7 @@ const Layout: FC<ILayoutProps> = props => {
         <div className={styles.container}>
             <main
                 className={classnames({
-                    [styles.viewport]: true
+                    [styles.viewport]: true,
                 })}>
                 {children}
             </main>

@@ -10,7 +10,7 @@ import { useUpdateEffect } from 'react-use';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Singleton = () => {
     const circleRef = React.useRef<HTMLDivElement>();
@@ -35,18 +35,18 @@ const Singleton = () => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
 
             <summary>
                 <IconButton
                     className={classnames({
-                        [styles.liked]: liked
+                        [styles.liked]: liked,
                     })}
                     style={{
                         cursor: 'pointer',
-                        display: 'table'
+                        display: 'table',
                     }}
                     onClick={() => {
                         toggleLike({ id: song.id, like: !liked });
@@ -61,14 +61,14 @@ const Singleton = () => {
                 <div
                     className={styles.circle}
                     style={{
-                        filter: `drop-shadow(3mm 6mm 12mm ${colors.randomColor()})`
+                        filter: `drop-shadow(3mm 6mm 12mm ${colors.randomColor()})`,
                     }}
                     ref={circleRef}>
                     <ProgressImage
                         {...{
                             width: 260,
                             height: 260,
-                            src: `${song.album.cover.replace(/\?.*$/, '')}?param=200y200`
+                            src: `${song.album.cover.replace(/\?.*$/, '')}?param=200y200`,
                         }}
                     />
                 </div>

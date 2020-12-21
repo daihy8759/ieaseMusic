@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface FadeImageProps {
     src?: string;
@@ -10,7 +10,7 @@ interface FadeImageProps {
     title?: string;
 }
 
-const FadeImage: React.SFC<FadeImageProps> = props => {
+const FadeImage: React.SFC<FadeImageProps> = (props) => {
     const { src, className, fallback = 'https://source.unsplash.com/random' } = props;
 
     useUpdateEffect(() => {

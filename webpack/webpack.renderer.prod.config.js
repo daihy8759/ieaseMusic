@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const TerserJSPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -11,12 +11,12 @@ if (process.env.analyzer) {
         new BundleAnalyzerPlugin({
             analyzerMode: 'static',
             reportFilename: 'bundleReport.html',
-            logLevel: 'info'
-        })
+            logLevel: 'info',
+        }),
     ];
 }
 
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
     mode: 'production',
     devtool: false,
     optimization: {
@@ -30,21 +30,21 @@ module.exports = merge.smart(baseConfig, {
                 vendor: {
                     name: 'vendor',
                     test: /node_modules/,
-                    priority: 20
+                    priority: 20,
                 },
                 common: {
                     name: 'common',
                     minChunks: 2,
                     priority: 10,
                     reuseExistingChunk: true,
-                    enforce: true
-                }
-            }
-        }
+                    enforce: true,
+                },
+            },
+        },
     },
     output: {
         filename: '[name].[contentHash].js',
-        chunkFilename: '[name].[contentHash].chunk.js'
+        chunkFilename: '[name].[contentHash].chunk.js',
     },
-    plugins
+    plugins,
 });

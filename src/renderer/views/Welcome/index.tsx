@@ -13,13 +13,13 @@ import React, { FunctionComponent, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IStatusProps {
     playing?: boolean;
 }
 
-const Status: FunctionComponent<IStatusProps> = props => {
+const Status: FunctionComponent<IStatusProps> = (props) => {
     const { playing } = props;
 
     if (!playing) {
@@ -37,8 +37,8 @@ const useStyles = makeStyles({
     bigAvatar: {
         margin: 10,
         width: 64,
-        height: 64
-    }
+        height: 64,
+    },
 });
 
 const ListItemLink = (props: any) => {
@@ -102,7 +102,7 @@ const Welcome = () => {
                         {...{
                             className: styles.background,
                             width: 360,
-                            src: favorite.background
+                            src: favorite.background,
                         }}
                     />
 
@@ -113,7 +113,7 @@ const Welcome = () => {
                             {...{
                                 height: 50,
                                 width: 50,
-                                src: favorite.cover
+                                src: favorite.cover,
                             }}
                         />
 
@@ -145,7 +145,7 @@ const Welcome = () => {
                             {...{
                                 height: 50,
                                 width: 50,
-                                src: recommend.cover
+                                src: recommend.cover,
                             }}
                         />
 
@@ -177,8 +177,8 @@ const Welcome = () => {
                                 width: 360,
                                 src: e.background,
                                 className: classnames(styles.background, {
-                                    [styles.album]: e.type
-                                })
+                                    [styles.album]: e.type,
+                                }),
                             }}
                         />
 
@@ -188,7 +188,7 @@ const Welcome = () => {
                                 {...{
                                     height: 50,
                                     width: 50,
-                                    src: e.cover
+                                    src: e.cover,
                                 }}
                             />
 
@@ -219,7 +219,7 @@ const Welcome = () => {
                             to="/login/0"
                             style={{
                                 fontSize: 14,
-                                letterSpacing: 2
+                                letterSpacing: 2,
                             }}>
                             Sign in
                         </Link>
@@ -238,7 +238,7 @@ const Welcome = () => {
                         <ListItemLink
                             href="#/fm"
                             className={classnames({
-                                [styles.playing]: controllerPlayList.id === 'PERSONAL_FM'
+                                [styles.playing]: controllerPlayList.id === 'PERSONAL_FM',
                             })}>
                             <ListItemText primary="Made For You" />
                         </ListItemLink>

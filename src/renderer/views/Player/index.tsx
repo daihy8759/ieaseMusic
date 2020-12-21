@@ -5,7 +5,7 @@ import {
     songState,
     togglePlayListState,
     togglePlaySongState,
-    togglePlayState
+    togglePlayState,
 } from '@/stores/controller';
 import { isLiked, loginState } from '@/stores/me';
 import { fetchListDetailState, fetchRelatedState, filterSongsState } from '@/stores/player';
@@ -23,15 +23,15 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
 import Search from '../Search';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     id: string;
 }
 
-const Player: FC<RouteComponentProps<MatchParams>> = props => {
+const Player: FC<RouteComponentProps<MatchParams>> = (props) => {
     const {
-        match: { params }
+        match: { params },
     } = props;
     const listDetail = useRecoilValue(fetchListDetailState(params));
     const song = useRecoilValue(songState);
@@ -42,7 +42,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
     const related = useRecoilValue(
         fetchRelatedState({
             songId: song.id,
-            artistId: song.artists.length > 0 ? song.artists[0].id : 0
+            artistId: song.artists.length > 0 ? song.artists[0].id : 0,
         })
     );
     const { recommend, users, artists } = related;
@@ -125,8 +125,8 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                         id: meta.id,
                         link: `/player/${meta.type}/${meta.id}`,
                         name: meta.name,
-                        songs: listDetail.songs
-                    }
+                        songs: listDetail.songs,
+                    },
                 });
             }
             return;
@@ -149,9 +149,9 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                 id: meta.id,
                 link: `/player/${meta.type}/${meta.id}`,
                 name: meta.name,
-                songs: listDetail.songs
+                songs: listDetail.songs,
             },
-            songId: songid
+            songId: songid,
         });
     };
 
@@ -168,7 +168,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                 <div
                     className={styles.nothing}
                     style={{
-                        height: '100%'
+                        height: '100%',
                     }}>
                     Nothing ...
                 </div>
@@ -180,7 +180,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                 <li
                     key={e.id}
                     className={classnames({
-                        [styles.active]: sameToPlaylist && e.id === song.id
+                        [styles.active]: sameToPlaylist && e.id === song.id,
                     })}
                     onClick={async () => {
                         await play(e.id);
@@ -215,13 +215,13 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                 <div
                     className={styles.hero}
                     style={{
-                        backgroundImage: colors.randomGradient()
+                        backgroundImage: colors.randomGradient(),
                     }}>
                     <ProgressImage
                         {...{
                             height: 260,
                             width: 260,
-                            src: meta.cover
+                            src: meta.cover,
                         }}
                     />
 
@@ -245,7 +245,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                         <p
                             className={styles.subtitle}
                             style={{
-                                marginTop: 20
+                                marginTop: 20,
                             }}>
                             <span>{meta.company || `${helper.humanNumber(meta.played)} Played`}</span>
                         </p>
@@ -258,7 +258,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                                 display: 'inline-block',
                                 height: 260 / 3,
                                 width: 260 / 3,
-                                marginTop: -2
+                                marginTop: -2,
                             }}>
                             <div className={styles.play} onClick={() => play()}>
                                 {canToggle() && playing ? <PauseSharp /> : <PlayArrowSharp />}
@@ -272,7 +272,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                                         {...{
                                             height: 260 / 3,
                                             width: 260 / 3,
-                                            src: e.cover
+                                            src: e.cover,
                                         }}
                                     />
                                 </Link>
@@ -300,7 +300,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = props => {
                         close: () => {
                             // player.toggleSearch(false);
                             // filter();
-                        }
+                        },
                     }}>
                     <div className={styles.list}>
                         <ul ref={searchingRef}>{renderList()}</ul>

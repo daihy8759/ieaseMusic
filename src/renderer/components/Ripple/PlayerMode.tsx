@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
 import { useRecoilValue } from 'recoil';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE, playModeState } from 'stores/controller';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const PlayerMode = () => {
     const mode = useRecoilValue(playModeState);

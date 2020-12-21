@@ -1,6 +1,6 @@
 import * as closePng from 'assets/close.png';
 import React, { FC } from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface ISearchProps {
     show?: boolean;
@@ -8,7 +8,7 @@ interface ISearchProps {
     filter?: any;
 }
 
-const Search: FC<ISearchProps> = props => {
+const Search: FC<ISearchProps> = (props) => {
     const { show, close, filter, children } = props;
 
     if (!show) {

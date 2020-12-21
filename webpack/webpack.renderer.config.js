@@ -1,14 +1,14 @@
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const baseConfig = require('./webpack.base.config');
 
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
     target: 'electron-renderer',
     entry: {
-        app: './src/renderer/index.tsx'
+        app: './src/renderer/index.tsx',
     },
     resolve: {
         alias: {
@@ -18,8 +18,8 @@ module.exports = merge.smart(baseConfig, {
             api: path.resolve(__dirname, '../src/renderer/api/'),
             assets: path.resolve(__dirname, '../src/renderer/assets/'),
             root: path.resolve(__dirname, '../'),
-            '@': path.resolve(__dirname, '../src/renderer/')
-        }
+            '@': path.resolve(__dirname, '../src/renderer/'),
+        },
     },
     module: {
         rules: [
@@ -29,34 +29,36 @@ module.exports = merge.smart(baseConfig, {
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
-                            hmr: process.env.NODE_ENV === 'development'
-                        }
+                            hmr: process.env.NODE_ENV === 'development',
+                        },
                     },
-                    'css-loader'
-                ]
+                    'css-loader',
+                ],
             },
             {
                 test: /\.less$/,
                 use: [
                     {
-                        loader: 'style-loader'
+                        loader: 'style-loader',
                     },
                     {
                         loader: 'css-loader',
                         options: {
                             sourceMap: true,
                             modules: {
-                                localIdentName: '[local]___[hash:base64:5]'
-                            }
-                        }
+                                localIdentName: '[local]___[hash:base64:5]',
+                            },
+                        },
                     },
                     {
                         loader: 'less-loader',
                         options: {
-                            javascriptEnabled: true
-                        }
-                    }
-                ]
+                            lessOptions: {
+                                javascriptEnabled: true,
+                            },
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/,
@@ -65,10 +67,10 @@ module.exports = merge.smart(baseConfig, {
                     {
                         loader: 'image-webpack-loader',
                         options: {
-                            bypassOnDebug: true
-                        }
-                    }
-                ]
+                            bypassOnDebug: true,
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
@@ -76,19 +78,19 @@ module.exports = merge.smart(baseConfig, {
                     loader: 'url-loader',
                     options: {
                         limit: 10000,
-                        name: 'fonts/[name]--[folder].[ext]'
-                    }
-                }
-            }
-        ]
+                        name: 'fonts/[name]--[folder].[ext]',
+                    },
+                },
+            },
+        ],
     },
     plugins: [
         new MiniCssExtractPlugin({
             filename: '[name].css',
-            chunkFilename: '[id].css'
+            chunkFilename: '[id].css',
         }),
         new HtmlWebpackPlugin({
-            template: 'src/renderer/index.html'
-        })
-    ]
+            template: 'src/renderer/index.html',
+        }),
+    ],
 });

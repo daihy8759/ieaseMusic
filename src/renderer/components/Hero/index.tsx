@@ -13,13 +13,13 @@ import { Link } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
 import AdapterLink from '../AdapterLink';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IHeroProps {
     location?: any;
 }
 
-const Hero: FC<IHeroProps> = props => {
+const Hero: FC<IHeroProps> = (props) => {
     const { location } = props;
     const song = useRecoilValue(songState);
     if (!song || !song.id) {
@@ -38,7 +38,7 @@ const Hero: FC<IHeroProps> = props => {
                 {...{
                     height: window.innerHeight,
                     width: window.innerHeight,
-                    src: song.album.cover.replace(/100y100$/, '500y500')
+                    src: song.album.cover.replace(/100y100$/, '500y500'),
                 }}
             />
 
@@ -71,7 +71,7 @@ const Hero: FC<IHeroProps> = props => {
             <nav>
                 <article
                     className={classnames({
-                        [styles.active]: pathname === '/lyrics'
+                        [styles.active]: pathname === '/lyrics',
                     })}>
                     <Link to={`/${pathname === '/comments' ? 'lyrics' : 'comments'}`}>
                         {pathname === '/comments' ? 'Lyrics' : `${helper.humanNumber(commentsTotal)} Comments`}
@@ -83,7 +83,7 @@ const Hero: FC<IHeroProps> = props => {
                         Cover
                         <Indicator
                             style={{
-                                marginLeft: 28
+                                marginLeft: 28,
                             }}
                         />
                     </Link>

@@ -11,7 +11,7 @@ import {
     FavoriteBorderTwoTone,
     FavoriteTwoTone,
     PauseCircleOutlineTwoTone,
-    PlayCircleOutlineTwoTone
+    PlayCircleOutlineTwoTone,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import Controller from 'components/Controller';
@@ -22,18 +22,18 @@ import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const useStyles = makeStyles({
     liked: {
         color: red[900],
-        textShadow: `0 0 24px ${red[900]}`
-    }
+        textShadow: `0 0 24px ${red[900]}`,
+    },
 });
 
 interface IFMProps extends RouteComponentProps {}
 
-const FM: FC<IFMProps> = props => {
+const FM: FC<IFMProps> = (props) => {
     const classes = useStyles();
     const hasLogin = useRecoilValue(loginState);
     if (!hasLogin) {
@@ -108,7 +108,7 @@ const FM: FC<IFMProps> = props => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
             {renderBg()}
@@ -118,7 +118,7 @@ const FM: FC<IFMProps> = props => {
                         {...{
                             height: 290,
                             width: 290,
-                            src: song.album.cover
+                            src: song.album.cover,
                         }}
                     />
 
@@ -155,7 +155,7 @@ const FM: FC<IFMProps> = props => {
                     </aside>
                 </article>
 
-                <div className={styles.bar} onClick={e => seek(e)}>
+                <div className={styles.bar} onClick={(e) => seek(e)}>
                     {isFMPlaying() && (
                         <div id="progress">
                             <div className={styles.playing} />

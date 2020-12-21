@@ -6,7 +6,7 @@ import { remote, shell } from 'electron';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Menu = () => {
     const hasLogin = useRecoilValue(loginState);
@@ -60,7 +60,7 @@ const Menu = () => {
             tabIndex={-1}
             className={styles.container}
             // Press ESC close menu
-            onKeyUp={e => e.keyCode === 27 && close()}>
+            onKeyUp={(e) => e.keyCode === 27 && close()}>
             <div className={styles.overlay} onClick={close} />
             <section className={styles.body}>
                 <div>
@@ -98,7 +98,7 @@ const Menu = () => {
 
                 <div className={styles.social}>
                     <IconButton
-                        onClick={e => {
+                        onClick={(e) => {
                             e.preventDefault();
                             shell.openExternal('https://github.com/daihy8759/ieaseMusic');
                             close();
