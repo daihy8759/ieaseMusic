@@ -4,7 +4,7 @@ import { BarChartTwoTone, MoreVertTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IHeaderProps {
     showBack?: boolean;

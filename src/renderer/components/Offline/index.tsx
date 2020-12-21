@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNetwork } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IOfflineProps {
     show?: boolean;

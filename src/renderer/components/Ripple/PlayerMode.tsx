@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const PlayerMode: React.SFC = observer(() => {
     const {

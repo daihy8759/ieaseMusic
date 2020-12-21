@@ -6,6 +6,7 @@ import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import lastfm from 'utils/lastfm';
 import comments from './comments';
 import fm from './fm';
+import me from './me';
 import preferences from './preferences';
 import upnext from './upnext';
 
@@ -103,11 +104,8 @@ class Controller {
 
     resolveSong = async () => {
         const { song } = this;
-
         try {
-            const data = await getSongUrl({
-                id: song.id
-            });
+            const data = await getSongUrl(song.id, me.profile.cookie);
             runInAction(() => {
                 this.song = Object.assign({}, this.song, { data }, { waiting: false });
             });

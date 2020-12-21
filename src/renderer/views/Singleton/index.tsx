@@ -9,7 +9,7 @@ import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Singleton: React.SFC = observer(() => {
     const { me, controller } = useStore();

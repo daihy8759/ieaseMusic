@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const TerserJSPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -16,7 +16,7 @@ if (process.env.analyzer) {
     ];
 }
 
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
     mode: 'production',
     devtool: false,
     optimization: {

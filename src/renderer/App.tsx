@@ -2,7 +2,6 @@ import { ipcRenderer, remote, shell } from 'electron';
 import { configure } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { hot } from 'react-hot-loader/root';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import { HashRouter } from 'react-router-dom';
@@ -287,4 +286,4 @@ const App: React.SFC = observer(() => {
     );
 });
 
-export default hot(App);
+export default App;

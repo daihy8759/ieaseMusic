@@ -6,7 +6,7 @@ import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const UpNext: React.SFC = observer(() => {
     const { upnext, controller } = useStore();

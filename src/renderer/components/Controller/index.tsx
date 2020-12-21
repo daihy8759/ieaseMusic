@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom';
 import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const useStyles = makeStyles({
     liked: {

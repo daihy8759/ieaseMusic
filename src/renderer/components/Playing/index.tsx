@@ -8,7 +8,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Playing: React.SFC = observer(() => {
     const { playing, controller } = useStore();

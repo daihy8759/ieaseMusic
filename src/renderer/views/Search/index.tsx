@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const a11yProps = (index: any) => {
     return {

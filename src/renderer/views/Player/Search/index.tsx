@@ -1,7 +1,7 @@
 import * as closePng from 'assets/close.png';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface ISearchProps {
     show?: boolean;

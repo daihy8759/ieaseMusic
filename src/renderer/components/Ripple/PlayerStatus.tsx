@@ -4,7 +4,7 @@ import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const PlayerStatus: React.FC = observer(() => {
     const {

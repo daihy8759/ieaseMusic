@@ -10,7 +10,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
 import AdapterLink from '../AdapterLink';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IHeroProps {
     location?: any;

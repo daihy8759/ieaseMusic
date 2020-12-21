@@ -14,7 +14,7 @@ import { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IStatusProps {
     playing?: boolean;

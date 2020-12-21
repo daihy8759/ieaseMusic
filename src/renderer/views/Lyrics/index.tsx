@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface ILyricsProps extends RouteComponentProps {}
 

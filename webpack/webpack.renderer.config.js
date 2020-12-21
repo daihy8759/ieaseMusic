@@ -1,11 +1,11 @@
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const baseConfig = require('./webpack.base.config');
 
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
     target: 'electron-renderer',
     entry: {
         app: './src/renderer/index.tsx'
@@ -23,13 +23,6 @@ module.exports = merge.smart(baseConfig, {
     },
     module: {
         rules: [
-            {
-                test: /\.tsx$/,
-                enforce: 'pre',
-                loader: 'eslint-loader',
-                include: [path.resolve(__dirname, '../src/renderer')],
-                exclude: /node_modules/
-            },
             {
                 test: /\.css$/,
                 use: [
@@ -60,7 +53,9 @@ module.exports = merge.smart(baseConfig, {
                     {
                         loader: 'less-loader',
                         options: {
-                            javascriptEnabled: true
+                            lessOptions:{
+                                javascriptEnabled: true
+                            }
                         }
                     }
                 ]
@@ -81,7 +76,7 @@ module.exports = merge.smart(baseConfig, {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 use: {
                     loader: 'url-loader',
-                    query: {
+                    options: {
                         limit: 10000,
                         name: 'fonts/[name]--[folder].[ext]'
                     }

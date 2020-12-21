@@ -7,7 +7,7 @@ import FadeImage from 'components/FadeImage';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     fm: string;

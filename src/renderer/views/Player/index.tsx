@@ -14,7 +14,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 import Search from './Search';
 
 interface MatchParams {

@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Top = observer(() => {
     const { top } = useStore();
