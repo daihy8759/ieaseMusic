@@ -1,16 +1,13 @@
-import { useStore } from '@/context';
 import { Zoom } from '@material-ui/core';
 import { ReorderTwoTone, RepeatTwoTone, ShuffleTwoTone } from '@material-ui/icons';
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
-import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
+import { useRecoilValue } from 'recoil';
+import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE, playModeState } from 'stores/controller';
 import * as styles from './index.less';
 
-const PlayerMode: React.SFC = observer(() => {
-    const {
-        controller: { mode }
-    } = useStore();
+const PlayerMode = () => {
+    const mode = useRecoilValue(playModeState);
     const [zoom, setZoom] = React.useState(false);
 
     useUpdateEffect(() => {
@@ -45,6 +42,6 @@ const PlayerMode: React.SFC = observer(() => {
             <div className={styles.container}>{renderIndicator(mode)}</div>
         </Zoom>
     );
-});
+};
 
 export default PlayerMode;

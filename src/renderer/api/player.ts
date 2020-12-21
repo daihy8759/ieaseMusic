@@ -1,11 +1,18 @@
 import { getSimilar } from './artist';
 import Api from './';
 
-async function getSongUrl(query: any) {
-    const { id } = query;
+async function getSongUrl(query: { id: number; cookie: string }) {
+    if (!query.id) {
+        return {};
+    }
+    const res = await Api.song_url({ id: query.id, cookie: query.cookie });
+    const {
+        body: { data }
+    } = res;
     return {
-        id,
-        src: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
+        id: query.id,
+        // @ts-ignore
+        src: data[0].url
     };
 }
 

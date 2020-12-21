@@ -1,36 +1,47 @@
-import { useStore } from '@/context';
+import { playingState, songDetailState, songState, toggleNextState } from '@/stores/controller';
+import { fetchLyricState } from '@/stores/lyrics';
+import { autoPlayState, volumeState } from '@/stores/preferences';
 import { ipcRenderer } from 'electron';
-import throttle from 'lodash/throttle';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import throttle from 'lodash.throttle';
+import React, { useCallback } from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
 
-const AudioPlayer: React.FC = observer(() => {
-    const store = useStore();
-    const { controller, preferences } = store;
-    const { song, tryTheNext, playing, scrobble, next } = controller;
+const AudioPlayer = () => {
+    const song = useRecoilValue(songState);
+    const songDetail = useRecoilValue(songDetailState);
+    const lyric = useRecoilValue(fetchLyricState(song.id));
+    const { list: lyrics } = lyric;
+    const { duration } = song;
+    const autoPlay = useRecoilValue(autoPlayState);
+    const playing = useRecoilValue(playingState);
+    const [volume, setVolume] = useRecoilState(volumeState);
+    const toggleNext = useSetRecoilState(toggleNextState);
+    const throttleProcess = useCallback(
+        throttle((time, duration) => {
+            onProgress(time, duration);
+        }, 1000),
+        []
+    );
+    const throttleLyrics = useCallback(
+        throttle(time => {
+            onScrollLyrics(time);
+        }, 300),
+        []
+    );
+
     const [passed, setPassed] = React.useState(0.0);
     let timer: number;
 
     const [audio, state, controls, ref] = useAudio({
-        src: song.data ? song.data.src : null,
+        src: songDetail.data ? songDetail.data.src : null,
         autoPlay: true
     });
-    const throttled = React.useRef(
-        throttle(throttledValue => {
-            onProgress(throttledValue);
-        }, 1000)
-    );
-    const throttledLyrics = React.useRef(
-        throttle(throttledValue => {
-            onScrollLyrics(throttledValue);
-        }, 200)
-    );
 
     useUpdateEffect(() => {
-        throttled.current(state.time);
-        throttledLyrics.current(state.time);
+        throttleProcess(state.time, duration);
+        throttleLyrics(state.time);
     }, [state.time]);
 
     // buffered
@@ -71,6 +82,7 @@ const AudioPlayer: React.FC = observer(() => {
                 await controls.play();
                 controls.unmute();
             } catch (e) {
+                console.error('play failed:', e);
                 // play failed
             }
         } else {
@@ -78,8 +90,7 @@ const AudioPlayer: React.FC = observer(() => {
         }
     };
 
-    const onProgress = (currentTime = 0) => {
-        const { duration } = store.controller.song;
+    const onProgress = (currentTime = 0, duration: number) => {
         const progress = document.getElementById('progress');
         if (progress) {
             const passedTime = currentTime * 1000;
@@ -104,7 +115,6 @@ const AudioPlayer: React.FC = observer(() => {
         if (!lyricsEle) {
             return;
         }
-        const { list: lyrics } = store.lyrics;
         if (lyricsEle) {
             const key = helper.getLyricsKey(currentTime * 1000, lyrics);
             const currentPlaying = lyricsEle.querySelector(`[playing][data-times='${key}']`);
@@ -134,19 +144,17 @@ const AudioPlayer: React.FC = observer(() => {
 
             console.error('Break by %o', e);
             resetProgress();
-            tryTheNext();
+            // tryTheNext();
         };
 
         ref.current.onended = () => {
-            scrobble();
             resetProgress();
-            next(true);
+            toggleNext();
         };
 
         ref.current.onseeked = () => {
             setPassed(0.0);
         };
-        const { volume, setVolume } = preferences;
         controls.volume(volume);
 
         ipcRenderer.on('player-volume-up', () => {
@@ -163,15 +171,10 @@ const AudioPlayer: React.FC = observer(() => {
     });
 
     useUpdateEffect(() => {
-        const { autoPlay } = preferences;
-        if (!ref.current.src && !autoPlay) {
-            controller.play(song.id);
-        } else {
-            setupPlay(playing);
-        }
+        setupPlay(playing);
     }, [playing]);
 
     return <>{audio}</>;
-});
+};
 
 export default AudioPlayer;

@@ -1,25 +1,24 @@
-import { useStore } from '@/context';
+import { songState } from '@/stores/controller';
+import { showState } from '@/stores/share';
 import * as closePng from 'assets/close.png';
 import * as socialFacebook from 'assets/social-facebook.png';
 import * as socialTwitter from 'assets/social-twitter.png';
 import Modal from 'components/Modal';
 import { shell } from 'electron';
 import IArtist from 'interface/IArtist';
-import { observer } from 'mobx-react-lite';
 import * as QRCode from 'qrcode';
-import * as React from 'react';
+import React, { FC } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import * as styles from './index.less';
 
-const Share: React.SFC = observer(() => {
-    const {
-        share,
-        controller: { song }
-    } = useStore();
+const Share: FC = () => {
+    const song = useRecoilValue(songState);
+    const [show, setShow] = useRecoilState(showState);
     if (!song.id) {
         return null;
     }
     const close = () => {
-        share.toggle(false);
+        setShow(false);
     };
 
     const renderContent = () => {
@@ -89,7 +88,7 @@ const Share: React.SFC = observer(() => {
         );
     };
 
-    return <Modal visible={share.show} fullScreen content={renderContent()} onCancel={close} />;
-});
+    return <Modal visible={show} fullScreen content={renderContent()} onCancel={close} />;
+};
 
 export default Share;

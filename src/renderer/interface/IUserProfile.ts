@@ -1,5 +1,4 @@
 export default interface IUserProfile {
-    id?: number;
     userId?: number;
     name?: string;
     avatar?: string;

@@ -1,34 +1,26 @@
-import { useStore } from '@/context';
+import { fetchListState } from '@/stores/comments';
+import { songState } from '@/stores/controller';
 import { ThumbUpAltTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import Hero from 'components/Hero';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
 interface CommentsProps extends RouteComponentProps {}
 
-const Comments: React.SFC<CommentsProps> = observer(props => {
-    const { comments } = useStore();
-    const { loading, song, like, loadMore, hotList, newestList } = comments;
-
-    useEffectOnce(() => {
-        if (!song || !song.id) {
-            props.history.replace('/');
-        }
-    });
-
-    if (loading || !song.id) {
-        return <Loader show />;
+const Comments: FC<CommentsProps> = props => {
+    const controllerSong = useRecoilValue(songState);
+    if (!controllerSong || !controllerSong.id) {
+        props.history.replace('/');
     }
-
+    const comments = useRecoilValue(fetchListState(controllerSong.id));
+    const { hotList, newestList } = comments;
     const listRef = React.useRef<HTMLElement>();
 
     const loadmore = async () => {
@@ -42,7 +34,7 @@ const Comments: React.SFC<CommentsProps> = observer(props => {
         if (container.scrollTop + container.offsetHeight + 100 > container.scrollHeight) {
             // Mark as loading
             container.classList.add(styles.loadmore);
-            await loadMore(song.id);
+            await loadMore(controllerSong.id);
             container.classList.remove(styles.loadmore);
         }
     };
@@ -133,6 +125,6 @@ const Comments: React.SFC<CommentsProps> = observer(props => {
             </aside>
         </div>
     );
-});
+};
 
 export default Comments;

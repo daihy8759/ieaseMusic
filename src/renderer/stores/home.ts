@@ -1,40 +1,33 @@
+import ISong from '@/interface/ISong';
 import homeApi from 'api/home';
-import { makeAutoObservable, runInAction } from 'mobx';
+import { selector } from 'recoil';
 import helper from 'utils/helper';
-import controller from './controller';
-import me from './me';
-import preferences from './preferences';
-
+import storage from '../../shared/storage';
+import { profileState } from './me';
 interface IHomeData {
     id?: number;
     size: any;
     pallet: any;
     cover: string;
+    songs: ISong[];
 }
 
-class Home {
-    loading = true;
-
-    list: IHomeData[] = [];
-
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    async load() {
+export const homeListQuery = selector({
+    key: 'homeList',
+    get: async ({ get }) => {
+        console.log('get home list');
+        const profile = get(profileState);
         let list: IHomeData[];
-        if (me.hasLogin()) {
-            list = await homeApi.getHomeData(me.profile.userId, me.profile.cookie);
+        if (profile.userId && profile.cookie) {
+            list = await homeApi.getHomeData(profile.userId, profile.cookie);
             const [favorite, recommend] = list;
 
-            me.rocking(favorite);
-
-            if (favorite.size) {
-                controller.setup(favorite);
-            } else if (recommend.size) {
-                controller.setup(recommend);
-            } else {
-                controller.setup(list[2]);
+            if (favorite.size > 0) {
+                const likes: number[] = [];
+                favorite.songs.forEach(song => {
+                    likes.push(song.id);
+                });
+                storage.set('likes', likes);
             }
         } else {
             list = await homeApi.getHomeData();
@@ -42,52 +35,13 @@ class Home {
                 console.error('get home request failed');
                 return;
             }
-            controller.setup(list[0]);
         }
-
-        if (preferences.autoPlay) {
-            controller.play();
-        } else {
-            const [song] = controller.playlist.songs;
-            controller.song = song || { id: undefined, name: undefined };
-        }
-
         list.forEach(e => {
             e.pallet = false;
-        });
-
-        runInAction(() => {
-            this.list = list;
-        });
-        // Get the color pallets
-        list.map(async (e, index: number) => {
             if (!e.cover) return;
-
-            const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
+            const pallet = helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
             e.pallet = pallet;
-
-            // Force update list
-            this.updateShadow(e, index);
         });
+        return list;
     }
-
-    async getList() {
-        this.loading = true;
-        // @ts-ignore
-        this.getList = Function;
-        try {
-            await this.load();
-        } finally {
-            runInAction(() => {
-                this.loading = false;
-            });
-        }
-    }
-
-    updateShadow = (e: IHomeData, index: number) => {
-        this.list = [...this.list.slice(0, index), e, ...this.list.slice(index + 1, this.list.length)];
-    };
-}
-
-const self = new Home();
-export default self;
+});

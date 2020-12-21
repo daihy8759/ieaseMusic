@@ -1,62 +1,24 @@
 import { getMusicComments } from 'api/comments';
-import { makeAutoObservable, runInAction } from 'mobx';
-import ISong from 'interface/ISong';
+import { selectorFamily } from 'recoil';
 
-class Comments {
-    loading = true;
-
-    hotList: any = [];
-
-    newestList: any = [];
-
-    total = 0;
-
-    song: ISong;
-
-    nextOffset = 0;
-
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    async getList(song: ISong) {
-        if (!song) {
-            return;
+export const fetchListState = selectorFamily({
+    key: 'fetchCommentList',
+    get: (id: number) => async () => {
+        if (!id) {
+            return {
+                hotList: [],
+                newestList: [],
+                total: 0,
+                nextOffset: 0
+            };
         }
-        this.loading = true;
-        const data = await getMusicComments(song.id);
-        runInAction(() => {
-            this.song = song;
-            this.hotList = data.hotList || [];
-            this.newestList = data.newestList || [];
-            this.total = data.total || 0;
-            this.nextOffset = data.nextOffset;
-            this.loading = false;
-        });
+        console.log('load comments:', id);
+        const data = await getMusicComments(id);
+        return {
+            hotList: data.hotList || [],
+            newestList: data.newestList || [],
+            total: data.total || 0,
+            nextOffset: data.nextOffset
+        };
     }
-
-    like = async (id: number, liked: boolean) => {
-        // const response = await axios.get(`/api/comments/like/${id}/${controller.song.id}/${+liked}`);
-        // const { data } = response;
-        // const { hotList, newestList } = this;
-        // if (data.success === true) {
-        //     const comment = [...hotList.slice(), ...newestList.slice()].find(e => e.commentId === id);
-        //     comment.likedCount += liked ? 1 : -1;
-        //     comment.liked = liked;
-        // }
-    };
-
-    loadMore = async (id: number) => {
-        if (!this.nextOffset) {
-            return;
-        }
-        const data = await getMusicComments(id, this.nextOffset);
-        runInAction(() => {
-            this.newestList.push(...data.newestList);
-            this.nextOffset = data.nextOffset;
-        });
-    };
-}
-
-const comments = new Comments();
-export default comments;
+});

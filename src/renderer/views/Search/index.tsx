@@ -1,11 +1,9 @@
-import { useStore } from '@/context';
 import { Box, IconButton, Tab, Tabs, Typography } from '@material-ui/core';
 import { FavoriteSharp, StarTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import helper from 'utils/helper';
@@ -40,8 +38,7 @@ const TabPanel = (props: TabPanelProps) => {
     );
 };
 
-const Search: React.FC = observer(() => {
-    const { search, artist } = useStore();
+const Search: React.FC = () => {
     const searchRef = React.useRef<HTMLInputElement>();
     const [value, setValue] = React.useState(0);
 
@@ -332,6 +329,6 @@ const Search: React.FC = observer(() => {
             </main>
         </div>
     );
-});
+};
 
 export default Search;

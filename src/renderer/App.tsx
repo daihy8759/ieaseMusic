@@ -1,39 +1,61 @@
-import { ipcRenderer, remote, shell } from 'electron';
-import { configure } from 'mobx';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import { hot } from 'react-hot-loader/root';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import { ipcRenderer, remote, shell } from 'electron';
+import React, { FC, useEffect } from 'react';
 import { HashRouter } from 'react-router-dom';
-import { useEffectOnce, useEvent } from 'react-use';
-import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
+import { useEvent } from 'react-use';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+    PLAYER_LOOP,
+    PLAYER_REPEAT,
+    PLAYER_SHUFFLE,
+    playingState,
+    playListState,
+    playModeState,
+    songState,
+    toggleModeState,
+    toggleNextState,
+    togglePlayState
+} from 'stores/controller';
 import './App.less';
-import { useStore } from './context';
 import MainRouter from './routes';
+import { loginState } from './stores/me';
+import { toggleMenuShowState } from './stores/menu';
+import { playingShowState } from './stores/playing';
+import { togglePreferenceShowState } from './stores/preferences';
 
 const { Menu } = remote;
-configure({ enforceActions: 'observed' });
 
 const theme = createMuiTheme({
     palette: {}
 });
 
-const App: React.SFC = observer(() => {
+const App: FC = () => {
     const navigatorRef = React.useRef<any>();
-    const store = useStore();
-    const { controller, playing, fm, menu } = store;
+    const playList = useRecoilValue(playListState);
+    const song = useRecoilValue(songState);
+    const playing = useRecoilValue(playingState);
+    const mode = useRecoilValue(playModeState);
+    const hasLogin = useRecoilValue(loginState);
 
-    useEffectOnce(() => {
+    const toggleNext = useSetRecoilState(toggleNextState);
+    const togglePrev = useSetRecoilState(toggleNextState);
+    const togglePlay = useSetRecoilState(togglePlayState);
+    const toggleMode = useSetRecoilState(toggleModeState);
+    const toggleMenuShow = useSetRecoilState(toggleMenuShowState);
+    const togglePreferenceShow = useSetRecoilState(togglePreferenceShowState);
+    const [playingShow, setPlayingShow] = useRecoilState(playingShowState);
+
+    useEffect(() => {
         ipcRenderer.on('player-toggle', () => {
-            if (navigatorRef.current.history.location.pathname === '/search' || playing.show) {
+            if (navigatorRef.current.history.location.pathname === '/search' || playingShow) {
                 return;
             }
-            controller.toggle();
+            togglePlay();
         });
         ipcRenderer.on('player-pause', () => {
-            if (controller.playing) {
-                controller.toggle();
+            if (playing) {
+                togglePlay();
             }
         });
         // Play the next song
@@ -43,7 +65,7 @@ const App: React.SFC = observer(() => {
             if (FMPlaying) {
                 fm.next();
             } else {
-                controller.next();
+                toggleNext();
             }
         });
         // Like a song
@@ -58,19 +80,19 @@ const App: React.SFC = observer(() => {
         });
         // Show preferences screen
         ipcRenderer.on('show-preferences', () => {
-            togglePreferences();
+            togglePreferenceShow();
         });
         // SHow slide menu panel
         ipcRenderer.on('show-menu', () => {
-            menu.toggle(true);
+            toggleMenuShow(true);
         });
         // Show the next up
         ipcRenderer.on('show-playing', () => {
-            playing.toggle(true);
+            setPlayingShow(true);
         });
-    });
+    }, []);
 
-    const isFMPlaying = () => controller.playlist.id === fm.playlist.id;
+    const isFMPlaying = () => playList.id === fm.playlist.id;
 
     const toggleLike = () => {
         const { controller, me } = store;
@@ -83,22 +105,16 @@ const App: React.SFC = observer(() => {
         me.like(song);
     };
 
-    const togglePreferences = () => {
-        const { preferences } = store;
-        preferences.toggle();
-    };
-
     const handleContextMenu = () => {
-        const { controller, fm, me, menu, playing } = store;
         const navigator = navigatorRef.current;
-        const isFMPlaying = () => controller.playlist.id === fm.playlist.id;
+        // const isFMPlaying = () => playList.id === fm.playlist.id;
+        const isFMPlaying = () => false;
 
-        const logined = me.hasLogin();
         const contextmenu = Menu.buildFromTemplate([
             {
-                label: controller.playing ? 'Pause' : 'Play',
+                label: playing ? 'Pause' : 'Play',
                 click: () => {
-                    controller.toggle();
+                    togglePlay();
                 }
             },
             {
@@ -107,14 +123,14 @@ const App: React.SFC = observer(() => {
                     if (isFMPlaying()) {
                         fm.next();
                     } else {
-                        controller.next();
+                        toggleNext();
                     }
                 }
             },
             {
                 label: 'Previous',
                 click: () => {
-                    controller.prev();
+                    togglePrev();
                 }
             },
             {
@@ -123,13 +139,13 @@ const App: React.SFC = observer(() => {
             {
                 label: 'Menu',
                 click: () => {
-                    menu.toggle(true);
+                    toggleMenuShow(true);
                 }
             },
             {
                 label: 'Next Up',
                 click: () => {
-                    playing.toggle(true);
+                    setPlayingShow(true);
                 }
             },
             {
@@ -137,22 +153,22 @@ const App: React.SFC = observer(() => {
             },
             {
                 label: 'Like/Unlike 💖',
-                enabled: logined,
+                enabled: hasLogin,
                 click: () => {
                     toggleLike();
                 }
             },
             {
                 label: 'Ban 💩',
-                enabled: logined && controller.playlist.id === 'PERSONAL_FM',
+                enabled: hasLogin && playList.id === 'PERSONAL_FM',
                 click: () => {
-                    fm.ban(controller.song.id);
+                    fm.ban(song.id);
                 }
             },
             {
                 label: 'Download 🍭',
                 click: () => {
-                    ipcRenderer.send('download', { songs: JSON.stringify(controller.song) });
+                    ipcRenderer.send('download', { songs: JSON.stringify(song) });
                 }
             },
             {
@@ -161,22 +177,22 @@ const App: React.SFC = observer(() => {
             {
                 label: 'Repeat 🤘',
                 type: 'checkbox',
-                checked: controller.mode === PLAYER_LOOP,
+                checked: mode === PLAYER_LOOP,
                 click: () => {
-                    if (controller.mode === PLAYER_LOOP) {
-                        controller.changeMode(PLAYER_REPEAT);
+                    if (mode === PLAYER_LOOP) {
+                        toggleMode(PLAYER_REPEAT);
                     } else {
-                        controller.changeMode(PLAYER_LOOP);
+                        toggleMode(PLAYER_LOOP);
                     }
                 }
             },
             {
                 label: 'Shuffle ⚡️',
                 type: 'checkbox',
-                checked: controller.mode === PLAYER_SHUFFLE,
+                checked: mode === PLAYER_SHUFFLE,
                 enabled: !isFMPlaying(),
                 click: () => {
-                    controller.changeMode(PLAYER_SHUFFLE);
+                    toggleMode(PLAYER_SHUFFLE);
                 }
             },
             {
@@ -185,7 +201,7 @@ const App: React.SFC = observer(() => {
             {
                 label: 'Preferences...',
                 click: () => {
-                    togglePreferences();
+                    togglePreferenceShow();
                 }
             },
             {
@@ -285,6 +301,6 @@ const App: React.SFC = observer(() => {
             <ThemeProvider theme={theme}>{MainRouter}</ThemeProvider>
         </HashRouter>
     );
-});
+};
 
-export default hot(App);
+export default App;

@@ -302,7 +302,6 @@ const createWindow = async () => {
         backgroundColor: 'none',
         titleBarStyle: 'hiddenInset',
         webPreferences: {
-            webSecurity: false,
             nodeIntegration: true,
             enableRemoteModule: true
         }

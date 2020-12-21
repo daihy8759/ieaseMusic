@@ -1,11 +1,11 @@
 import AdapterLink from '@/components/AdapterLink';
-import { useStore } from '@/context';
+import { login, profileState } from '@/stores/me';
 import { Button, CircularProgress, Typography } from '@material-ui/core';
 import { ArrowBackSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 import * as styles from './index.less';
 
 interface MatchParams {
@@ -14,13 +14,12 @@ interface MatchParams {
 
 interface ILegacyProps extends RouteComponentProps<MatchParams> {}
 
-const Legacy: React.FC<ILegacyProps> = observer(props => {
-    const {
-        me: { login, logining }
-    } = useStore();
-    const phoneRef = React.useRef<HTMLInputElement>();
-    const passwordRef = React.useRef<HTMLInputElement>();
-    const [showError, setShowError] = React.useState(false);
+const Legacy: FC<ILegacyProps> = props => {
+    const phoneRef = useRef<HTMLInputElement>();
+    const passwordRef = useRef<HTMLInputElement>();
+    const setProfile = useSetRecoilState(profileState);
+    const [showError, setShowError] = useState(false);
+    const [waitingLogin, setWaitingLogin] = useState(false);
 
     const doLogin = async () => {
         const phone = phoneRef.current.value;
@@ -35,12 +34,20 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
 
         const { history, match } = props;
 
-        if (await login(phone, password)) {
-            // Login success
-            history.replace(+match.params.fm ? '/fm' : '/');
-            return;
+        setWaitingLogin(true);
+        try {
+            const result = await login(phone, password);
+            if (result) {
+                if (result.cookie) {
+                    setProfile(result);
+                }
+                history.replace(+match.params.fm ? '/fm' : '/');
+            } else {
+                setShowError(true);
+            }
+        } finally {
+            setWaitingLogin(false);
         }
-        setShowError(true);
     };
 
     const handleEnter = async (e: any) => {
@@ -74,8 +81,8 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
             </section>
 
             <footer>
-                <Button variant="contained" disabled={logining} color="primary" onClick={doLogin}>
-                    {logining ? (
+                <Button variant="contained" disabled={waitingLogin} color="primary" onClick={doLogin}>
+                    {waitingLogin ? (
                         <>
                             <CircularProgress size={14} />
                             <Typography>Logining...</Typography>
@@ -97,6 +104,6 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
             </footer>
         </div>
     );
-});
+};
 
 export default Legacy;

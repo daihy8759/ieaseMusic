@@ -1,23 +1,22 @@
-import { useStore } from '@/context';
-import classnames from 'classnames';
+import { upNextShowState, upNextSongState } from '@/stores/upnext';
 import { PlayArrowSharp } from '@material-ui/icons';
+import classnames from 'classnames';
 import Modal from 'components/Modal';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import * as styles from './index.less';
 
-const UpNext: React.SFC = observer(() => {
-    const { upnext, controller } = useStore();
+const UpNext = () => {
+    const [show, setShow] = useRecoilState(upNextShowState);
+    const song = useRecoilValue(upNextSongState);
 
     const close = () => {
-        upnext.hide();
+        setShow(false);
     };
 
     const renderContent = () => {
-        const { song } = upnext;
-
         return (
             <div className={styles.container}>
                 <p>
@@ -31,7 +30,7 @@ const UpNext: React.SFC = observer(() => {
                             className={classnames('remixicon-play-fill', styles.play)}
                             onClick={() => {
                                 close();
-                                controller.play(song.id);
+                                // controller.play(song.id);
                             }}
                         />
 
@@ -49,11 +48,11 @@ const UpNext: React.SFC = observer(() => {
                         <circle
                             className={styles.outter}
                             onAnimationEnd={() => {
-                                if (!upnext.show) {
+                                if (!show) {
                                     return;
                                 }
                                 close();
-                                controller.play(song.id);
+                                // controller.play(song.id);
                             }}
                             cx="70"
                             cy="70"
@@ -66,8 +65,8 @@ const UpNext: React.SFC = observer(() => {
                 <button
                     type="button"
                     onClick={() => {
-                        upnext.cancel();
-                        controller.pause();
+                        // upnext.cancel();
+                        // controller.pause();
                     }}>
                     Cancel
                 </button>
@@ -75,7 +74,7 @@ const UpNext: React.SFC = observer(() => {
         );
     };
 
-    return <Modal visible={upnext.show} content={renderContent()} />;
-});
+    return <Modal visible={show} content={renderContent()} />;
+};
 
 export default UpNext;

@@ -19,9 +19,7 @@
             },
             "icons"
         ],
-        ["@babel/plugin-proposal-class-properties", { "loose": true }],
-        "@babel/plugin-syntax-dynamic-import",
-        "react-hot-loader/babel"
+        "@babel/plugin-syntax-dynamic-import"
     ],
     "comments": true
 }

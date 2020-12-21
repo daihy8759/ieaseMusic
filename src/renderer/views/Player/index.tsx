@@ -1,95 +1,79 @@
-import { useStore } from '@/context';
+import ISong from '@/interface/ISong';
+import {
+    playingState,
+    playListState,
+    songState,
+    togglePlayListState,
+    togglePlaySongState,
+    togglePlayState
+} from '@/stores/controller';
+import { isLiked, loginState } from '@/stores/me';
+import { fetchListDetailState, fetchRelatedState, filterSongsState } from '@/stores/player';
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import FadeImage from 'components/FadeImage';
 import Header from 'components/Header';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import { FunctionComponent } from 'react';
+import React, { FC, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce, useUpdateEffect } from 'react-use';
+import { useUpdateEffect } from 'react-use';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
+import Search from '../Search';
 import * as styles from './index.less';
-import Search from './Search';
 
 interface MatchParams {
     id: string;
 }
 
-interface PlayerProps extends RouteComponentProps<MatchParams> {}
-
-const Player: FunctionComponent<PlayerProps> = observer(props => {
-    const { player, controller, me } = useStore();
-    const { song, playing } = controller;
-    const { loading, meta, recommend, filter, searching } = player;
+const Player: FC<RouteComponentProps<MatchParams>> = props => {
+    const {
+        match: { params }
+    } = props;
+    const listDetail = useRecoilValue(fetchListDetailState(params));
+    const song = useRecoilValue(songState);
+    if (!song || !song.id) {
+        props.history.replace('/');
+        return null;
+    }
+    const related = useRecoilValue(
+        fetchRelatedState({
+            songId: song.id,
+            artistId: song.artists.length > 0 ? song.artists[0].id : 0
+        })
+    );
+    const { recommend, users, artists } = related;
+    const playList = useRecoilValue(playListState);
+    const { meta, songs } = listDetail;
+    const playing = useRecoilValue(playingState);
+    const hasLogin = useRecoilValue(loginState);
+    const togglePlay = useSetRecoilState(togglePlayState);
+    const togglePlaySong = useSetRecoilState(togglePlaySongState);
+    const togglePlayList = useSetRecoilState(togglePlayListState);
+    const filterSongs = useSetRecoilState(filterSongsState);
     const searchingRef = React.useRef<HTMLUListElement>();
     const listRef = React.useRef<HTMLUListElement>();
-
-    useEffectOnce(() => {
-        load();
-    });
+    const [searching, setSearching] = useState(false);
+    const [filteredSongs, setFilteredSongs] = useState<ISong[]>([]);
 
     useUpdateEffect(() => {
-        player.getRelated(song);
-    }, [song.id]);
-
-    useUpdateEffect(() => {
-        load();
-    }, [props.match.params.id]);
-
-    useUpdateEffect(() => {
-        const { searching } = player;
         const ele = searching ? searchingRef.current : listRef.current;
         if (!ele) {
             return;
         }
         const playing = ele.querySelector(styles.active);
-
         if (playing) {
             playing.scrollIntoViewIfNeeded();
         }
     }, [playing]);
 
-    const showLoading = () => {
-        player.toggleLoading(true);
-    };
-
-    const hideLoading = () => {
-        setTimeout(() => player.toggleLoading(false), 500);
-    };
-
-    const getList = async (args: any) => {
-        const { id, type } = args;
-        await player.getDetail(type, id);
-    };
-
-    const load = async () => {
-        const { getRelated } = player;
-        const { song } = controller;
-        const {
-            match: { params }
-        } = props;
-
-        showLoading();
-        try {
-            await getList(params);
-            await getRelated(song);
-        } finally {
-            hideLoading();
-        }
-    };
-
     const renderPeople = () => {
-        const { artists, users } = player;
-        const { hasLogin } = me;
         const content = [];
 
-        if (!hasLogin()) {
+        if (!hasLogin) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
 
@@ -125,60 +109,57 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
     };
 
     const canToggle = () => {
-        return controller.playlist.id === player.meta.id;
+        return playList.id === meta.id;
     };
 
     const play = async (songid?: number) => {
-        const { meta } = player;
-        const currentPlayId = controller.playlist.id;
-        const sameToPlaying = currentPlayId && currentPlayId === player.meta.id;
+        const currentPlayId = playList.id;
+        const sameToPlaying = currentPlayId && currentPlayId === meta.id;
 
         if (!songid) {
-            // Change the
             if (sameToPlaying) {
-                controller.toggle();
+                togglePlay();
             } else {
-                // Play a new playlist
-                controller.setup({
-                    id: meta.id,
-                    link: `/player/${meta.type}/${meta.id}`,
-                    name: meta.name,
-                    songs: player.songs
+                togglePlayList({
+                    playList: {
+                        id: meta.id,
+                        link: `/player/${meta.type}/${meta.id}`,
+                        name: meta.name,
+                        songs: listDetail.songs
+                    }
                 });
-                await controller.play();
             }
-
             return;
         }
 
         if (sameToPlaying) {
             // Song is playing
-            if (songid === controller.song.id) {
-                controller.toggle();
+            if (songid === song.id) {
+                togglePlay();
                 return;
             }
 
-            await controller.play(songid);
+            togglePlaySong(songid);
             return;
         }
 
         // Change playlist and play specific song
-        controller.setup({
-            id: meta.id,
-            link: `/player/${meta.type}/${meta.id}`,
-            name: meta.name,
-            songs: player.songs
+        togglePlayList({
+            playList: {
+                id: meta.id,
+                link: `/player/${meta.type}/${meta.id}`,
+                name: meta.name,
+                songs: listDetail.songs
+            },
+            songId: songid
         });
-        await controller.play(songid);
     };
 
     const canifav = () => {
-        return player.meta.type === 0 && me.likes.get('id') !== player.meta.id;
+        return meta.type === 0 && isLiked(meta.id);
     };
 
     const renderList = () => {
-        const { songs, keywords, searching, filtered } = player;
-        const { song } = controller;
         const sameToPlaylist = canToggle();
         const list = searching && keywords ? filtered : songs;
 
@@ -194,7 +175,7 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
             );
         }
 
-        return list.map((e, index: number) => {
+        return list.map((e: ISong, index: number) => {
             return (
                 <li
                     key={e.id}
@@ -228,8 +209,6 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
 
     return (
         <div className={styles.container}>
-            <Loader show={loading} />
-
             <Header transparent showFav={canifav()} />
 
             <section>
@@ -307,7 +286,7 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
 
                     <div className={styles.list}>
                         <header>
-                            <span onClick={() => player.toggleSearch(true)}>Track/SEARCH</span>
+                            {/* <span onClick={() => player.toggleSearch(true)}>Track/SEARCH</span> */}
                             <span>Time</span>
                         </header>
                         <ul ref={listRef}>{renderList()}</ul>
@@ -319,8 +298,8 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
                         filter,
                         show: searching,
                         close: () => {
-                            player.toggleSearch(false);
-                            filter();
+                            // player.toggleSearch(false);
+                            // filter();
                         }
                     }}>
                     <div className={styles.list}>
@@ -332,6 +311,6 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
             <Controller />
         </div>
     );
-});
+};
 
 export default Player;

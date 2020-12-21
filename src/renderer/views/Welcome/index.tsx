@@ -1,18 +1,17 @@
-import { useStore } from '@/context';
+import { playListState, songState, togglePlayListState, togglePlayState } from '@/stores/controller';
+import { homeListQuery } from '@/stores/home';
+import { loginState, profileState } from '@/stores/me';
 import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
+import { ArrowForwardTwoTone } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
-import { ArrowForwardTwoTone } from '@material-ui/icons';
 import Controller from 'components/Controller';
 import Indicator from 'components/Indicator';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
@@ -46,23 +45,28 @@ const ListItemLink = (props: any) => {
     return <ListItem button component="a" {...props} />;
 };
 
-const Welcome = observer(() => {
-    const { me, controller, home } = useStore();
+const Welcome = () => {
+    const hasLogin = useRecoilValue(loginState);
+    const homeList = useRecoilValue(homeListQuery);
+    const profile = useRecoilValue(profileState);
+    const controllerPlayList = useRecoilValue(playListState);
+    const controllerSong = useRecoilValue(songState);
     const classes = useStyles();
-    useEffectOnce(() => {
-        home.getList();
-    });
+    const togglePlayList = useSetRecoilState(togglePlayListState);
+    const togglePlay = useSetRecoilState(togglePlayState);
+
+    useEffect(() => {
+        togglePlayList({ playList: homeList[0] });
+    }, []);
 
     const play = (playlist: any) => {
-        if (controller.playlist.id === playlist.id) {
-            controller.toggle();
+        if (controllerPlayList.id === playlist.id) {
+            togglePlay();
         }
-        controller.setup(playlist);
-        controller.play();
+        togglePlayList(playlist);
     };
 
     const renderProfile = () => {
-        const { profile } = me;
         const link = `/user/${profile.userId}`;
         return (
             <article className={styles.profile}>
@@ -87,7 +91,7 @@ const Welcome = observer(() => {
 
         return (
             <Link className={styles.clearfix} to={favorite.link || '#'}>
-                {Status({ playing: controller.playlist.id === favorite.id })}
+                {Status({ playing: controllerPlayList.id === favorite.id })}
 
                 <div className={styles.hovered}>
                     <ArrowForwardTwoTone />
@@ -127,7 +131,7 @@ const Welcome = observer(() => {
     const renderRecommend = (recommend: any = {}) => {
         return (
             <Link className={styles.clearfix} to="#" onClick={() => play(recommend)}>
-                <Status playing={controller.playlist.id === recommend.id} />
+                <Status playing={controllerPlayList.id === recommend.id} />
 
                 <div className={styles.hovered}>
                     <ArrowForwardTwoTone />
@@ -160,7 +164,7 @@ const Welcome = observer(() => {
         return list.map((e: any, index: number) => {
             return (
                 <Link className={styles.clearfix} key={index} to={e.link}>
-                    <Status playing={controller.playlist.id === e.id} />
+                    <Status playing={controllerPlayList.id === e.id} />
 
                     <div className={styles.hovered}>
                         <ArrowForwardTwoTone />
@@ -201,17 +205,14 @@ const Welcome = observer(() => {
             );
         });
     };
-    const { list } = home;
-    const logined = me.hasLogin();
-    const hasRecommend = logined && list.length > 1 && list[1].size;
-    const songId = controller.song ? controller.song.id : '';
+    const hasRecommend = hasLogin && homeList.length > 1 && homeList[1].size;
+    const songId = controllerSong ? controllerSong.id : '';
 
     return (
         <div className={styles.container}>
-            <Loader show={home.loading} />
             <main>
                 <aside className={styles.navs}>
-                    {logined ? (
+                    {hasLogin ? (
                         renderProfile()
                     ) : (
                         <Link
@@ -237,27 +238,26 @@ const Welcome = observer(() => {
                         <ListItemLink
                             href="#/fm"
                             className={classnames({
-                                [styles.playing]: controller.playlist.id === 'PERSONAL_FM'
+                                [styles.playing]: controllerPlayList.id === 'PERSONAL_FM'
                             })}>
                             <ListItemText primary="Made For You" />
                         </ListItemLink>
                     </List>
                 </aside>
 
-                {list.length ? (
+                {homeList.length ? (
                     <section className={styles.list}>
-                        {logined ? renderFavorite(list[0]) : false}
-                        {hasRecommend ? renderRecommend(list[1]) : false}
-                        {renderPlaylist(logined ? list.slice(2, list.length) : list.slice())}
+                        {hasLogin ? renderFavorite(homeList[0]) : false}
+                        {hasRecommend ? renderRecommend(homeList[1]) : false}
+                        {renderPlaylist(hasLogin ? homeList.slice(2, homeList.length) : homeList.slice())}
                     </section>
                 ) : (
                     <div className={styles.placeholder} />
                 )}
             </main>
-
             <Controller key={songId} />
         </div>
     );
-});
+};
 
 export default Welcome;

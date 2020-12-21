@@ -1,11 +1,18 @@
-import * as React from 'react';
+import React, { Suspense } from 'react';
 import * as ReactDOM from 'react-dom';
+import { RecoilRoot } from 'recoil';
+// import RecoilizeDebugger from 'recoilize';
 import App from './App';
-import { StoreProvider } from './context';
+import Loader from './components/Loader';
+
+const app = document.getElementById('app');
 
 ReactDOM.render(
-    <StoreProvider>
-        <App />
-    </StoreProvider>,
-    document.getElementById('app')
+    <RecoilRoot>
+        {/* <RecoilizeDebugger root={app} /> */}
+        <Suspense fallback={<Loader />}>
+            <App />
+        </Suspense>
+    </RecoilRoot>,
+    app
 );

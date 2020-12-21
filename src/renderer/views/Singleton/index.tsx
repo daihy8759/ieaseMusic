@@ -1,22 +1,23 @@
-import { useStore } from '@/context';
+import { playingState, songState } from '@/stores/controller';
+import { isLiked, toggleLikeState } from '@/stores/me';
 import { IconButton } from '@material-ui/core';
 import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
-const Singleton: React.SFC = observer(() => {
-    const { me, controller } = useStore();
+const Singleton = () => {
     const circleRef = React.useRef<HTMLDivElement>();
+    const song = useRecoilValue(songState);
+    const playing = useRecoilValue(playingState);
+    const toggleLike = useSetRecoilState(toggleLikeState);
 
-    const { isLiked, like, unlike } = me;
-    const { song, playing } = controller;
     const liked = isLiked(song.id);
 
     useUpdateEffect(() => {
@@ -47,7 +48,9 @@ const Singleton: React.SFC = observer(() => {
                         cursor: 'pointer',
                         display: 'table'
                     }}
-                    onClick={() => (liked ? unlike(song) : like(song))}>
+                    onClick={() => {
+                        toggleLike({ id: song.id, like: !liked });
+                    }}>
                     <FavoriteSharp />
                 </IconButton>
 
@@ -72,6 +75,6 @@ const Singleton: React.SFC = observer(() => {
             </main>
         </div>
     );
-});
+};
 
 export default Singleton;

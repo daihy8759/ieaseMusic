@@ -1,35 +1,20 @@
-import { useStore } from '@/context';
+import { songState } from '@/stores/controller';
+import { fetchLyricState } from '@/stores/lyrics';
 import Header from 'components/Header';
 import Hero from 'components/Hero';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce, useUpdateEffect } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import * as styles from './index.less';
 
-interface ILyricsProps extends RouteComponentProps {}
-
-const Lyrics: React.SFC<ILyricsProps> = observer(props => {
-    const { lyrics, controller } = useStore();
-    const { loading, list: lyricsList } = lyrics;
-    const { song } = controller;
-
-    useEffectOnce(() => {
-        if (!song.id) {
-            props.history.replace('/');
-        }
-        lyrics.getLyrics();
-    });
-
-    useUpdateEffect(() => {
-        lyrics.getLyrics();
-    }, [song.id]);
-
-    if (loading) {
-        return <Loader show />;
+const Lyrics: FC<RouteComponentProps> = props => {
+    const song = useRecoilValue(songState);
+    if (!song || !song.id) {
+        props.history.replace('/');
     }
+    const lyric = useRecoilValue(fetchLyricState(song.id));
+    const { list: lyricsList } = lyric;
 
     const renderLyrics = () => {
         const times = lyricsList && Object.keys(lyricsList);
@@ -83,6 +68,6 @@ const Lyrics: React.SFC<ILyricsProps> = observer(props => {
             </aside>
         </div>
     );
-});
+};
 
 export default Lyrics;

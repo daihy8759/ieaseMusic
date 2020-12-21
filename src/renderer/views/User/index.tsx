@@ -1,13 +1,13 @@
-import { useStore } from '@/context';
+import { playingState, playListState, songState } from '@/stores/controller';
+import { profileState } from '@/stores/me';
+import { userDetailQueryState } from '@/stores/user';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Header from 'components/Header';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
@@ -17,27 +17,25 @@ interface MatchParams {
 
 interface UserProps extends RouteComponentProps<MatchParams> {}
 
-const User: React.FC<UserProps> = observer(props => {
-    const { user, controller, me } = useStore();
+const User: FC<UserProps> = props => {
+    const song = useRecoilValue(songState);
+    const playing = useRecoilValue(playingState);
+    const playList = useRecoilValue(playListState);
+    const profile = useRecoilValue(profileState);
+
+    const user = useRecoilValue(userDetailQueryState(parseInt(props.match.params.id)));
+    const { followed } = profile;
     const [hovered, setHovered] = React.useState();
 
-    useEffectOnce(() => {
-        user.getUser(parseInt(props.match.params.id));
-    });
-
-    if (user.loading) {
-        return <Loader show />;
-    }
-
     const isme = () => {
-        if (!me.profile.userId) {
+        if (!profile.userId) {
             return false;
         }
-        return user.profile.id === me.profile.userId;
+        return user.profile.id === profile.userId;
     };
 
     const isPlaying = (id: number) => {
-        return controller.playing && controller.playlist.id === id;
+        return playing && playList.id === id;
     };
 
     const renderList = () => {
@@ -64,9 +62,6 @@ const User: React.FC<UserProps> = observer(props => {
             );
         });
     };
-
-    const { profile, follow } = user;
-    const { followed } = profile;
 
     return (
         <div className={styles.container}>
@@ -144,9 +139,9 @@ const User: React.FC<UserProps> = observer(props => {
                 <section className={styles.list}>{renderList()}</section>
             </main>
 
-            <Controller key={controller.song.id} />
+            <Controller key={song.id} />
         </div>
     );
-});
+};
 
 export default User;

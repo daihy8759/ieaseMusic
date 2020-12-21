@@ -1,12 +1,12 @@
 import Api from './';
 
-async function getLyric(id: number) {
+async function getLyric(id: number, cookie: string) {
     if (!id) {
         return;
     }
     const result: any = {};
     try {
-        const { body } = await Api.lyric({ id });
+        const { body } = await Api.lyric({ id, cookie });
         if (body.code === 200) {
             const { lrc } = body;
             if (lrc === undefined) {

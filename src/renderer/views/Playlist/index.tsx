@@ -1,14 +1,13 @@
-import { useStore } from '@/context';
+import { playListState } from '@/stores/controller';
 import Grid from '@material-ui/core/Grid';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
@@ -16,19 +15,17 @@ interface MatchParams {
     type: string;
 }
 
-interface IPlaylistProps extends RouteComponentProps<MatchParams> {}
-
-const Playlist: FunctionComponent<IPlaylistProps> = observer(props => {
+const Playlist: FC<RouteComponentProps<MatchParams>> = props => {
     const { match } = props;
-    const { playlist, controller } = useStore();
     const listRef = React.useRef<HTMLElement>();
+    const playList = useRecoilValue(playListState);
 
     React.useEffect(() => {
         loadList();
     }, [match.params.type]);
 
     const isPlaying = (id: number) => {
-        return controller.playlist.id === id;
+        return playList.id === id;
     };
 
     const loadList = () => {
@@ -135,6 +132,6 @@ const Playlist: FunctionComponent<IPlaylistProps> = observer(props => {
             </div>
         </div>
     );
-});
+};
 
 export default Playlist;

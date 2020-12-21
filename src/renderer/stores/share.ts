@@ -1,16 +1,6 @@
-import { makeAutoObservable } from 'mobx';
+import { atom } from 'recoil';
 
-class Share {
-    show = false;
-
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    toggle = (show = !this.show) => {
-        this.show = show;
-    };
-}
-
-const self = new Share();
-export default self;
+export const showState = atom({
+    key: 'shareShow',
+    default: false
+});

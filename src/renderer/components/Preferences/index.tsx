@@ -1,11 +1,9 @@
-import { useStore } from '@/context';
-import { Button, Switch, Theme, CircularProgress, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Switch, Theme, Typography } from '@material-ui/core';
 import { FlashOnTwoTone, VerifiedUserTwoTone } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
 import Modal from 'components/Modal';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import * as styles from './index.less';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -19,8 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const Preferences: React.SFC = observer(() => {
-    const { preferences } = useStore();
+const Preferences = () => {
     const downloadRef = React.useRef<HTMLInputElement>();
     const usernameRef = React.useRef<HTMLInputElement>();
     const passwordRef = React.useRef<HTMLInputElement>();
@@ -411,6 +408,6 @@ const Preferences: React.SFC = observer(() => {
     };
 
     return <Modal title="Preferences..." visible={preferences.show} onCancel={close} content={renderOptions()} />;
-});
+};
 
 export default Preferences;

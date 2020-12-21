@@ -1,18 +1,23 @@
-import { useStore } from '@/context';
+import { playListState, songState } from '@/stores/controller';
+import { filteredSongsState, playingShowState } from '@/stores/playing';
 import classnames from 'classnames';
 import FadeImage from 'components/FadeImage';
 import Indicator from 'components/Indicator';
 import IArtist from 'interface/IArtist';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUpdateEffect } from 'react-use';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import colors from 'utils/colors';
 import * as styles from './index.less';
 
-const Playing: React.SFC = observer(() => {
-    const { playing, controller } = useStore();
-    if (!playing.show) {
+const Playing = () => {
+    const [show, setShow] = useRecoilState(playingShowState);
+    const filteredSongs = useRecoilState(filteredSongsState);
+    const playList = useRecoilValue(playListState);
+    const controllerSong = useRecoilValue(songState);
+
+    if (!show) {
         return null;
     }
 
@@ -22,7 +27,7 @@ const Playing: React.SFC = observer(() => {
 
     const pressEscExit = (e: any) => {
         if (e.keyCode === 27) {
-            playing.toggle(false);
+            setShow(false);
         }
     };
 
@@ -76,26 +81,23 @@ const Playing: React.SFC = observer(() => {
         if (active) {
             // @ts-ignore
             const songid = active.dataset.id;
-            controller.play(songid);
+            // controller.play(songid);
         }
     };
 
+    const filter = value => {};
+
     const renderList = () => {
-        const {
-            playlist: { songs = [] },
-            song = {},
-            play
-        } = controller;
-        const { filtered } = playing;
-        let list = songs;
+        // const { filtered } = playing;
+        let list = playList.songs;
         if (searchRef.current && searchRef.current.value.trim()) {
-            list = filtered;
+            list = filteredSongs;
         }
         if (list.length === 0) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
         return list.map(e => {
-            const playing = e.id === song.id;
+            const playing = e.id === controllerSong.id;
 
             return (
                 <li key={e.id}>
@@ -107,7 +109,7 @@ const Playing: React.SFC = observer(() => {
                         })}
                         data-id={e.id}
                         onClick={() => {
-                            play(e.id);
+                            // play(e.id);
                             close();
                         }}>
                         <Link to={e.album.link}>
@@ -139,22 +141,21 @@ const Playing: React.SFC = observer(() => {
         });
     };
 
-    useUpdateEffect(() => {
-        listRef.current.scrollTop = 0;
-    }, [playing.filtered]);
+    // useUpdateEffect(() => {
+    //     listRef.current.scrollTop = 0;
+    // }, [playing.filtered]);
 
     useUpdateEffect(() => {
-        if (playing.show) {
-            const { song } = controller;
+        if (show) {
             const playing = Array.from(listRef.current.querySelectorAll('[data-id]')).find(
-                (e: any) => e.dataset.id === song.id
+                (e: any) => e.dataset.id === controllerSong.id
             );
 
             if (playing) {
                 playing.scrollIntoView();
             }
         }
-    }, [playing.show, playing]);
+    }, [show]);
 
     return (
         <div className={styles.container} onKeyUp={e => pressEscExit(e)} ref={containerRef} tabIndex={-1}>
@@ -163,7 +164,7 @@ const Playing: React.SFC = observer(() => {
             <section>
                 <header>
                     <input
-                        onInput={(e: React.ChangeEvent<HTMLInputElement>) => playing.filter(e.target.value)}
+                        onInput={(e: React.ChangeEvent<HTMLInputElement>) => filter(e.target.value)}
                         onKeyUp={navigation}
                         placeholder="Search..."
                         ref={searchRef}
@@ -177,6 +178,6 @@ const Playing: React.SFC = observer(() => {
             </section>
         </div>
     );
-});
+};
 
 export default Playing;

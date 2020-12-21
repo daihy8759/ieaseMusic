@@ -12,17 +12,8 @@ const helper = {
         return `${this.pad(minutes)}:${this.pad(second)}`;
     },
     getPallet(image: string) {
-        return new Promise(resolve => {
-            const imageWithParam = `${image.replace(/\?.*$/, '')}?param=20y20`;
-            new AlbumColors(imageWithParam)
-                .getColors()
-                .then((colors: number[][]) => {
-                    resolve(colors);
-                })
-                .catch(() => {
-                    resolve([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
-                });
-        });
+        const imageWithParam = `${image.replace(/\?.*$/, '')}?param=20y20`;
+        return new AlbumColors(imageWithParam).getColors();
     },
     getLyricsKey(times: any, lyrics: any) {
         const keys = Object.keys(lyrics);

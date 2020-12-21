@@ -7,5 +7,14 @@ module.exports = merge.smart(baseConfig, {
     target: 'electron-main',
     entry: {
         main: './src/main/index.ts'
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader'
+            }
+        ]
     }
 });

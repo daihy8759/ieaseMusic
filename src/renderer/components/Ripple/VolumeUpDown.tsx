@@ -1,16 +1,11 @@
-import { useStore } from '@/context';
 import { Zoom } from '@material-ui/core';
 import { VolumeDownTwoTone, VolumeMuteTwoTone, VolumeUpTwoTone } from '@material-ui/icons';
 import { ipcRenderer } from 'electron';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC } from 'react';
 import { useEffectOnce } from 'react-use';
 import * as styles from './index.less';
 
-const VolumeUpDown: React.SFC = observer(() => {
-    const {
-        preferences: { volume }
-    } = useStore();
+const VolumeUpDown: FC = () => {
     const isMuted = volume === 0;
     const containerRef = React.useRef<HTMLDivElement>();
     const [direction, setDirection] = React.useState(true);
@@ -52,6 +47,6 @@ const VolumeUpDown: React.SFC = observer(() => {
             </div>
         </Zoom>
     );
-});
+};
 
 export default VolumeUpDown;

@@ -1,12 +1,17 @@
 import AdapterLink from '@/components/AdapterLink';
-import { useStore } from '@/context';
+import IUserProfile from '@/interface/IUserProfile';
+import { profileState } from '@/stores/me';
 import { Button } from '@material-ui/core';
 import { ArrowBackSharp } from '@material-ui/icons';
+import QRCodeApi from 'api/qrcode';
 import * as qrcodePlaceholder from 'assets/qrcode-placeholder.png';
 import FadeImage from 'components/FadeImage';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import { dialog } from 'electron';
+import React, { FC, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import storage from '../../../../shared/storage';
+import Api from '../../../api';
 import * as styles from './index.less';
 
 interface MatchParams {
@@ -16,20 +21,42 @@ interface MatchParams {
 
 interface IQRCodeProps extends RouteComponentProps<MatchParams> {}
 
-const QRCode: React.SFC<IQRCodeProps> = observer(props => {
-    const { me } = useStore();
+const QRCode: FC<IQRCodeProps> = props => {
+    const [qrCode, setQrCode] = useState({ url: '', type: '' });
+    const setProfile = useSetRecoilState(profileState);
     let timer: number;
     const pleaseLogin = async () => {
         const {
-            history,
             match: { params }
         } = props;
-        const { fm, type } = params;
-
-        await me.generate(type);
-        me.waiting(() => {
-            history.replace(+fm ? '/fm' : '/');
+        const { type } = params;
+        const result = await QRCodeApi.generate(type);
+        setQrCode({
+            ...result,
+            type
         });
+        const { ticket, state } = result;
+        const data = await QRCodeApi.polling({
+            ticket,
+            state,
+            type
+        });
+        if (data.success === false) {
+            dialog.showErrorBox(
+                '错误',
+                'Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.'
+            );
+            return;
+        }
+        const { body } = await Api.login_status({});
+        const profile = body.profile as IUserProfile;
+        const userProfile = {
+            ...profile,
+            cookie: body.cookie
+        };
+        storage.set('profile', userProfile);
+        setProfile(userProfile);
+        props.history.replace('/');
     };
 
     const tick = () => {
@@ -59,8 +86,8 @@ const QRCode: React.SFC<IQRCodeProps> = observer(props => {
 
             <figure>
                 <div className={styles.wraped}>
-                    {me.qrcode.url ? (
-                        <FadeImage className={styles.qrcode} src={me.qrcode.url} />
+                    {qrCode.url ? (
+                        <FadeImage className={styles.qrcode} src={qrCode.url} />
                     ) : (
                         <img alt="" className={styles.qrcode} src={qrcodePlaceholder} />
                     )}
@@ -81,6 +108,6 @@ const QRCode: React.SFC<IQRCodeProps> = observer(props => {
             </figure>
         </div>
     );
-});
+};
 
 export default QRCode;

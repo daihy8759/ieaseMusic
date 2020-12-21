@@ -1,4 +1,5 @@
-import { useStore } from '@/context';
+import { fetchListState } from '@/stores/comments';
+import { isLiked, loginState, toggleLikeState } from '@/stores/me';
 import { IconButton } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import {
@@ -16,10 +17,21 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+    MODES,
+    PLAYER_LOOP,
+    PLAYER_REPEAT,
+    PLAYER_SHUFFLE,
+    playingState,
+    playListState,
+    playModeState,
+    songState,
+    toggleNextState,
+    togglePrevState
+} from 'stores/controller';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
 import * as styles from './index.less';
@@ -31,34 +43,41 @@ const useStyles = makeStyles({
     }
 });
 
-const Controller: React.FC = observer(() => {
-    const { controller, me, comments } = useStore();
+const Controller = () => {
     const classes = useStyles();
+    const controllerSong = useRecoilValue(songState);
+    const comments = useRecoilValue(fetchListState(controllerSong.id));
+    const controllerPlayList = useRecoilValue(playListState);
+    const [playing, setPlaying] = useRecoilState(playingState);
+    const [mode, setMode] = useRecoilState(playModeState);
+    const hasLogin = useRecoilValue(loginState);
+    const toggleNext = useSetRecoilState(toggleNextState);
+    const togglePrev = useSetRecoilState(togglePrevState);
+    const toggleLike = useSetRecoilState(toggleLikeState);
 
     const seek = (e: any) => {
         const percent = e.clientX / window.innerWidth;
-        const {
-            song: { duration }
-        } = controller;
+        const { duration } = controllerSong;
         const time = duration * percent;
 
         document.querySelector('audio').currentTime = time / 1000;
     };
 
     const getPlayerLink = () => {
-        return controller.playlist.link || '/';
+        return controllerPlayList.link || '/';
     };
 
     const getPlaylistName = () => {
-        return `🎉 ${controller.playlist.name}`;
+        return `🎉 ${controllerPlayList.name}`;
     };
 
-    const { song, mode, prev, next, toggle, playing, changeMode } = controller;
-    const { hasLogin, isLiked, like, unlike } = me;
-    const { total: commentsTotal } = comments;
-    const liked = isLiked(song.id);
+    // const { song, mode, prev, next, toggle, playing, changeMode } = controller;
+    // const { hasLogin, isLiked, like, unlike } = me;
+    // const { total: commentsTotal } = comments;
+    // const liked = isLiked(controllerSong.id);
+    const liked = isLiked(controllerSong.id);
 
-    if (!song.id) {
+    if (!controllerSong.id) {
         return null;
     }
 
@@ -74,15 +93,24 @@ const Controller: React.FC = observer(() => {
         }
     };
 
+    const changeMode = () => {
+        let index = MODES.indexOf(mode);
+        if (++index > MODES.length) {
+            index = 0;
+        }
+        setMode(MODES[index]);
+        return;
+    };
+
     return (
         <div
             className={styles.container}
             ref={ele => {
                 if (!ele) return;
 
-                ele.style.backgroundColor = song.id ? 'none' : 'white';
+                ele.style.backgroundColor = controllerSong.id ? 'none' : 'white';
             }}>
-            {song.id ? (
+            {controllerSong.id ? (
                 <figure
                     style={{
                         position: 'absolute',
@@ -103,7 +131,10 @@ const Controller: React.FC = observer(() => {
                             height: window.innerWidth,
                             padding: 0,
                             margin: 0,
-                            backgroundImage: `url(${`${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`})`,
+                            backgroundImage: `url(${`${controllerSong.album.cover.replace(
+                                /\?param=.*/,
+                                ''
+                            )}?param=800y800`})`,
                             backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
                             filter: 'blur(10px)',
                             zIndex: -1
@@ -118,7 +149,6 @@ const Controller: React.FC = observer(() => {
                 <div className={styles.buffering} />
             </div>
             <section>
-                {/* Click the cover show the player screen */}
                 <Link
                     data-text={getPlaylistName()}
                     className="tooltip"
@@ -139,7 +169,7 @@ const Controller: React.FC = observer(() => {
                         {...{
                             height: 32,
                             width: 32,
-                            src: song.album.cover,
+                            src: controllerSong.album.cover,
                             style: {
                                 filter: `drop-shadow(3mm 2mm 4mm ${colors.randomColor()})`
                             },
@@ -150,13 +180,13 @@ const Controller: React.FC = observer(() => {
 
                 <aside>
                     <div className={styles.info}>
-                        <p className={styles.title} title={song.name}>
+                        <p className={styles.title} title={controllerSong.name}>
                             {/* Click the song name show the album screen */}
-                            <Link to={song.album.link}>{song.name}</Link>
+                            <Link to={controllerSong.album.link}>{controllerSong.name}</Link>
                         </p>
 
                         <p className={styles.author}>
-                            {song.artists.map((e: IArtist, index: number) => {
+                            {controllerSong.artists.map((e: IArtist, index: number) => {
                                 // Show the artist
                                 return (
                                     <Link key={index} to={e.link} title={e.name}>
@@ -168,7 +198,7 @@ const Controller: React.FC = observer(() => {
                     </div>
 
                     <div className={styles.action}>
-                        {song.data && song.data.isFlac ? (
+                        {controllerSong.data && controllerSong.data.isFlac ? (
                             <span className={styles.highquality} title="High Quality Music">
                                 SQ
                             </span>
@@ -179,11 +209,14 @@ const Controller: React.FC = observer(() => {
                             LRC
                         </Link>
                         <Link className={styles.text} to="/comments">
-                            {helper.humanNumber(commentsTotal)} Comments
+                            {helper.humanNumber(comments.total)} Comments
                         </Link>
                         <div className={styles.controls}>
-                            <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
-                                {hasLogin() && liked ? (
+                            <IconButton
+                                onClick={() => {
+                                    toggleLike({ id: controllerSong.id, like: !liked });
+                                }}>
+                                {hasLogin && liked ? (
                                     <FavoriteTwoTone className={classes.liked} />
                                 ) : (
                                     <FavoriteBorderTwoTone />
@@ -193,13 +226,22 @@ const Controller: React.FC = observer(() => {
                             <IconButton>
                                 <CloudDownloadTwoTone />
                             </IconButton>
-                            <IconButton onClick={prev}>
+                            <IconButton
+                                onClick={() => {
+                                    togglePrev();
+                                }}>
                                 <FastRewindTwoTone />
                             </IconButton>
-                            <IconButton onClick={toggle}>
+                            <IconButton
+                                onClick={() => {
+                                    setPlaying(!playing);
+                                }}>
                                 {playing ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
                             </IconButton>
-                            <IconButton onClick={() => next()}>
+                            <IconButton
+                                onClick={() => {
+                                    toggleNext();
+                                }}>
                                 <FastForwardTwoTone />
                             </IconButton>
                         </div>
@@ -208,6 +250,6 @@ const Controller: React.FC = observer(() => {
             </section>
         </div>
     );
-});
+};
 
 export default Controller;

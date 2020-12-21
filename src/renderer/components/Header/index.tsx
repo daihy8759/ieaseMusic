@@ -1,9 +1,10 @@
-import { useStore } from '@/context';
+import { songState } from '@/stores/controller';
+import { loginState } from '@/stores/me';
 import { IconButton } from '@material-ui/core';
 import { BarChartTwoTone, MoreVertTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC } from 'react';
+import { useRecoilValue } from 'recoil';
 import * as styles from './index.less';
 
 interface IHeaderProps {
@@ -14,9 +15,9 @@ interface IHeaderProps {
     transparent?: boolean;
 }
 
-const Header: React.SFC<IHeaderProps> = observer(props => {
-    const { controller, menu, me, player } = useStore();
-    const { song } = controller;
+const Header: FC<IHeaderProps> = props => {
+    const song = useRecoilValue(songState);
+    const hasLogin = useRecoilValue(loginState);
     const goBack = () => window.history.back();
 
     const renderBack = () => {
@@ -42,7 +43,7 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
     };
 
     const renderFav = () => {
-        if (!props.showFav || !me.hasLogin()) {
+        if (!props.showFav || !hasLogin) {
             return false;
         }
 
@@ -63,7 +64,10 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
 
     const renderMenu = () => {
         return (
-            <IconButton onClick={() => menu.toggle(true)}>
+            <IconButton
+                onClick={() => {
+                    // menu.toggle(true);
+                }}>
                 <MoreVertTwoTone />
             </IconButton>
         );
@@ -118,6 +122,6 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
             </section>
         </header>
     );
-});
+};
 
 export default Header;

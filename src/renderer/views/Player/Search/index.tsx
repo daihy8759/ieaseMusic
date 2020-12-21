@@ -1,6 +1,5 @@
 import * as closePng from 'assets/close.png';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC } from 'react';
 import * as styles from './index.less';
 
 interface ISearchProps {
@@ -9,7 +8,7 @@ interface ISearchProps {
     filter?: any;
 }
 
-const Search: React.SFC<ISearchProps> = observer(props => {
+const Search: FC<ISearchProps> = props => {
     const { show, close, filter, children } = props;
 
     if (!show) {
@@ -32,6 +31,6 @@ const Search: React.SFC<ISearchProps> = observer(props => {
             <div className={styles.list}>{children}</div>
         </div>
     );
-});
+};
 
 export default Search;

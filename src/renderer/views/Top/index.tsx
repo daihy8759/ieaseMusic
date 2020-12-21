@@ -1,27 +1,16 @@
-import { useStore } from '@/context';
+import { fetchListState } from '@/stores/top';
 import classnames from 'classnames';
 import Controller from 'components/Controller';
 import Header from 'components/Header';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import * as styles from './index.less';
 
-const Top = observer(() => {
-    const { top } = useStore();
-    const { loading } = top;
-
-    useEffectOnce(() => {
-        top.getList();
-    });
-
-    if (loading) {
-        return <Loader show />;
-    }
+const Top = () => {
+    const list = useRecoilValue(fetchListState);
 
     const renderItem = (item: any) => {
         if (!item) {
@@ -52,7 +41,6 @@ const Top = observer(() => {
     };
 
     const renderList = () => {
-        const { list } = top;
         const columns = [];
 
         for (let i = 0, length = Math.ceil(list.length / 2); i < length; ++i) {
@@ -83,6 +71,6 @@ const Top = observer(() => {
             <Controller />
         </div>
     );
-});
+};
 
 export default Top;

@@ -1,32 +1,33 @@
-import { useStore } from '@/context';
+import { loginState, logout, profileState } from '@/stores/me';
+import { showState } from '@/stores/menu';
+import { IconButton, SvgIcon } from '@material-ui/core';
 import FadeImage from 'components/FadeImage';
-import { SvgIcon, IconButton } from '@material-ui/core';
 import { remote, shell } from 'electron';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import * as styles from './index.less';
 
-const Menu: React.SFC = observer(() => {
-    const { menu, me } = useStore();
-    const { show } = menu;
+const Menu = () => {
+    const hasLogin = useRecoilValue(loginState);
+    const profile = useRecoilValue(profileState);
+    const [show, setShow] = useRecoilState(showState);
     if (!show) {
         return null;
     }
     const doLogout = () => {
         remote.getCurrentWindow().webContents.session.clearStorageData();
-        me.logout();
+        logout();
     };
 
     const close = () => {
-        menu.toggle(false);
+        setShow(false);
     };
 
     const renderMe = () => {
-        const { hasLogin, profile } = me;
         const link = `/user/${profile.userId}`;
 
-        if (!hasLogin()) {
+        if (!hasLogin) {
             return (
                 <p>
                     <Link onClick={close} to="/login/0">
@@ -112,6 +113,6 @@ const Menu: React.SFC = observer(() => {
             </section>
         </div>
     );
-});
+};
 
 export default Menu;

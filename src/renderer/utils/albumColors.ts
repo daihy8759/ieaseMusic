@@ -6,7 +6,11 @@ export default class AlbumColors {
 
     constructor(imageUrl: string) {
         this.imageUrl = imageUrl;
-        this.colors = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        this.colors = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ];
     }
 
     fetch(callback: any) {
@@ -40,21 +44,19 @@ export default class AlbumColors {
             .getImageData(0, 0, this.image.width, this.image.height).data;
     }
 
-    getColors(): Promise<any> {
-        return new Promise(resolve => {
-            if (this.colors) {
-                resolve(this.colors);
-                return;
-            }
-            let p;
-            const colors = [];
-            const pixelArray = this.getPixelArray();
+    getColors() {
+        if (this.colors) {
+            this.colors;
+            return;
+        }
+        let p;
+        const colors = [];
+        const pixelArray = this.getPixelArray();
 
-            for (p = 0; p < pixelArray.length; p += 4) {
-                colors.push([pixelArray[p], pixelArray[p + 1], pixelArray[p + 2]]);
-            }
-            this.colors = colors;
-            resolve(colors);
-        });
+        for (p = 0; p < pixelArray.length; p += 4) {
+            colors.push([pixelArray[p], pixelArray[p + 1], pixelArray[p + 2]]);
+        }
+        this.colors = colors;
+        return colors;
     }
 }

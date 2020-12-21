@@ -1,25 +1,26 @@
-import { useStore } from '@/context';
+import { fetchListState } from '@/stores/comments';
+import { playingState, playListState, songState } from '@/stores/controller';
+import { fetchFmListState } from '@/stores/fm';
+import { isLiked, loginState, toggleLikeState } from '@/stores/me';
 import { IconButton } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import {
     CloudDownloadTwoTone,
+    DeleteForeverTwoTone,
     FastForwardTwoTone,
     FavoriteBorderTwoTone,
     FavoriteTwoTone,
     PauseCircleOutlineTwoTone,
-    PlayCircleOutlineTwoTone,
-    DeleteForeverTwoTone
+    PlayCircleOutlineTwoTone
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import Controller from 'components/Controller';
 import FadeImage from 'components/FadeImage';
 import Header from 'components/Header';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
 import * as styles from './index.less';
 
@@ -32,25 +33,26 @@ const useStyles = makeStyles({
 
 interface IFMProps extends RouteComponentProps {}
 
-const FM: React.SFC<IFMProps> = observer(props => {
-    const { fm, me, comments, controller } = useStore();
-    // @ts-ignore
+const FM: FC<IFMProps> = props => {
     const classes = useStyles();
-    useEffectOnce(() => {
-        if (!me.hasLogin()) {
-            props.history.replace('/login/1');
-            return;
-        }
-        fm.preload();
-    });
-
-    if (fm.loading) {
-        return <Loader show />;
+    const hasLogin = useRecoilValue(loginState);
+    if (!hasLogin) {
+        props.history.replace('/login/1');
+        return null;
     }
+    const song = useRecoilValue(songState);
+    if (!song || !song.id) {
+        props.history.replace('/');
+        return null;
+    }
+    const playList = useRecoilValue(playListState);
+    const playing = useRecoilValue(playingState);
+    const comments = useRecoilValue(fetchListState(song.id));
+    const toggleLike = useSetRecoilState(toggleLikeState);
+    const fmPlayList = useRecoilValue(fetchFmListState);
+    const { songs } = fmPlayList;
 
     const renderBg = () => {
-        const { songs } = fm.playlist;
-
         return (
             <div className={styles.covers}>
                 {songs.map((e, index) => {
@@ -75,17 +77,14 @@ const FM: React.SFC<IFMProps> = observer(props => {
     };
 
     const isFMPlaying = () => {
-        return controller.playlist.id === fm.playlist.id;
+        return playList.id === fmPlayList.id;
     };
 
     const isPlaying = () => {
-        return controller.playing && controller.playlist.id === fm.playlist.id;
+        return playing && playList.id === fmPlayList.id;
     };
 
-    const { ban, song, next, play } = fm;
-    const { songs } = fm.playlist;
     const { total: commentsTotal } = comments;
-    const { isLiked, like, unlike } = me;
     let liked = false;
 
     if (songs.length === 0) {
@@ -166,7 +165,10 @@ const FM: React.SFC<IFMProps> = observer(props => {
                 </div>
 
                 <div>
-                    <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
+                    <IconButton
+                        onClick={() => {
+                            toggleLike({ id: song.id, like: !liked });
+                        }}>
                         {liked ? <FavoriteTwoTone className={classes.liked} /> : <FavoriteBorderTwoTone />}
                     </IconButton>
                     <IconButton onClick={() => ban(song.id)}>
@@ -185,6 +187,6 @@ const FM: React.SFC<IFMProps> = observer(props => {
             </section>
         </div>
     );
-});
+};
 
 export default FM;

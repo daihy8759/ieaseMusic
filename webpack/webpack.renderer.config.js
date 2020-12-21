@@ -24,13 +24,6 @@ module.exports = merge.smart(baseConfig, {
     module: {
         rules: [
             {
-                test: /\.tsx$/,
-                enforce: 'pre',
-                loader: 'eslint-loader',
-                include: [path.resolve(__dirname, '../src/renderer')],
-                exclude: /node_modules/
-            },
-            {
                 test: /\.css$/,
                 use: [
                     {
@@ -81,7 +74,7 @@ module.exports = merge.smart(baseConfig, {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 use: {
                     loader: 'url-loader',
-                    query: {
+                    options: {
                         limit: 10000,
                         name: 'fonts/[name]--[folder].[ext]'
                     }

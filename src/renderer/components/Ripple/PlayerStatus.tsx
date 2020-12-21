@@ -1,15 +1,13 @@
-import { useStore } from '@/context';
+import { playingState } from '@/stores/controller';
 import { Zoom } from '@material-ui/core';
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import * as styles from './index.less';
 
-const PlayerStatus: React.FC = observer(() => {
-    const {
-        controller: { playing }
-    } = useStore();
+const PlayerStatus: React.FC = () => {
+    const playing = useRecoilValue(playingState);
     const [zoom, setZoom] = React.useState(false);
 
     useUpdateEffect(() => {
@@ -28,6 +26,6 @@ const PlayerStatus: React.FC = observer(() => {
             <div className={styles.container}>{playing ? <PlayArrowSharp /> : <PauseSharp />}</div>
         </Zoom>
     );
-});
+};
 
 export default PlayerStatus;

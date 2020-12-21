@@ -1,8 +1,17 @@
-import { useStore } from '@/context';
+import { fetchArtistState } from '@/stores/artist';
+import {
+    playingState,
+    playListState,
+    songState,
+    togglePlayListState,
+    togglePlaySongState,
+    togglePlayState
+} from '@/stores/controller';
+import { loginState } from '@/stores/me';
+import { Fab } from '@material-ui/core';
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import Header from 'components/Header';
-import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
 // @ts-ignore
@@ -10,13 +19,12 @@ import delegate from 'delegate';
 import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
 import ISong from 'interface/ISong';
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
 import * as styles from './index.less';
-import { Fab } from '@material-ui/core';
 
 interface MatchParams {
     id: string;
@@ -24,9 +32,16 @@ interface MatchParams {
 
 interface ArtistProps extends RouteComponentProps<MatchParams> {}
 
-const Artist: React.FC<ArtistProps> = observer(props => {
-    const { artist, controller, me } = useStore();
-    const { loading, profile, follow } = artist;
+const Artist: React.FC<ArtistProps> = props => {
+    const playList = useRecoilValue(playListState);
+    const playing = useRecoilValue(playingState);
+    const song = useRecoilValue(songState);
+    const hasLogin = useRecoilValue(loginState);
+    const togglePlayList = useSetRecoilState(togglePlayListState);
+    const togglePlay = useSetRecoilState(togglePlayState);
+    const togglePlaySong = useSetRecoilState(togglePlaySongState);
+    const artist = useRecoilValue(fetchArtistState(parseInt(props.match.params.id)));
+    const { profile } = artist;
     const size = profile.size || {};
     const { followed } = profile;
     const [renderTab, setRenderTab] = React.useState('renderSongs');
@@ -41,49 +56,49 @@ const Artist: React.FC<ArtistProps> = observer(props => {
             navs.map(d => d.classList.remove(styles.selected));
             e.target.classList.add(styles.selected);
         });
-        artist.getArtist(parseInt(props.match.params.id));
     });
 
     const sameToPlaying = () => {
-        return controller.playlist.id === artist.playlist.id;
+        return playList.id === artist.playlist.id;
     };
 
     const isPlaying = (id?: number) => {
-        let res = controller.playing && controller.playlist.id === artist.playlist.id;
+        let res = playing && playList.id === artist.playlist.id;
 
         if (res && id) {
-            res = controller.song.id === id;
+            res = song.id === id;
         }
         return res;
     };
 
     const highlightAlbum = (id: number) => {
-        return controller.playlist.id === id;
+        return playList.id === id;
     };
 
     const play = async (songId?: number) => {
         const isSameToPlaying = sameToPlaying();
 
         if (isSameToPlaying) {
-            if (controller.playing && controller.song.id === songId) {
-                controller.toggle();
+            if (playing && song.id === songId) {
+                togglePlay();
             } else {
-                await controller.play(songId);
+                togglePlaySong(songId);
             }
         } else {
-            controller.setup({
-                id: artist.playlist.id,
-                link: `/artist/${artist.profile.id}`,
-                name: artist.playlist.name,
-                songs: artist.playlist.songs
+            togglePlayList({
+                playList: {
+                    id: artist.playlist.id,
+                    link: `/artist/${artist.profile.id}`,
+                    name: artist.playlist.name,
+                    songs: artist.playlist.songs
+                },
+                songId
             });
-            await controller.play(songId);
         }
     };
 
     const renderSongs = () => {
         const { playlist } = artist;
-        const { song } = controller;
 
         return (
             <ul className={styles.songs} ref={listRef}>
@@ -163,10 +178,9 @@ const Artist: React.FC<ArtistProps> = observer(props => {
     };
 
     const renderArtists = () => {
-        const { hasLogin } = me;
         const { similar } = artist;
 
-        if (!hasLogin()) {
+        if (!hasLogin) {
             return <section className={styles.nothing}>Nothing ...</section>;
         }
 
@@ -206,8 +220,6 @@ const Artist: React.FC<ArtistProps> = observer(props => {
 
     return (
         <div className={styles.container}>
-            <Loader show={loading} />
-
             <Header
                 {...{
                     transparent: true,
@@ -273,6 +285,6 @@ const Artist: React.FC<ArtistProps> = observer(props => {
             </div>
         </div>
     );
-});
+};
 
 export default Artist;
