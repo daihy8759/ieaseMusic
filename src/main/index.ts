@@ -60,7 +60,9 @@ const mainMenu = [
                 accelerator: 'Command+Q',
                 selector: 'terminate:',
                 click() {
-                    // goodbye();
+                    if(win) {
+                        win.close();
+                    }
                 }
             }
         ]

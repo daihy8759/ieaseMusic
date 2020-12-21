@@ -247,13 +247,13 @@ const App: React.SFC = observer(() => {
             {
                 label: 'Minimize 👇',
                 click: () => {
-                    ipcRenderer.send('minimize');
+                    remote.getCurrentWindow().minimize();
                 }
             },
             {
                 label: 'Goodbye 😘',
                 click: () => {
-                    ipcRenderer.send('goodbye');
+                    remote.getCurrentWindow().close();
                 }
             },
             {

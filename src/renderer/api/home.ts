@@ -1,4 +1,4 @@
-import * as uuid from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import NeteaseCloudMusicApi from './';
 
 async function getSongs(id: number, cookie?: string) {
@@ -70,7 +70,7 @@ async function getDaily(cookie?: string) {
     const dailySongs: any = body.data.dailySongs;
     list = [
         {
-            id: uuid(),
+            id: uuidv4(),
             name: '每日推荐歌曲',
             size: dailySongs.length,
             songs: dailySongs.map((d: any) => {
