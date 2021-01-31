@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import * as React from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IIndicatorProps {
     className?: string;

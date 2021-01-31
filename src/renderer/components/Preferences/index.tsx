@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import Modal from 'components/Modal';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

@@ -60,7 +60,9 @@ const mainMenu = [
                 accelerator: 'Command+Q',
                 selector: 'terminate:',
                 click() {
-                    // goodbye();
+                    if(win) {
+                        win.close();
+                    }
                 }
             }
         ]
@@ -302,7 +304,6 @@ const createWindow = async () => {
         backgroundColor: 'none',
         titleBarStyle: 'hiddenInset',
         webPreferences: {
-            webSecurity: false,
             nodeIntegration: true,
             enableRemoteModule: true
         }

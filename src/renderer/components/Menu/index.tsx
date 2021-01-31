@@ -5,7 +5,7 @@ import { remote, shell } from 'electron';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Menu: React.SFC = observer(() => {
     const { menu, me } = useStore();

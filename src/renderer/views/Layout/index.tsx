@@ -17,7 +17,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useNetwork, useEffectOnce, useWindowSize } from 'react-use';
 import lastfm from 'utils/lastfm';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface IBackgroundProps {
     controller?: any;

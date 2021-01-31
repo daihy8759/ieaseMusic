@@ -10,7 +10,7 @@ import * as React from 'react';
 import { FunctionComponent } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface MatchParams {
     type: string;

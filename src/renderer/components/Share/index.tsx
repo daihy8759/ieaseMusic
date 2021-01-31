@@ -8,7 +8,7 @@ import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as QRCode from 'qrcode';
 import * as React from 'react';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const Share: React.SFC = observer(() => {
     const {

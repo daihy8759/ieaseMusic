@@ -3,7 +3,7 @@ import { FastForwardTwoTone, FastRewindTwoTone } from '@material-ui/icons';
 import { ipcRenderer } from 'electron';
 import * as React from 'react';
 import { useEffectOnce } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 const PlayerNavigation: React.FC = () => {
     const [direction, setDirection] = React.useState(true);

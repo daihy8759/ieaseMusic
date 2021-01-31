@@ -8,13 +8,12 @@ import Loader from 'components/Loader';
 import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import colors from 'utils/colors';
 import helper from 'utils/helper';
-import * as styles from './index.less';
+import styles from './index.less';
 import Search from './Search';
 
 interface MatchParams {
@@ -23,7 +22,7 @@ interface MatchParams {
 
 interface PlayerProps extends RouteComponentProps<MatchParams> {}
 
-const Player: FunctionComponent<PlayerProps> = observer(props => {
+const Player: FC<PlayerProps> = observer(props => {
     const { player, controller, me } = useStore();
     const { song, playing } = controller;
     const { loading, meta, recommend, filter, searching } = player;
@@ -128,12 +127,11 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
         return controller.playlist.id === player.meta.id;
     };
 
-    const play = async (songid?: number) => {
+    const play = async (songId?: number) => {
         const { meta } = player;
         const currentPlayId = controller.playlist.id;
-        const sameToPlaying = currentPlayId && currentPlayId === player.meta.id;
-
-        if (!songid) {
+        const sameToPlaying = currentPlayId && currentPlayId === meta.id;
+        if (!songId) {
             // Change the
             if (sameToPlaying) {
                 controller.toggle();
@@ -153,12 +151,12 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
 
         if (sameToPlaying) {
             // Song is playing
-            if (songid === controller.song.id) {
+            if (songId === controller.song.id) {
                 controller.toggle();
                 return;
             }
 
-            await controller.play(songid);
+            await controller.play(songId);
             return;
         }
 
@@ -169,7 +167,7 @@ const Player: FunctionComponent<PlayerProps> = observer(props => {
             name: meta.name,
             songs: player.songs
         });
-        await controller.play(songid);
+        await controller.play(songId);
     };
 
     const canifav = () => {

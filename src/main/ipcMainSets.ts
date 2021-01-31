@@ -6,12 +6,6 @@ import storage from '../shared/storage';
 const debug = _debug('dev:main');
 let mainWindow: BrowserWindow;
 
-const goodbye = () => {
-    if (mainWindow) {
-        mainWindow.close();
-    }
-};
-
 const registerGlobalShortcut = () => {
     // Play the next song
     globalShortcut.register('MediaNextTrack', () => {
@@ -57,7 +51,6 @@ export default (win: BrowserWindow) => {
     powerMonitor.on('suspend', () => {
         mainWindow.webContents.send('player-pause');
     });
-    ipcMain.on('goodbye', () => goodbye());
     // 设置代理
     ipcMain.on('setProxy', (_event, args) => {
         setProxy(args);

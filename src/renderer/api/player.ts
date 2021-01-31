@@ -1,12 +1,15 @@
-import { getSimilar } from './artist';
 import Api from './';
+import { getSimilar } from './artist';
 
-async function getSongUrl(query: any) {
-    const { id } = query;
+async function getSongUrl(id: number,cookie?: string) {
+    const {body} = await Api.song_url({
+        id,cookie
+    })
     return {
         id,
-        src: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
-    };
+        // @ts-ignore
+        src: body.data[0].url,
+    }
 }
 
 // 相似歌手

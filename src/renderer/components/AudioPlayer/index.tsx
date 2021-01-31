@@ -1,6 +1,6 @@
 import { useStore } from '@/context';
 import { ipcRenderer } from 'electron';
-import throttle from 'lodash/throttle';
+import throttle from 'lodash.throttle';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';

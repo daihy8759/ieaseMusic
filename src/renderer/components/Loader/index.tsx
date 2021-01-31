@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import * as React from 'react';
 import colors from 'utils/colors';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface ILoaderProps {
     show?: boolean;

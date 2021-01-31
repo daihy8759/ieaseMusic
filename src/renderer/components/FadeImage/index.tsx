@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
-import * as styles from './index.less';
+import styles from './index.less';
 
 interface FadeImageProps {
     src?: string;
