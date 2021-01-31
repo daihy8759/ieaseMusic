@@ -1,12 +1,9 @@
 import { songState } from '@/stores/controller';
-import { profileState } from '@/stores/me';
 import classnames from 'classnames';
 import AudioPlayer from 'components/AudioPlayer';
-import Loader from 'components/Loader';
 import Menu from 'components/Menu';
 import Offline from 'components/Offline';
 import Playing from 'components/Playing';
-import Preferences from 'components/Preferences';
 import ProgressImage from 'components/ProgressImage';
 import PlayerMode from 'components/Ripple/PlayerMode';
 import PlayerNavigation from 'components/Ripple/PlayerNavigation';
@@ -15,16 +12,11 @@ import VolumeUpDown from 'components/Ripple/VolumeUpDown';
 import Share from 'components/Share';
 import UpNext from 'components/UpNext';
 import React, { FC } from 'react';
-import { useNetwork, useEffectOnce, useWindowSize } from 'react-use';
+import { useEffectOnce, useNetwork, useWindowSize } from 'react-use';
 import { useRecoilValue } from 'recoil';
-import lastfm from 'utils/lastfm';
 import styles from './index.less';
 
-interface IBackgroundProps {
-    controller?: any;
-}
-
-const Background: FC<IBackgroundProps> = () => {
+const Background = () => {
     const song = useRecoilValue(songState);
     const { width } = useWindowSize();
 
@@ -79,7 +71,7 @@ const Layout: FC<ILayoutProps> = (props) => {
             <Share />
             {/* <Preferences /> */}
             <Menu />
-            {/* <VolumeUpDown /> */}
+            <VolumeUpDown />
             <Playing />
             <PlayerNavigation />
             <PlayerMode />

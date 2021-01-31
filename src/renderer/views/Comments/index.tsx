@@ -12,9 +12,7 @@ import { useRecoilValue } from 'recoil';
 import helper from 'utils/helper';
 import styles from './index.less';
 
-interface CommentsProps extends RouteComponentProps {}
-
-const Comments: FC<CommentsProps> = (props) => {
+const Comments: FC<RouteComponentProps> = (props) => {
     const controllerSong = useRecoilValue(songState);
     if (!controllerSong || !controllerSong.id) {
         props.history.replace('/');

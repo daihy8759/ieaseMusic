@@ -1,5 +1,5 @@
 import { fetchListState } from '@/stores/comments';
-import { playingState, playListState, songState } from '@/stores/controller';
+import { playingState, playListState, songState, toggleNextState, togglePlayState } from '@/stores/controller';
 import { fetchFmListState } from '@/stores/fm';
 import { isLiked, loginState, toggleLikeState } from '@/stores/me';
 import { IconButton } from '@material-ui/core';
@@ -31,9 +31,7 @@ const useStyles = makeStyles({
     },
 });
 
-interface IFMProps extends RouteComponentProps {}
-
-const FM: FC<IFMProps> = (props) => {
+const FM: FC<RouteComponentProps> = (props) => {
     const classes = useStyles();
     const hasLogin = useRecoilValue(loginState);
     if (!hasLogin) {
@@ -49,6 +47,8 @@ const FM: FC<IFMProps> = (props) => {
     const playing = useRecoilValue(playingState);
     const comments = useRecoilValue(fetchListState(song.id));
     const toggleLike = useSetRecoilState(toggleLikeState);
+    const togglePlay = useSetRecoilState(togglePlayState);
+    const toggleNext = useSetRecoilState(toggleNextState);
     const fmPlayList = useRecoilValue(fetchFmListState);
     const { songs } = fmPlayList;
 
@@ -70,7 +70,6 @@ const FM: FC<IFMProps> = (props) => {
         const { width } = e.target.getBoundingClientRect();
         const padWidth = (window.innerWidth - width) / 2;
         const percent = (e.clientX - padWidth) / width;
-        const { song } = fm;
         const time = song.duration * percent;
 
         document.querySelector('audio').currentTime = time / 1000;
@@ -177,10 +176,10 @@ const FM: FC<IFMProps> = (props) => {
                     <IconButton>
                         <CloudDownloadTwoTone />
                     </IconButton>
-                    <IconButton onClick={() => play()}>
+                    <IconButton onClick={() => togglePlay()}>
                         {isPlaying() ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
                     </IconButton>
-                    <IconButton onClick={() => next()}>
+                    <IconButton onClick={() => toggleNext()}>
                         <FastForwardTwoTone />
                     </IconButton>
                 </div>

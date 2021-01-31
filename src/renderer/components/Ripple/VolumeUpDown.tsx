@@ -1,17 +1,19 @@
+import { volumeState } from '@/stores/preferences';
 import { Zoom } from '@material-ui/core';
 import { VolumeDownTwoTone, VolumeMuteTwoTone, VolumeUpTwoTone } from '@material-ui/icons';
 import { ipcRenderer } from 'electron';
-import React, { FC } from 'react';
-import { useEffectOnce } from 'react-use';
+import React, { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import styles from './index.less';
 
-const VolumeUpDown: FC = () => {
+const VolumeUpDown = () => {
+    const volume = useRecoilValue(volumeState);
     const isMuted = volume === 0;
     const containerRef = React.useRef<HTMLDivElement>();
     const [direction, setDirection] = React.useState(true);
     const [zoom, setZoom] = React.useState(false);
 
-    useEffectOnce(() => {
+    useEffect(() => {
         ipcRenderer.on('player-volume-up', () => {
             setDirection(true);
             zoomTimeout();
@@ -21,7 +23,7 @@ const VolumeUpDown: FC = () => {
             setDirection(false);
             zoomTimeout();
         });
-    });
+    }, []);
 
     const zoomTimeout = () => {
         setZoom(true);

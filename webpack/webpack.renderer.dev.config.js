@@ -10,8 +10,6 @@ const baseConfig = require('./webpack.renderer.config');
 module.exports = merge(baseConfig, {
     mode: 'development',
     devtool: 'eval-cheap-module-source-map',
-    entry: ['react-hot-loader/patch', './src/renderer/index.tsx'],
-    plugins: [new webpack.HotModuleReplacementPlugin()],
     entry: {
         renderer: './src/renderer/index.tsx',
         vendors: ['react', 'react-dom', 'react-refresh/runtime'],

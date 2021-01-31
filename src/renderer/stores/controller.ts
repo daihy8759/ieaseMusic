@@ -79,6 +79,9 @@ export const togglePlayListState = selector({
     },
     set: ({ set }, playListParam: TogglePlayListParam) => {
         const { playList, songId } = playListParam;
+        if (!playList) {
+            return;
+        }
         set(playListState, playList);
         let playIndex = 0;
         if (songId) {

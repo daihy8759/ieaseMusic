@@ -15,7 +15,7 @@ let menu;
 const installExtensions = async () => {
     const extensions = [REACT_DEVELOPER_TOOLS];
 
-    return Promise.all(extensions.map(name => installer(name, false)));
+    return Promise.all(extensions.map((name) => installer(name, false)));
 };
 
 const mainMenu = [
@@ -24,36 +24,36 @@ const mainMenu = [
         submenu: [
             {
                 label: `About ieaseMusic`,
-                selector: 'orderFrontStandardAboutPanel:'
+                selector: 'orderFrontStandardAboutPanel:',
             },
             {
                 label: 'Preferences...',
                 accelerator: 'Cmd+,',
                 click() {
                     win.webContents.send('show-preferences');
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
-                role: 'hide'
+                role: 'hide',
             },
             {
-                role: 'hideothers'
+                role: 'hideothers',
             },
             {
-                role: 'unhide'
+                role: 'unhide',
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Check for updates',
                 accelerator: 'Cmd+U',
                 click() {
                     // updater.checkForUpdates();
-                }
+                },
             },
             {
                 label: 'Quit',
@@ -61,9 +61,9 @@ const mainMenu = [
                 selector: 'terminate:',
                 click() {
                     // goodbye();
-                }
-            }
-        ]
+                },
+            },
+        ],
     },
     {
         label: 'Controls',
@@ -74,7 +74,7 @@ const mainMenu = [
                 click() {
                     win.show();
                     win.webContents.send('player-toggle');
-                }
+                },
             },
             {
                 label: 'Next',
@@ -82,7 +82,7 @@ const mainMenu = [
                 click() {
                     win.show();
                     win.webContents.send('player-next');
-                }
+                },
             },
             {
                 label: 'Previous',
@@ -90,7 +90,7 @@ const mainMenu = [
                 click() {
                     win.show();
                     win.webContents.send('player-previous');
-                }
+                },
             },
             {
                 label: 'Increase Volume',
@@ -98,7 +98,7 @@ const mainMenu = [
                 click() {
                     win.show();
                     win.webContents.send('player-volume-up');
-                }
+                },
             },
             {
                 label: 'Decrease Volume',
@@ -106,7 +106,7 @@ const mainMenu = [
                 click() {
                     win.show();
                     win.webContents.send('player-volume-down');
-                }
+                },
             },
             {
                 label: 'Like',
@@ -114,57 +114,57 @@ const mainMenu = [
                 click() {
                     win.show();
                     win.webContents.send('player-like');
-                }
-            }
-        ]
+                },
+            },
+        ],
     },
     {
         label: 'Recently Played',
         submenu: [
             {
-                label: 'Nothing...'
-            }
-        ]
+                label: 'Nothing...',
+            },
+        ],
     },
     {
         label: 'Next Up',
         submenu: [
             {
-                label: 'Nothing...'
-            }
-        ]
+                label: 'Nothing...',
+            },
+        ],
     },
     {
         label: 'Edit',
         submenu: [
             {
-                role: 'undo'
+                role: 'undo',
             },
             {
-                role: 'redo'
+                role: 'redo',
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
-                role: 'cut'
+                role: 'cut',
             },
             {
-                role: 'copy'
+                role: 'copy',
             },
             {
-                role: 'paste'
+                role: 'paste',
             },
             {
-                role: 'pasteandmatchstyle'
+                role: 'pasteandmatchstyle',
             },
             {
-                role: 'delete'
+                role: 'delete',
             },
             {
-                role: 'selectall'
-            }
-        ]
+                role: 'selectall',
+            },
+        ],
     },
     {
         label: 'View',
@@ -174,78 +174,78 @@ const mainMenu = [
                 accelerator: 'Cmd+Shift+H',
                 click() {
                     win.webContents.send('show-home');
-                }
+                },
             },
             {
                 label: 'Search',
                 accelerator: 'Cmd+F',
                 click() {
                     win.webContents.send('show-search');
-                }
+                },
             },
             {
                 label: 'Top podcasts',
                 accelerator: 'Cmd+Shift+T',
                 click() {
                     win.webContents.send('show-top');
-                }
+                },
             },
             {
                 label: 'Playlist',
                 accelerator: 'Cmd+Shift+P',
                 click() {
                     win.webContents.send('show-playlist');
-                }
+                },
             },
             {
                 label: 'Made For You',
                 accelerator: 'Cmd+Shift+F',
                 click() {
                     win.webContents.send('show-fm');
-                }
+                },
             },
             {
                 label: 'Downloads',
                 accelerator: 'Cmd+Shift+D',
                 click() {
                     // downloader.showDownloader();
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Menu',
                 accelerator: 'Cmd+Shift+L',
                 click() {
                     win.webContents.send('show-menu');
-                }
+                },
             },
             {
                 label: 'Next Up',
                 accelerator: 'Cmd+P',
                 click() {
                     win.webContents.send('show-playing');
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
-                role: 'toggledevtools'
-            }
-        ]
+                role: 'toggledevtools',
+            },
+        ],
     },
     {
         role: 'window',
         submenu: [
             {
-                role: 'minimize'
+                role: 'minimize',
             },
             {
-                role: 'close'
-            }
-        ]
+                role: 'close',
+            },
+        ],
     },
     {
         role: 'help',
@@ -254,25 +254,25 @@ const mainMenu = [
                 label: 'Bug report 🐛',
                 click() {
                     shell.openExternal('https://github.com/trazyn/ieaseMusic/issues');
-                }
+                },
             },
             {
                 label: 'Fork me on Github 🚀',
                 click() {
                     shell.openExternal('https://github.com/trazyn/ieaseMusic');
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: '💕 Follow me on Twitter 👏',
                 click() {
                     shell.openExternal('https://twitter.com/var_darling');
-                }
-            }
-        ]
-    }
+                },
+            },
+        ],
+    },
 ];
 
 function updateMenu(playing = false) {
@@ -290,7 +290,7 @@ const createWindow = async () => {
     await app.whenReady();
     const mainWindowState = windowStateKeeper({
         defaultWidth: 800,
-        defaultHeight: 520
+        defaultHeight: 520,
     });
 
     win = new BrowserWindow({
@@ -303,8 +303,8 @@ const createWindow = async () => {
         titleBarStyle: 'hiddenInset',
         webPreferences: {
             nodeIntegration: true,
-            enableRemoteModule: true
-        }
+            enableRemoteModule: true,
+        },
     });
 
     updateMenu();
@@ -318,7 +318,7 @@ const createWindow = async () => {
             url.format({
                 pathname: path.join(__dirname, 'index.html'),
                 protocol: 'file:',
-                slashes: true
+                slashes: true,
             })
         );
     }

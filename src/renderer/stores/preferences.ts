@@ -2,12 +2,12 @@ import { atom, selector } from 'recoil';
 
 export const autoPlayState = atom({
     key: 'autoPlay',
-    default: false
+    default: false,
 });
 
 export const showState = atom({
     key: 'preferencesShow',
-    default: false
+    default: false,
 });
 
 export const togglePreferenceShowState = selector({
@@ -16,10 +16,10 @@ export const togglePreferenceShowState = selector({
     set: ({ set, get }) => {
         const show = get(showState);
         set(showState, !show);
-    }
+    },
 });
 
 export const volumeState = atom({
     key: 'volume',
-    default: 1
+    default: 1,
 });

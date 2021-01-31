@@ -12,9 +12,7 @@ interface MatchParams {
     fm: string;
 }
 
-interface ILegacyProps extends RouteComponentProps<MatchParams> {}
-
-const Legacy: FC<ILegacyProps> = (props) => {
+const Legacy: FC<RouteComponentProps<MatchParams>> = (props) => {
     const phoneRef = useRef<HTMLInputElement>();
     const passwordRef = useRef<HTMLInputElement>();
     const setProfile = useSetRecoilState(profileState);

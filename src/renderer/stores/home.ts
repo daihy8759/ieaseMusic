@@ -24,7 +24,7 @@ export const homeListQuery = selector({
 
             if (favorite.size > 0) {
                 const likes: number[] = [];
-                favorite.songs.forEach(song => {
+                favorite.songs.forEach((song) => {
                     likes.push(song.id);
                 });
                 storage.set('likes', likes);
@@ -33,15 +33,15 @@ export const homeListQuery = selector({
             list = await homeApi.getHomeData();
             if (list.length === 0) {
                 console.error('get home request failed');
-                return;
+                return [];
             }
         }
-        list.forEach(e => {
+        list.forEach((e) => {
             e.pallet = false;
             if (!e.cover) return;
             const pallet = helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
             e.pallet = pallet;
         });
         return list;
-    }
+    },
 });

@@ -14,14 +14,12 @@ import classnames from 'classnames';
 import Header from 'components/Header';
 import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
-// @ts-ignore
-import delegate from 'delegate';
+import delegate from 'delegate-it';
 import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
 import ISong from 'interface/ISong';
-import * as React from 'react';
+import React, { FC, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import helper from 'utils/helper';
 import styles from './index.less';
@@ -30,9 +28,7 @@ interface MatchParams {
     id: string;
 }
 
-interface ArtistProps extends RouteComponentProps<MatchParams> {}
-
-const Artist: React.FC<ArtistProps> = (props) => {
+const Artist: FC<RouteComponentProps<MatchParams>> = (props) => {
     const playList = useRecoilValue(playListState);
     const playing = useRecoilValue(playingState);
     const song = useRecoilValue(songState);
@@ -49,14 +45,14 @@ const Artist: React.FC<ArtistProps> = (props) => {
     const canvasRef = React.useRef<HTMLCanvasElement>();
     const listRef = React.useRef<HTMLUListElement>();
 
-    useEffectOnce(() => {
+    useEffect(() => {
         const navs = Array.from(headerRef.current.querySelectorAll('nav'));
 
         delegate(headerRef.current, 'nav', 'click', (e: any) => {
             navs.map((d) => d.classList.remove(styles.selected));
             e.target.classList.add(styles.selected);
         });
-    });
+    }, []);
 
     const sameToPlaying = () => {
         return playList.id === artist.playlist.id;
