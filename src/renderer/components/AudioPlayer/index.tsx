@@ -1,4 +1,5 @@
 import throttle from 'lodash.throttle';
+import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
@@ -16,10 +17,6 @@ const AudioPlayer = observer(() => {
     const [passed, setPassed] = React.useState(0.0);
     let timer: number;
 
-    const [audio, state, controls, ref] = useAudio({
-        src: song.data ? song.data.src : '',
-        autoPlay: true,
-    });
     const throttled = React.useRef(
         throttle((throttledValue) => {
             onProgress(throttledValue);
@@ -30,6 +27,11 @@ const AudioPlayer = observer(() => {
             onScrollLyrics(throttledValue);
         }, 200)
     );
+
+    const [audio, state, controls, ref] = useAudio({
+        src: song.data ? song.data.src : '',
+        autoPlay: true,
+    });
 
     useUpdateEffect(() => {
         throttled.current(state.time);
@@ -118,7 +120,7 @@ const AudioPlayer = observer(() => {
             if (key) {
                 const playingEleArray = lyricsEle.querySelectorAll('[playing]');
                 const playing = lyricsEle.querySelector(`[data-times='${key}']`);
-                Array.from(playingEleArray).forEach((e: HTMLElement) => e.removeAttribute('playing'));
+                Array.from(playingEleArray).forEach((e: Element) => e.removeAttribute('playing'));
                 if (playing && !playing.getAttribute('playing')) {
                     playing.setAttribute('playing', 'true');
                     if (lyricsEle.querySelector('section').getAttribute('scrolling')) {
@@ -135,11 +137,9 @@ const AudioPlayer = observer(() => {
         const audioRef = ref.current;
         if (audioRef) {
             audioRef.onerror = (e: any) => {
-                // TODO: 切换url导致的错误
-                if (!audioRef.src.startsWith('http') || song.waiting) {
+                if (!audioRef.src.startsWith('http') || !song.id || song.waiting) {
                     return;
                 }
-
                 console.error('Break by %o', e);
                 // resetProgress();
                 // tryTheNext();

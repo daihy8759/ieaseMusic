@@ -1,10 +1,12 @@
-import searchByType from '/@/api/search';
-import IAlbum from 'interface/IAlbum';
-import IArtist from 'interface/IArtist';
 import { makeAutoObservable, runInAction } from 'mobx';
+import searchByType from '/@/api/search';
+import IAlbum from '/@/interface/IAlbum';
+import IArtist from '/@/interface/IArtist';
 
 class Search {
     loading = false;
+
+    scrollLoading = false;
 
     playlists: any = [];
 
@@ -43,10 +45,12 @@ class Search {
         if (this.nextPlaylistsOffset === -1) {
             return;
         }
+        this.scrollLoading = true;
         const data = await searchByType('1000', this.keyword, this.nextPlaylistsOffset);
         runInAction(() => {
-            this.playlists.push(...data.playlists);
+            data.playlists && this.playlists.push(...data.playlists);
             this.nextPlaylistsOffset = data.nextOffset;
+            this.scrollLoading = false;
         });
     };
 
@@ -54,7 +58,7 @@ class Search {
         this.loading = true;
         const data = await searchByType('10', keyword);
         runInAction(() => {
-            this.albums = data.albums;
+            this.albums = data.albums || [];
             this.nextAlbumsOffset = data.nextOffset;
             this.loading = false;
         });
@@ -64,10 +68,12 @@ class Search {
         if (this.nextAlbumsOffset === -1) {
             return;
         }
+        this.scrollLoading = true;
         const data = await searchByType('10', this.keyword, this.nextAlbumsOffset);
         runInAction(() => {
-            this.albums.push(...data.albums);
+            data.albums && this.albums.push(...data.albums);
             this.nextAlbumsOffset = data.nextOffset;
+            this.scrollLoading = false;
         });
     };
 
@@ -75,7 +81,7 @@ class Search {
         this.loading = true;
         const data = await searchByType('100', keyword);
         runInAction(() => {
-            this.artists = data.artists;
+            this.artists = data.artists || [];
             this.nextArtistsOffset = data.nextOffset;
             this.loading = false;
         });
@@ -85,9 +91,13 @@ class Search {
         if (this.nextArtistsOffset === -1) {
             return;
         }
+        this.scrollLoading = true;
         const data = await searchByType('100', this.keyword, this.nextArtistsOffset);
-        this.artists.push(...data.artists);
-        this.nextArtistsOffset = data.nextOffset;
+        runInAction(() => {
+            data.artists && this.artists.push(...data.artists);
+            this.nextArtistsOffset = data.nextOffset;
+            this.scrollLoading = false;
+        });
     };
 
     getUsers = async (keyword: string) => {
@@ -104,9 +114,13 @@ class Search {
         if (this.nextUsersOffset === -1) {
             return;
         }
+        this.scrollLoading = true;
         const data = await searchByType('1002', this.keyword, this.nextUsersOffset);
-        this.users.push(...data.users);
-        this.nextUsersOffset = data.nextOffset;
+        runInAction(() => {
+            data.users && this.users.push(...data.users);
+            this.nextUsersOffset = data.nextOffset;
+            this.scrollLoading = false;
+        });
     };
 }
 

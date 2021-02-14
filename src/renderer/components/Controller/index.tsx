@@ -1,4 +1,4 @@
-import { IconButton } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import {
     CloudDownloadTwoTone,
@@ -31,7 +31,7 @@ const useStyles = makeStyles({
     },
 });
 
-const Controller: React.FC = observer(() => {
+const Controller = observer(() => {
     const { controller, me, comments } = useStore();
     const classes = useStyles();
 
@@ -40,9 +40,10 @@ const Controller: React.FC = observer(() => {
         const {
             song: { duration },
         } = controller;
-        const time = duration * percent;
-
-        document.querySelector('audio').currentTime = time / 1000;
+        if (duration) {
+            const time = duration * percent;
+            document.querySelector('audio').currentTime = time / 1000;
+        }
     };
 
     const getPlayerLink = () => {
@@ -64,13 +65,25 @@ const Controller: React.FC = observer(() => {
 
     const renderPlayMode = () => {
         if (mode === PlayMode.PLAYER_SHUFFLE) {
-            return <ShuffleTwoTone />;
+            return (
+                <Tooltip title="随机播放">
+                    <ShuffleTwoTone />
+                </Tooltip>
+            );
         }
         if (mode === PlayMode.PLAYER_REPEAT) {
-            return <ReorderTwoTone />;
+            return (
+                <Tooltip title="顺序播放">
+                    <ReorderTwoTone />
+                </Tooltip>
+            );
         }
         if (mode === PlayMode.PLAYER_LOOP) {
-            return <RepeatTwoTone />;
+            return (
+                <Tooltip title="单曲循环">
+                    <RepeatTwoTone />
+                </Tooltip>
+            );
         }
     };
 

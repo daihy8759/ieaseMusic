@@ -11,7 +11,7 @@ import {
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import styles from './index.module.less';
@@ -30,9 +30,7 @@ const useStyles = makeStyles({
     },
 });
 
-interface IFMProps extends RouteComponentProps {}
-
-const FM: React.SFC<IFMProps> = observer((props) => {
+const FM: FC<RouteComponentProps> = observer((props) => {
     const { fm, me, comments, controller } = useStore();
     // @ts-ignore
     const classes = useStyles();

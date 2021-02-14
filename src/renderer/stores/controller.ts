@@ -23,7 +23,7 @@ class Controller {
     playlist: IPlayList = {};
 
     // Currently played song
-    song: ISong = {};
+    song = {} as ISong;
 
     // Keep a history with current playlist
     history: number[] = [];
@@ -54,7 +54,7 @@ class Controller {
         });
     }
 
-    async play(songId: number, forward = true) {
+    async play(songId?: number, forward = true) {
         if (this.songs.length === 0) {
             return;
         }
@@ -73,7 +73,7 @@ class Controller {
         song = song || songs[0];
 
         // Save to history list
-        if (!this.history.includes(songId)) {
+        if (!this.history.includes(song.id)) {
             this.history[forward ? 'push' : 'unshift'](song.id);
             const songs = this.songs.filter((e) => this.history.includes(e.id)).map((song) => toJS(song));
             ipc.send('update-history', {
@@ -87,8 +87,8 @@ class Controller {
 
         if (preferences.showNotification) {
             const notification = new Notification(song.name, {
-                icon: song.album.cover,
-                body: song.artists.map((e) => e.name).join(' / '),
+                icon: song.album?.cover,
+                body: song.artists ? song.artists.map((e) => e.name).join(' / ') : '',
                 vibrate: [200, 100, 200],
             });
 

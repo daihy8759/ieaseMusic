@@ -14,6 +14,14 @@ async function getPlayList(cat: string, offset?: number) {
         // @ts-ignore
         playList = body.playlists.map((e: any) => {
             const { creator } = e;
+            let user = {};
+            if (creator) {
+                user = {
+                    id: creator.userId,
+                    name: creator.nickname,
+                    link: `/user/${creator.userId}`,
+                };
+            }
 
             return {
                 id: e.id,
@@ -22,11 +30,7 @@ async function getPlayList(cat: string, offset?: number) {
                 size: e.trackCount,
                 link: `/player/0/${e.id}`,
                 cover: `${e.coverImgUrl}?param=100y100`,
-                user: {
-                    id: creator.userId,
-                    name: creator.nickname,
-                    link: `/user/${creator.userId}`,
-                },
+                user,
             };
         });
         if (body.more) {

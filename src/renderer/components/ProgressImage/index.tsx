@@ -4,7 +4,7 @@ import { useUpdateEffect } from 'react-use';
 import styles from './index.module.less';
 
 interface ProgressImageProps {
-    src: string;
+    src?: string;
     className?: string;
     style?: any;
     width: number;

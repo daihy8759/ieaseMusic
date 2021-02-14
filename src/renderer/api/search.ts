@@ -34,11 +34,13 @@ async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult>
                     star: e.bookCount,
                     size: e.trackCount,
                     link: `/player/0/${e.id}`,
-                    creator: {
-                        id: creator.id,
-                        name: creator.name,
-                        link: `/user/${creator.id}`,
-                    },
+                    creator: creator
+                        ? {
+                              id: creator.id,
+                              name: creator.name,
+                              link: `/user/${creator.id}`,
+                          }
+                        : {},
                 };
             });
         }

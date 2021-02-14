@@ -7,7 +7,7 @@ interface ISongData {
 }
 export default interface ISong {
     id: number;
-    name?: string;
+    name: string;
     waiting?: boolean;
     duration?: number;
     album?: IAlbum;

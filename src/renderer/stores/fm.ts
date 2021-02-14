@@ -8,9 +8,9 @@ import ISong from '/@/interface/ISong';
 class FM {
     loading = true;
 
-    song: ISong = {
+    song = {
         duration: 0,
-    };
+    } as ISong;
 
     playlist: IPlayList = {
         songs: [],
