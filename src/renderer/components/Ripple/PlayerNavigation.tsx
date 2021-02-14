@@ -3,9 +3,6 @@ import { FastForwardTwoTone, FastRewindTwoTone } from '@material-ui/icons';
 import React from 'react';
 import { useEffectOnce } from 'react-use';
 import styles from './index.module.less';
-import { useIpc } from '/@/hooks';
-
-const ipc = useIpc();
 
 const PlayerNavigation: React.FC = () => {
     const [direction, setDirection] = React.useState(true);

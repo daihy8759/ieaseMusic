@@ -1,30 +1,28 @@
-import { useStore } from '/@/context';
+import { Fab } from '@material-ui/core';
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import Header from '/@/components/Header';
-import Loader from '/@/components/Loader';
-import ProgressImage from '/@/components/ProgressImage';
 import format from 'date-fns/format';
 // @ts-ignore
 import delegate from 'delegate';
-import IAlbum from 'interface/IAlbum';
-import IArtist from 'interface/IArtist';
-import ISong from 'interface/ISong';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import helper from '/@/utils/helper';
 import styles from './index.module.less';
-import { Fab } from '@material-ui/core';
+import Header from '/@/components/Header';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import IAlbum from '/@/interface/IAlbum';
+import IArtist from '/@/interface/IArtist';
+import ISong from '/@/interface/ISong';
+import helper from '/@/utils/helper';
 
 interface MatchParams {
     id: string;
 }
 
-interface ArtistProps extends RouteComponentProps<MatchParams> {}
-
-const Artist: React.FC<ArtistProps> = observer((props) => {
+const Artist: React.FC<RouteComponentProps<MatchParams>> = observer((props) => {
     const { artist, controller, me } = useStore();
     const { loading, profile, follow } = artist;
     const size = profile.size || {};

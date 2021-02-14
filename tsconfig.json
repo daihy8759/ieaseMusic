@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "esnext",
-        "lib": ["DOM", "DOM.Iterable", "esnext"],
+        "lib": ["dom", "DOM.Iterable", "esnext"],
         "allowJs": false,
         "skipLibCheck": false,
         "esModuleInterop": false,
@@ -14,6 +14,7 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react",
+        "types": ["vite/client"],
         "paths": {
             "/@/*": ["./src/renderer/*"]
         }

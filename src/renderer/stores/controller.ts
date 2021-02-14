@@ -1,25 +1,23 @@
-import { getSongUrl } from '/@/api/player';
-import IPlayList from '/@/interface/IPlayList';
-import ISong from '/@/interface/ISong';
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
-import lastfm from '/@/utils/lastfm';
+import { PlayMode } from '../../shared/interface/controller';
+import { useIpc } from '../hooks';
 import comments from './comments';
 import fm from './fm';
 import me from './me';
 import preferences from './preferences';
 import upnext from './upnext';
-import { useIpc } from '../hooks';
+import { getSongUrl } from '/@/api/player';
+import IPlayList from '/@/interface/IPlayList';
+import ISong from '/@/interface/ISong';
+import lastfm from '/@/utils/lastfm';
 
-const PLAYER_SHUFFLE = 0;
-const PLAYER_REPEAT = 1;
-const PLAYER_LOOP = 2;
-const MODES = [PLAYER_SHUFFLE, PLAYER_REPEAT, PLAYER_LOOP];
+const MODES = [PlayMode.PLAYER_SHUFFLE, PlayMode.PLAYER_REPEAT, PlayMode.PLAYER_LOOP];
 const ipc = useIpc();
 
 class Controller {
     playing = false;
 
-    mode = PLAYER_SHUFFLE;
+    mode = PlayMode.PLAYER_SHUFFLE;
 
     // A struct should contains 'id' and 'songs'
     playlist: IPlayList = {};
@@ -32,6 +30,10 @@ class Controller {
 
     constructor() {
         makeAutoObservable(this);
+    }
+
+    get songs() {
+        return this.playlist.songs || [];
     }
 
     async setup(playlist: any) {
@@ -52,11 +54,11 @@ class Controller {
         });
     }
 
-    async play(songId?: number, forward = true) {
-        if (!this.playlist || !this.playlist.songs) {
+    async play(songId: number, forward = true) {
+        if (this.songs.length === 0) {
             return;
         }
-        const songs = this.playlist.songs.slice();
+        const songs = this.songs.slice();
         let song;
 
         if (!(upnext.canceled && upnext.canceled.id === songId)) {
@@ -73,7 +75,7 @@ class Controller {
         // Save to history list
         if (!this.history.includes(songId)) {
             this.history[forward ? 'push' : 'unshift'](song.id);
-            const songs = this.playlist.songs.filter((e) => this.history.includes(e.id)).map((song) => toJS(song));
+            const songs = this.songs.filter((e) => this.history.includes(e.id)).map((song) => toJS(song));
             ipc.send('update-history', {
                 songs,
             });
@@ -120,7 +122,10 @@ class Controller {
     };
 
     prev = async () => {
-        const { history, song, playlist } = this;
+        if (this.songs.length === 0) {
+            return;
+        }
+        const { history, song } = this;
         let index = history.indexOf(song.id);
 
         if (--index >= 0) {
@@ -128,8 +133,8 @@ class Controller {
             return;
         }
 
-        if (this.mode === PLAYER_SHUFFLE) {
-            const songs = this.playlist.songs.filter((e) => history.indexOf(e.id) === -1);
+        if (this.mode === PlayMode.PLAYER_SHUFFLE) {
+            const songs = this.songs.filter((e) => history.indexOf(e.id) === -1);
             if (songs.length === 0) {
                 await this.play(history[history.length - 1]);
                 return;
@@ -140,13 +145,13 @@ class Controller {
             return;
         }
 
-        index = playlist.songs.findIndex((e) => e.id === song.id);
+        index = this.songs.findIndex((e) => e.id === song.id);
 
         if (--index < 0) {
-            index = playlist.songs.length - 1;
+            index = this.songs.length - 1;
         }
 
-        await this.play(playlist.songs[index].id, false);
+        await this.play(this.songs[index].id, false);
     };
 
     tryTheNext = async () => {
@@ -160,15 +165,18 @@ class Controller {
     };
 
     next = async (loop = false, autoPlay = true) => {
-        let songs = this.playlist.songs.slice();
+        if (this.songs.length === 0) {
+            return;
+        }
+        let songs = this.songs.slice();
         const { history, song } = this;
-        let index = history.indexOf(song.id);
+        let index = history.findIndex((d) => d === song.id);
         let next: number;
         let nextSong;
 
         switch (true) {
             // In the loop mode, manual shuffle immediate play the next song
-            case loop === true && this.mode === PLAYER_LOOP:
+            case loop === true && this.mode === PlayMode.PLAYER_LOOP:
                 next = this.song.id;
                 break;
 
@@ -181,7 +189,7 @@ class Controller {
                 next = history[index];
                 break;
 
-            case this.mode !== PLAYER_SHUFFLE:
+            case this.mode !== PlayMode.PLAYER_SHUFFLE:
                 // Get song from current track list
                 index = songs.findIndex((e) => e.id === song.id);
 
@@ -231,7 +239,7 @@ class Controller {
 
         if (this.playing && upnext.canceled) {
             await this.play(upnext.canceled.id, false);
-            upnext.cancel(null);
+            upnext.cancel();
         }
 
         this.updateStatus();
@@ -251,7 +259,7 @@ class Controller {
         if (MODES.includes(mode)) {
             this.mode = mode;
         } else {
-            this.mode = PLAYER_SHUFFLE;
+            this.mode = PlayMode.PLAYER_SHUFFLE;
         }
 
         this.updateStatus();
@@ -275,6 +283,5 @@ class Controller {
     }
 }
 
-export { PLAYER_LOOP, PLAYER_SHUFFLE, PLAYER_REPEAT };
 const controller = new Controller();
 export default controller;

@@ -9,7 +9,7 @@
         "dev": "concurrently -n=vue,main -c=green,blue \"npm run dev:vite\" \"npm run dev:main\"",
         "dev:main": "cross-env DEBUG=dev:* node script/build --env=development --watch",
         "build:main": "cross-env NODE_ENV=production node script/build.js",
-        "dev:vite": "cross-env NODE_ENV=development DEBUG=dev:* vite",
+        "dev:vite": "cross-env NODE_ENV=development vite",
         "build:vite": "cross-env NODE_ENV=production vite build",
         "build": "npm run build:main && npm run build:vite && electron-builder"
     },

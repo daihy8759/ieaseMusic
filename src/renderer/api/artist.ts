@@ -72,33 +72,13 @@ async function getSimilar(id: number, cookie: string) {
     return [];
 }
 
-function id2url(id: string) {
-    const key = '3go8&$8*3*3h0k(2)2';
-    const keyCodes = Array.from(key).map((_, i) => key.charCodeAt(i));
-    const fidCodes = Array.from(id).map((_, i) => id.charCodeAt(i));
-
-    const hashCodes: number[] = [];
-
-    for (let i = 0; i < fidCodes.length; i++) {
-        const code = (fidCodes[i] ^ keyCodes[i % key.length]) & 0xff;
-        hashCodes.push(code);
-    }
-
-    const string = hashCodes.map((e, i) => String.fromCharCode(hashCodes[i])).join('');
-    const md5String = md5(string);
-    const result = Buffer.from(md5String).toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
-
-    return `https://p4.music.126.net/${result}/${id}.jpg?param=y177y177`;
-}
-
 async function getArtist(id: number) {
     try {
-        const { body } = await musicApi.artists({ id });
+        const { body } = await musicApi.artists({ id: id.toString() });
         if (body.code !== 200) {
             throw body;
         }
         const { artist, hotSongs } = body;
-        // @ts-ignore
         const songs = hotSongs.map((e: any) => {
             const { al, ar } = e;
             return {
@@ -108,7 +88,7 @@ async function getArtist(id: number) {
                 album: {
                     id: al.id,
                     name: al.name,
-                    cover: id2url(al.pic_str),
+                    cover: `${al.picUrl}?param=640y300`,
                     link: `/player/1/${al.id}`,
                 },
                 artists: ar.map((d: IArtist) => ({

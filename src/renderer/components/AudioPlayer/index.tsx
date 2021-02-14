@@ -2,13 +2,14 @@ import throttle from 'lodash.throttle';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
+import { IPC_PLAYER_VOLUME_DOWN, IPC_PLAYER_VOLUME_UP } from '../../../shared/ipc';
 import { useStore } from '/@/context';
-import { useIpc } from '/@/hooks';
+import { useChannel } from '/@/hooks';
 import helper from '/@/utils/helper';
 
-const ipc = useIpc();
+const channel = useChannel();
 
-const AudioPlayer: React.FC = observer(() => {
+const AudioPlayer = observer(() => {
     const store = useStore();
     const { controller, preferences } = store;
     const { song, tryTheNext, playing, scrobble, next } = controller;
@@ -16,7 +17,7 @@ const AudioPlayer: React.FC = observer(() => {
     let timer: number;
 
     const [audio, state, controls, ref] = useAudio({
-        src: song.data ? song.data.src : null,
+        src: song.data ? song.data.src : '',
         autoPlay: true,
     });
     const throttled = React.useRef(
@@ -83,7 +84,7 @@ const AudioPlayer: React.FC = observer(() => {
     const onProgress = (currentTime = 0) => {
         const { duration } = store.controller.song;
         const progress = document.getElementById('progress');
-        if (progress) {
+        if (progress && duration) {
             const passedTime = currentTime * 1000;
             if (passedTime - passed < 1000) {
                 return;
@@ -131,38 +132,43 @@ const AudioPlayer: React.FC = observer(() => {
     };
 
     useEffectOnce(() => {
-        ref.current.onerror = (e: any) => {
-            if (!ref.current.src.startsWith('http') || song.waiting) return;
+        const audioRef = ref.current;
+        if (audioRef) {
+            audioRef.onerror = (e: any) => {
+                // TODO: 切换url导致的错误
+                if (!audioRef.src.startsWith('http') || song.waiting) {
+                    return;
+                }
 
-            console.error('Break by %o', e);
-            resetProgress();
-            tryTheNext();
-        };
+                console.error('Break by %o', e);
+                // resetProgress();
+                // tryTheNext();
+            };
 
-        ref.current.onended = () => {
-            scrobble();
-            resetProgress();
-            next(true);
-        };
+            audioRef.onended = () => {
+                scrobble();
+                resetProgress();
+                next(true);
+            };
 
-        ref.current.onseeked = () => {
-            setPassed(0.0);
-        };
+            audioRef.onseeked = () => {
+                setPassed(0.0);
+            };
+        }
         const { volume, setVolume } = preferences;
         controls.volume(volume);
 
-        // TODO ipc.on
-        // ipc.on('player-volume-up', () => {
-        //     const volumeUp = state.volume + 0.1;
+        channel.listen(IPC_PLAYER_VOLUME_UP, () => {
+            const volumeUp = state.volume + 0.1;
 
-        //     controls.volume(volumeUp > 1 ? 1 : volumeUp);
-        //     setVolume(state.volume);
-        // });
-        // ipc.on('player-volume-down', () => {
-        //     const volumeDown = state.volume - 0.1;
-        //     controls.volume(volumeDown < 0 ? 0 : volumeDown);
-        //     setVolume(state.volume);
-        // });
+            controls.volume(volumeUp > 1 ? 1 : volumeUp);
+            setVolume(state.volume);
+        });
+        channel.listen(IPC_PLAYER_VOLUME_DOWN, () => {
+            const volumeDown = state.volume - 0.1;
+            controls.volume(volumeDown < 0 ? 0 : volumeDown);
+            setVolume(state.volume);
+        });
     });
 
     useUpdateEffect(() => {

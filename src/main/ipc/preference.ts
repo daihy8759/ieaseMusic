@@ -1,26 +1,9 @@
 import _debug from 'debug';
-import { BrowserWindow, globalShortcut, ipcMain, powerMonitor, session } from 'electron';
-import IPreferences from 'src/shared/interface/IPreferences';
+import { BrowserWindow, ipcMain, powerMonitor, session } from 'electron';
+import IPreferences from '../../shared/interface/IPreferences';
 
-const debug = _debug('dev:main');
+const debug = _debug('dev:preference');
 let mainWindow: BrowserWindow;
-
-const registerGlobalShortcut = () => {
-    // Play the next song
-    globalShortcut.register('MediaNextTrack', () => {
-        mainWindow.webContents.send('player-next');
-    });
-
-    // Play the previous song
-    globalShortcut.register('MediaPreviousTrack', () => {
-        mainWindow.webContents.send('player-previous');
-    });
-
-    // Toggle the player
-    globalShortcut.register('MediaPlayPause', () => {
-        mainWindow.webContents.send('player-toggle');
-    });
-};
 
 function setProxy(proxyRules: string) {
     debug('Apply proxy: %s', proxyRules);
@@ -45,7 +28,6 @@ function setProxyFromStore() {
 export default (win: BrowserWindow) => {
     mainWindow = win;
     // setProxyFromStore();
-    registerGlobalShortcut();
     // App has suspend
     powerMonitor.on('suspend', () => {
         mainWindow.webContents.send('player-pause');

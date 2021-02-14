@@ -3,9 +3,9 @@ import { ReorderTwoTone, RepeatTwoTone, ShuffleTwoTone } from '@material-ui/icon
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useUpdateEffect } from 'react-use';
+import { PlayMode } from '../../../shared/interface/controller';
 import styles from './index.module.less';
 import { useStore } from '/@/context';
-import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from '/@/stores/controller';
 
 const PlayerMode = observer(() => {
     const {
@@ -26,13 +26,13 @@ const PlayerMode = observer(() => {
 
     const renderIndicator = (mode: number) => {
         switch (mode) {
-            case PLAYER_SHUFFLE:
+            case PlayMode.PLAYER_SHUFFLE:
                 return <ShuffleTwoTone />;
 
-            case PLAYER_REPEAT:
+            case PlayMode.PLAYER_REPEAT:
                 return <ReorderTwoTone />;
 
-            case PLAYER_LOOP:
+            case PlayMode.PLAYER_LOOP:
                 return <RepeatTwoTone />;
 
             default:

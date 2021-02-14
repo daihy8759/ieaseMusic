@@ -54,7 +54,7 @@ async function getPlaylist(): Promise<PlaylistResponse> {
     };
 }
 
-async function fmTrash(id: number, cookie: string) {
+async function fmTrash(id: number, cookie?: string) {
     try {
         const { body } = await musicApi.fm_trash({ id, cookie });
         return body;

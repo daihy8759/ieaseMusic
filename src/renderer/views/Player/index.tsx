@@ -1,6 +1,5 @@
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -13,6 +12,7 @@ import Header from '/@/components/Header';
 import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
 import { useStore } from '/@/context';
+import IArtist from '/@/interface/IArtist';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
@@ -20,9 +20,7 @@ interface MatchParams {
     id: string;
 }
 
-interface PlayerProps extends RouteComponentProps<MatchParams> {}
-
-const Player: FC<PlayerProps> = observer((props) => {
+const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
     const { player, controller, me } = useStore();
     const { song, playing } = controller;
     const { loading, meta, recommend, filter, searching } = player;

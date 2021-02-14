@@ -1,9 +1,9 @@
-import ISong from '@/interface/ISong';
-import { fmTrash, getPlaylist } from '/@/api/fm';
-import IPlayList from 'interface/IPlayList';
 import { makeAutoObservable, runInAction } from 'mobx';
 import controller from './controller';
 import me from './me';
+import { fmTrash, getPlaylist } from '/@/api/fm';
+import IPlayList from '/@/interface/IPlayList';
+import ISong from '/@/interface/ISong';
 
 class FM {
     loading = true;
@@ -23,7 +23,7 @@ class FM {
     preload = () => {
         controller.changeMode();
         this.shuffle();
-        this.preload = Function;
+        // this.preload = () => {};
     };
 
     async shuffle() {

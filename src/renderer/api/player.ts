@@ -10,7 +10,6 @@ async function getSongUrl(id: number, cookie?: string) {
     });
     return {
         id,
-        // @ts-ignore
         src: body.data[0].url,
     };
 }

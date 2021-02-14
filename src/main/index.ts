@@ -1,10 +1,9 @@
+import { IPC_NAVIGATOR } from './../shared/ipc/index';
 import { app, BrowserWindow, Menu, shell } from 'electron';
 import installer, { ExtensionReference, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import windowStateKeeper from 'electron-window-state';
 import { join } from 'path';
-import './ipc/music';
-import './ipc/storage';
-import ipcMainSets from './ipcMainSets';
+import setupIPC from './ipc';
 
 const _PLATFORM = process.platform;
 const isOsx = _PLATFORM === 'darwin';
@@ -176,7 +175,7 @@ const mainMenu = [
                 label: 'Home',
                 accelerator: 'Cmd+Shift+H',
                 click() {
-                    win.webContents.send('show-home');
+                    win.webContents.send(IPC_NAVIGATOR, '/');
                 },
             },
             {
@@ -204,7 +203,7 @@ const mainMenu = [
                 label: 'Made For You',
                 accelerator: 'Cmd+Shift+F',
                 click() {
-                    win.webContents.send('show-fm');
+                    win.webContents.send(IPC_NAVIGATOR, '/fm');
                 },
             },
             {
@@ -311,7 +310,7 @@ const createWindow = async () => {
 
     updateMenu();
     mainWindowState.manage(win);
-    ipcMainSets(win);
+    setupIPC(win);
 
     if (process.env.NODE_ENV !== 'production') {
         win.loadURL(`http://localhost:${process.env.PORT}`);

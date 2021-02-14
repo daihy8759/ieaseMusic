@@ -17,6 +17,14 @@ const electronApi = {
             return ipcRenderer.sendSync('app:getPath', name);
         },
     },
+    channel: {
+        listen(channel: string, func: any) {
+            // TODO: check channel
+            if (func) {
+                ipcRenderer.on(channel, (event, ...args) => func(...args));
+            }
+        },
+    },
     dialog: {
         showCertificateTrustDialog(...options: any[]) {
             return ipcRenderer.invoke('dialog:showCertificateTrustDialog', ...options);

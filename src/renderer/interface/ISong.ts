@@ -1,12 +1,12 @@
-import IAlbum from 'interface/IAlbum';
-import IArtist from 'interface/IArtist';
+import IAlbum from '/@/interface/IAlbum';
+import IArtist from '/@/interface/IArtist';
 
 interface ISongData {
     src: string;
     isFlac: boolean;
 }
 export default interface ISong {
-    id?: number;
+    id: number;
     name?: string;
     waiting?: boolean;
     duration?: number;

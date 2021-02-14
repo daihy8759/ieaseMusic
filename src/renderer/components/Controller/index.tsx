@@ -13,14 +13,14 @@ import {
     ShuffleTwoTone,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
-import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { PlayMode } from '../../../shared/interface/controller';
 import styles from './index.module.less';
 import ProgressImage from '/@/components/ProgressImage';
 import { useStore } from '/@/context';
-import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from '/@/stores/controller';
+import IArtist from '/@/interface/IArtist';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
@@ -63,13 +63,13 @@ const Controller: React.FC = observer(() => {
     }
 
     const renderPlayMode = () => {
-        if (mode === PLAYER_SHUFFLE) {
+        if (mode === PlayMode.PLAYER_SHUFFLE) {
             return <ShuffleTwoTone />;
         }
-        if (mode === PLAYER_REPEAT) {
+        if (mode === PlayMode.PLAYER_REPEAT) {
             return <ReorderTwoTone />;
         }
-        if (mode === PLAYER_LOOP) {
+        if (mode === PlayMode.PLAYER_LOOP) {
             return <RepeatTwoTone />;
         }
     };
