@@ -1,21 +1,21 @@
-import { useStore } from '@/context';
+import { useStore } from '/@/context';
 import { ThumbUpAltTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
-import Header from 'components/Header';
-import Hero from 'components/Hero';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
+import Header from '/@/components/Header';
+import Hero from '/@/components/Hero';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import helper from 'utils/helper';
-import styles from './index.less';
+import helper from '/@/utils/helper';
+import styles from './index.module.less';
 
 interface CommentsProps extends RouteComponentProps {}
 
-const Comments: React.SFC<CommentsProps> = observer(props => {
+const Comments: React.SFC<CommentsProps> = observer((props) => {
     const { comments } = useStore();
     const { loading, song, like, loadMore, hotList, newestList } = comments;
 
@@ -73,7 +73,7 @@ const Comments: React.SFC<CommentsProps> = observer(props => {
                         {...{
                             height: 48,
                             width: 48,
-                            src: item.user.avatarUrl
+                            src: item.user.avatarUrl,
                         }}
                     />
                 </Link>
@@ -84,7 +84,7 @@ const Comments: React.SFC<CommentsProps> = observer(props => {
                     <div className={styles.meta}>
                         <span
                             className={classnames('tooltip', styles.thumbsup, {
-                                [styles.liked]: item.liked
+                                [styles.liked]: item.liked,
                             })}
                             data-text={`${helper.humanNumber(item.likedCount)} liked`}
                             onClick={() => like(item.commentId, !item.liked)}>

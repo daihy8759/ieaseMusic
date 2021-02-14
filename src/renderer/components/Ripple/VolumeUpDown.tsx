@@ -1,15 +1,17 @@
-import { useStore } from '@/context';
 import { Zoom } from '@material-ui/core';
 import { VolumeDownTwoTone, VolumeMuteTwoTone, VolumeUpTwoTone } from '@material-ui/icons';
-import { ipcRenderer } from 'electron';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { useEffectOnce } from 'react-use';
-import styles from './index.less';
+import styles from './index.module.less';
+import { useStore } from '/@/context';
+import { useIpc } from '/@/hooks';
 
-const VolumeUpDown: React.SFC = observer(() => {
+const ipc = useIpc();
+
+const VolumeUpDown = observer(() => {
     const {
-        preferences: { volume }
+        preferences: { volume },
     } = useStore();
     const isMuted = volume === 0;
     const containerRef = React.useRef<HTMLDivElement>();
@@ -17,15 +19,15 @@ const VolumeUpDown: React.SFC = observer(() => {
     const [zoom, setZoom] = React.useState(false);
 
     useEffectOnce(() => {
-        ipcRenderer.on('player-volume-up', () => {
-            setDirection(true);
-            zoomTimeout();
-        });
-
-        ipcRenderer.on('player-volume-down', () => {
-            setDirection(false);
-            zoomTimeout();
-        });
+        // TODO ipc.on
+        // ipc.on('player-volume-up', () => {
+        //     setDirection(true);
+        //     zoomTimeout();
+        // });
+        // ipc.on('player-volume-down', () => {
+        //     setDirection(false);
+        //     zoomTimeout();
+        // });
     });
 
     const zoomTimeout = () => {

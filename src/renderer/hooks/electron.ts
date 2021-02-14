@@ -1,0 +1,23 @@
+import type Electron from 'electron';
+
+const { app, shell, clipboard, ipcRenderer, dialog } = (window as any).electron as typeof Electron;
+
+export function useApp() {
+    return app;
+}
+
+export function useShell() {
+    return shell;
+}
+
+export function useClipboard() {
+    return clipboard;
+}
+
+export function useIpc() {
+    return ipcRenderer;
+}
+
+export function useDialog() {
+    return dialog;
+}

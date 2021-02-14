@@ -1,7 +1,6 @@
 import _debug from 'debug';
 import { BrowserWindow, globalShortcut, ipcMain, powerMonitor, session } from 'electron';
 import IPreferences from 'src/shared/interface/IPreferences';
-import storage from '../shared/storage';
 
 const debug = _debug('dev:main');
 let mainWindow: BrowserWindow;
@@ -28,7 +27,7 @@ function setProxy(proxyRules: string) {
     session.defaultSession.setProxy({
         proxyRules,
         pacScript: '',
-        proxyBypassRules: ''
+        proxyBypassRules: '',
     });
 }
 
@@ -45,7 +44,7 @@ function setProxyFromStore() {
 
 export default (win: BrowserWindow) => {
     mainWindow = win;
-    setProxyFromStore();
+    // setProxyFromStore();
     registerGlobalShortcut();
     // App has suspend
     powerMonitor.on('suspend', () => {

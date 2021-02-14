@@ -1,38 +1,38 @@
-import { useStore } from '@/context';
 import { IconButton } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import {
     CloudDownloadTwoTone,
+    DeleteForeverTwoTone,
     FastForwardTwoTone,
     FavoriteBorderTwoTone,
     FavoriteTwoTone,
     PauseCircleOutlineTwoTone,
     PlayCircleOutlineTwoTone,
-    DeleteForeverTwoTone
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
-import Controller from 'components/Controller';
-import FadeImage from 'components/FadeImage';
-import Header from 'components/Header';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
+import Controller from '/@/components/Controller';
+import FadeImage from '/@/components/FadeImage';
+import Header from '/@/components/Header';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import helper from '/@/utils/helper';
 
 const useStyles = makeStyles({
     liked: {
         color: red[900],
-        textShadow: `0 0 24px ${red[900]}`
-    }
+        textShadow: `0 0 24px ${red[900]}`,
+    },
 });
 
 interface IFMProps extends RouteComponentProps {}
 
-const FM: React.SFC<IFMProps> = observer(props => {
+const FM: React.SFC<IFMProps> = observer((props) => {
     const { fm, me, comments, controller } = useStore();
     // @ts-ignore
     const classes = useStyles();
@@ -109,7 +109,7 @@ const FM: React.SFC<IFMProps> = observer(props => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
             {renderBg()}
@@ -119,7 +119,7 @@ const FM: React.SFC<IFMProps> = observer(props => {
                         {...{
                             height: 290,
                             width: 290,
-                            src: song.album.cover
+                            src: song.album.cover,
                         }}
                     />
 
@@ -156,7 +156,7 @@ const FM: React.SFC<IFMProps> = observer(props => {
                     </aside>
                 </article>
 
-                <div className={styles.bar} onClick={e => seek(e)}>
+                <div className={styles.bar} onClick={(e) => seek(e)}>
                     {isFMPlaying() && (
                         <div id="progress">
                             <div className={styles.playing} />

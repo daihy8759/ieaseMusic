@@ -1,4 +1,4 @@
-import searchByType from 'api/search';
+import searchByType from '/@/api/search';
 import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
 import { makeAutoObservable, runInAction } from 'mobx';

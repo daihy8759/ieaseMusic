@@ -1,5 +1,5 @@
-import Loader from 'components/Loader';
-import * as React from 'react';
+import Loader from '/@/components/Loader';
+import React from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import Layout from '../views/Layout';
 import Welcome from '../views/Welcome';

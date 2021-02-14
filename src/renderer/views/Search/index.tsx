@@ -1,20 +1,20 @@
-import { useStore } from '@/context';
 import { Box, IconButton, Tab, Tabs, Typography } from '@material-ui/core';
 import { FavoriteSharp, StarTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
-import Header from 'components/Header';
-import ProgressImage from 'components/ProgressImage';
 import format from 'date-fns/format';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
+import Header from '/@/components/Header';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import helper from '/@/utils/helper';
 
 const a11yProps = (index: any) => {
     return {
         id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`
+        'aria-controls': `simple-tabpanel-${index}`,
     };
 };
 
@@ -113,7 +113,7 @@ const Search: React.FC = observer(() => {
                         {...{
                             src: e.cover,
                             height: 40,
-                            width: 40
+                            width: 40,
                         }}
                     />
 
@@ -148,14 +148,14 @@ const Search: React.FC = observer(() => {
             );
         }
 
-        return albums.map(e => {
+        return albums.map((e) => {
             return (
                 <Link className={styles.row} key={e.link} onClick={reset} to={e.link}>
                     <ProgressImage
                         {...{
                             src: e.cover,
                             height: 40,
-                            width: 40
+                            width: 40,
                         }}
                     />
 
@@ -183,7 +183,7 @@ const Search: React.FC = observer(() => {
             );
         }
 
-        return artists.map(e => {
+        return artists.map((e) => {
             return (
                 <div className={styles.artist} key={e.link}>
                     <Link onClick={reset} to={e.link}>
@@ -191,7 +191,7 @@ const Search: React.FC = observer(() => {
                             {...{
                                 src: e.avatar,
                                 height: 40,
-                                width: 40
+                                width: 40,
                             }}
                         />
                     </Link>
@@ -207,7 +207,7 @@ const Search: React.FC = observer(() => {
 
                         <IconButton
                             className={classnames({
-                                liked: e.followed
+                                liked: e.followed,
                             })}
                             onClick={async (ev: any) => {
                                 const { target } = ev;
@@ -248,7 +248,7 @@ const Search: React.FC = observer(() => {
                             {...{
                                 src: e.avatar,
                                 height: 64,
-                                width: 64
+                                width: 64,
                             }}
                         />
                     </Link>
@@ -271,7 +271,7 @@ const Search: React.FC = observer(() => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
 

@@ -1,15 +1,15 @@
-import { useStore } from '@/context';
+import { useStore } from '/@/context';
 import classnames from 'classnames';
-import Controller from 'components/Controller';
-import Header from 'components/Header';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
+import Controller from '/@/components/Controller';
+import Header from '/@/components/Header';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import styles from './index.less';
+import styles from './index.module.less';
 
 const Top = observer(() => {
     const { top } = useStore();
@@ -36,7 +36,7 @@ const Top = observer(() => {
                     {...{
                         height,
                         width: height,
-                        src: item.cover
+                        src: item.cover,
                     }}
                 />
 
@@ -74,7 +74,7 @@ const Top = observer(() => {
             <Header
                 {...{
                     showBack: true,
-                    transparent: true
+                    transparent: true,
                 }}
             />
 

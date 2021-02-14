@@ -1,15 +1,15 @@
-import { useStore } from '@/context';
 import { IconButton } from '@material-ui/core';
 import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import Header from 'components/Header';
-import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { useUpdateEffect } from 'react-use';
-import colors from 'utils/colors';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
+import Header from '/@/components/Header';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import colors from '/@/utils/colors';
+import helper from '/@/utils/helper';
 
 const Singleton: React.SFC = observer(() => {
     const { me, controller } = useStore();
@@ -34,18 +34,18 @@ const Singleton: React.SFC = observer(() => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
 
             <summary>
                 <IconButton
                     className={classnames({
-                        [styles.liked]: liked
+                        [styles.liked]: liked,
                     })}
                     style={{
                         cursor: 'pointer',
-                        display: 'table'
+                        display: 'table',
                     }}
                     onClick={() => (liked ? unlike(song) : like(song))}>
                     <FavoriteSharp />
@@ -58,14 +58,14 @@ const Singleton: React.SFC = observer(() => {
                 <div
                     className={styles.circle}
                     style={{
-                        filter: `drop-shadow(3mm 6mm 12mm ${colors.randomColor()})`
+                        filter: `drop-shadow(3mm 6mm 12mm ${colors.randomColor()})`,
                     }}
                     ref={circleRef}>
                     <ProgressImage
                         {...{
                             width: 260,
                             height: 260,
-                            src: `${song.album.cover.replace(/\?.*$/, '')}?param=200y200`
+                            src: `${song.album.cover.replace(/\?.*$/, '')}?param=200y200`,
                         }}
                     />
                 </div>

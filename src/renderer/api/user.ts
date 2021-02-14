@@ -1,8 +1,10 @@
-import Api from './';
+import { useMusicApi } from '../hooks';
+
+const musicApi = useMusicApi();
 
 async function getUser(uid: number, cookie?: string) {
     try {
-        const { body } = await Api.user_detail({ uid, cookie });
+        const { body } = await musicApi.user_detail({ uid, cookie });
         if (body.code !== 200) {
             throw body;
         }
@@ -14,7 +16,7 @@ async function getUser(uid: number, cookie?: string) {
             avatar: profile.avatarUrl,
             followed: profile.followed,
             followers: profile.followeds,
-            following: profile.follows
+            following: profile.follows,
         };
     } catch (e) {
         console.error(e);
@@ -24,7 +26,7 @@ async function getUser(uid: number, cookie?: string) {
 
 async function getPlayList(uid: number, cookie?: string) {
     try {
-        const { body } = await Api.user_playlist({ uid, cookie });
+        const { body } = await musicApi.user_playlist({ uid, cookie });
         if (body.code !== 200) {
             throw body;
         }
@@ -35,7 +37,7 @@ async function getPlayList(uid: number, cookie?: string) {
             cover: e.coverImgUrl,
             played: e.playCount,
             size: e.trackCount,
-            link: `/player/0/${e.id}`
+            link: `/player/0/${e.id}`,
         }));
     } catch (e) {
         console.error(e);
@@ -47,7 +49,7 @@ async function getUserDetail(uid: number, cookie?: string) {
     const [profile, playlists] = await Promise.all([getUser(uid, cookie), getPlayList(uid, cookie)]);
     return {
         profile,
-        playlists
+        playlists,
     };
 }
 

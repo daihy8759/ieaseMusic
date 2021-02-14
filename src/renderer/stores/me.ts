@@ -1,16 +1,19 @@
-import { dialog } from 'electron';
-import QRCodeApi, { LoginType } from 'api/qrcode';
-import ISong from 'interface/ISong';
-import IUserProfile from 'interface/IUserProfile';
+import _debug from 'debug';
 import { makeAutoObservable, runInAction } from 'mobx';
-import helper from 'utils/helper';
-import lastfm from 'utils/lastfm';
-import storage from '../../shared/storage';
+import { useDialog, useMusicApi, useStorage } from '../hooks';
 import home from './home';
 import player from './player';
-import Api from '../api';
+import QRCodeApi, { LoginType } from '/@/api/qrcode';
+import ISong from '/@/interface/ISong';
+import IUserProfile from '/@/interface/IUserProfile';
+import helper from '/@/utils/helper';
+import lastfm from '/@/utils/lastfm';
 
 const { generate, polling } = QRCodeApi;
+const dialog = useDialog();
+const musicApi = useMusicApi();
+const storage = useStorage();
+const error = _debug('dev:me:error');
 
 class Me {
     initialized = false;
@@ -28,14 +31,13 @@ class Me {
     }
 
     async init() {
-        let profile: IUserProfile = storage.get('profile');
-
+        let profile: IUserProfile = await storage.get('profile');
         if (!profile) {
             profile = {};
         } else {
             try {
-                await Api.login_refresh({
-                    cookie: profile.cookie
+                await musicApi.login_refresh({
+                    cookie: profile.cookie,
                 });
             } catch (e) {
                 profile = {};
@@ -58,7 +60,7 @@ class Me {
 
         this.qrcode = {
             ...data,
-            type
+            type,
         };
     };
 
@@ -67,7 +69,7 @@ class Me {
         const data = await polling({
             ticket,
             state,
-            type
+            type,
         });
         if (data.success === false) {
             dialog.showErrorBox(
@@ -77,12 +79,12 @@ class Me {
             return;
         }
 
-        const { body } = await Api.login_status({});
+        const { body } = await musicApi.login_status({});
         // @ts-ignore
         this.profile = body.profile;
         await storage.set('profile', {
             ...this.profile,
-            cookie: body.cookie
+            cookie: body.cookie,
         });
         await this.init();
         await home.load();
@@ -94,29 +96,35 @@ class Me {
         this.logining = true;
 
         const formatter = helper.formatPhone(phone);
-        const { body } = await Api.login_cellphone({
-            countrycode: formatter.code.toString(),
-            phone: formatter.phone.toString(),
-            password
-        });
-        if (body.code !== 200) {
-            console.error(`Failed to login: ${body.msg}`);
-            this.logining = false;
-            return false;
-        }
+        try {
+            const { body } = await musicApi.login_cellphone({
+                countrycode: formatter.code.toString(),
+                phone: formatter.phone.toString(),
+                password,
+            });
+            if (body.code !== 200) {
+                console.error(`Failed to login: ${body.msg}`);
+                this.logining = false;
+                return false;
+            }
 
-        runInAction(() => {
-            const accountProfile: {} = body.profile || {};
-            this.profile = {
-                ...accountProfile,
-                cookie: body.cookie
-            };
-        });
-        await storage.set('profile', this.profile);
-        runInAction(() => {
-            this.logining = false;
-        });
-        return this.profile;
+            runInAction(() => {
+                const accountProfile = body.profile || {};
+                const cookie = body.cookie as string[];
+                this.profile = {
+                    ...accountProfile,
+                    cookie: cookie.join(''),
+                };
+            });
+            // await storage.set('profile', this.profile);
+            return this.profile;
+        } catch (e) {
+            error('me: Login Fail %s', e);
+        } finally {
+            runInAction(() => {
+                this.logining = false;
+            });
+        }
     };
 
     rocking = (likes: any) => {
@@ -139,11 +147,11 @@ class Me {
 
     async exeLike(song: ISong, like: boolean) {
         const cookie = this.profile.cookie;
-        const { body } = await Api.like({ id: song.id, like, cookie });
+        const { body } = await musicApi.like({ id: song.id, like, cookie });
 
         if (this.likes.get('id') === player.meta.id) {
             let { songs } = player;
-            const index = songs.findIndex(e => e.id === song.id);
+            const index = songs.findIndex((e) => e.id === song.id);
 
             if (index === -1) {
                 songs = [song, ...songs];

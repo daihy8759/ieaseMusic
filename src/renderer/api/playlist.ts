@@ -1,12 +1,13 @@
-import Api from './';
+import { useMusicApi } from '../hooks';
 
 const limit = 50;
+const musicApi = useMusicApi();
 
 async function getPlayList(cat: string, offset?: number) {
     let playList = [];
     let nextOffset = offset;
     try {
-        const { body } = await Api.top_playlist({ cat, offset, limit });
+        const { body } = await musicApi.top_playlist({ cat, offset, limit });
         if (body.code !== 200) {
             throw body;
         }
@@ -24,8 +25,8 @@ async function getPlayList(cat: string, offset?: number) {
                 user: {
                     id: creator.userId,
                     name: creator.nickname,
-                    link: `/user/${creator.userId}`
-                }
+                    link: `/user/${creator.userId}`,
+                },
             };
         });
         if (body.more) {
@@ -36,7 +37,7 @@ async function getPlayList(cat: string, offset?: number) {
     }
     return {
         playList,
-        nextOffset
+        nextOffset,
     };
 }
 

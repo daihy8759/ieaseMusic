@@ -1,6 +1,6 @@
-import homeApi from 'api/home';
+import homeApi from '/@/api/home';
 import { makeAutoObservable, runInAction } from 'mobx';
-import helper from 'utils/helper';
+import helper from '/@/utils/helper';
 import controller from './controller';
 import me from './me';
 import preferences from './preferences';
@@ -52,7 +52,7 @@ class Home {
             controller.song = song || { id: undefined, name: undefined };
         }
 
-        list.forEach(e => {
+        list.forEach((e) => {
             e.pallet = false;
         });
 

@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import * as React from 'react';
+import React from 'react';
 import { TransitionProps } from 'react-transition-group/Transition';
 import { Zoom } from '@material-ui/core';
 
@@ -13,14 +13,14 @@ const styles = (theme: Theme) =>
     createStyles({
         root: {
             margin: 0,
-            padding: theme.spacing(2)
+            padding: theme.spacing(2),
         },
         closeButton: {
             position: 'absolute',
             right: theme.spacing(1),
             top: theme.spacing(1),
-            color: theme.palette.grey[500]
-        }
+            color: theme.palette.grey[500],
+        },
     });
 
 const Transition = React.forwardRef<unknown, TransitionProps>(function Transition(props, ref) {
@@ -48,7 +48,7 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 });
 
 const DialogContent = withStyles(() => ({
-    root: {}
+    root: {},
 }))(MuiDialogContent);
 
 interface ModalProps {
@@ -59,7 +59,7 @@ interface ModalProps {
     onCancel?: () => void;
 }
 
-const Modal: React.SFC<ModalProps> = props => {
+const Modal: React.SFC<ModalProps> = (props) => {
     const { visible, title, content, fullScreen, onCancel } = props;
     return (
         <Dialog

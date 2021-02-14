@@ -1,4 +1,4 @@
-import { getUserDetail } from 'api/user';
+import { getUserDetail } from '/@/api/user';
 import me from './me';
 import axios from 'axios';
 import { makeAutoObservable, runInAction } from 'mobx';
@@ -35,7 +35,7 @@ class User {
 
         if (data.success) {
             this.profile = Object.assign({}, this.profile, {
-                followed: !followed
+                followed: !followed,
             });
         }
     };

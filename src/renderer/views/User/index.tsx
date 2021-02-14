@@ -1,15 +1,15 @@
-import { useStore } from '@/context';
 import classnames from 'classnames';
-import Controller from 'components/Controller';
-import Header from 'components/Header';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
+import Controller from '/@/components/Controller';
+import Header from '/@/components/Header';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import helper from '/@/utils/helper';
 
 interface MatchParams {
     id: string;
@@ -17,7 +17,7 @@ interface MatchParams {
 
 interface UserProps extends RouteComponentProps<MatchParams> {}
 
-const User: React.FC<UserProps> = observer(props => {
+const User: React.FC<UserProps> = observer((props) => {
     const { user, controller, me } = useStore();
     const [hovered, setHovered] = React.useState();
 
@@ -47,7 +47,7 @@ const User: React.FC<UserProps> = observer(props => {
             return (
                 <Link
                     className={classnames('clearfix', styles.item, {
-                        [styles.playing]: isPlaying(e.id)
+                        [styles.playing]: isPlaying(e.id),
                     })}
                     to={e.link}
                     key={e.id}
@@ -74,16 +74,16 @@ const User: React.FC<UserProps> = observer(props => {
                 {...{
                     transparent: true,
                     showBack: true,
-                    showPlaylist: true
+                    showPlaylist: true,
                 }}
             />
 
             <button
                 style={{
-                    display: isme() ? 'none' : 'block'
+                    display: isme() ? 'none' : 'block',
                 }}
                 className={classnames(styles.follow, {
-                    [styles.followed]: followed
+                    [styles.followed]: followed,
                 })}
                 type="button"
                 onClick={() => follow(followed)}>
@@ -99,7 +99,7 @@ const User: React.FC<UserProps> = observer(props => {
                     width: '100%',
                     padding: 0,
                     margin: 0,
-                    overflow: 'hidden'
+                    overflow: 'hidden',
                 }}>
                 <img
                     alt=""
@@ -107,7 +107,7 @@ const User: React.FC<UserProps> = observer(props => {
                     className={styles.avatar}
                     style={{
                         width: window.innerWidth,
-                        height: window.innerWidth
+                        height: window.innerWidth,
                     }}
                     onLoad={(e: any) => {
                         e.target.classList.add(styles.expose);
@@ -136,7 +136,7 @@ const User: React.FC<UserProps> = observer(props => {
                         {...{
                             height: 260,
                             width: 260,
-                            src: hovered && hovered.cover ? hovered.cover : profile.avatar
+                            src: hovered && hovered.cover ? hovered.cover : profile.avatar,
                         }}
                     />
                 </aside>

@@ -1,7 +1,7 @@
-import * as closePng from 'assets/close.png';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import styles from './index.less';
+import React from 'react';
+import styles from './index.module.less';
+import * as closePng from '/@/assets/close.png';
 
 interface ISearchProps {
     show?: boolean;
@@ -9,7 +9,7 @@ interface ISearchProps {
     filter?: any;
 }
 
-const Search: React.SFC<ISearchProps> = observer(props => {
+const Search: React.SFC<ISearchProps> = observer((props) => {
     const { show, close, filter, children } = props;
 
     if (!show) {

@@ -1,19 +1,21 @@
-import { useStore } from '@/context';
-import * as closePng from 'assets/close.png';
-import * as socialFacebook from 'assets/social-facebook.png';
-import * as socialTwitter from 'assets/social-twitter.png';
-import Modal from 'components/Modal';
-import { shell } from 'electron';
-import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import * as QRCode from 'qrcode';
-import * as React from 'react';
-import styles from './index.less';
+import React from 'react';
+import styles from './index.module.less';
+import * as closePng from '/@/assets/close.png';
+import * as socialFacebook from '/@/assets/social-facebook.png';
+import * as socialTwitter from '/@/assets/social-twitter.png';
+import Modal from '/@/components/Modal';
+import { useStore } from '/@/context';
+import { useShell } from '/@/hooks';
+import IArtist from '/@/interface/IArtist';
+
+const shell = useShell();
 
 const Share: React.SFC = observer(() => {
     const {
         share,
-        controller: { song }
+        controller: { song },
     } = useStore();
     if (!song.id) {
         return null;
@@ -38,7 +40,7 @@ const Share: React.SFC = observer(() => {
                     <section>
                         <a
                             href=""
-                            onClick={e => {
+                            onClick={(e) => {
                                 e.preventDefault();
                                 shell.openExternal(
                                     `https://twitter.com/intent/tweet?url=${encodeURIComponent(
@@ -51,7 +53,7 @@ const Share: React.SFC = observer(() => {
                         </a>
                         <a
                             href=""
-                            onClick={e => {
+                            onClick={(e) => {
                                 e.preventDefault();
                                 shell.openExternal(
                                     `https://facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
@@ -65,7 +67,7 @@ const Share: React.SFC = observer(() => {
                     <figure className={styles.qrcode}>
                         <img
                             alt=""
-                            ref={async ele => {
+                            ref={async (ele) => {
                                 if (!ele) return;
                                 const base64 = await QRCode.toDataURL(url);
                                 ele.src = base64;
@@ -78,7 +80,7 @@ const Share: React.SFC = observer(() => {
                     <a
                         href=""
                         className={styles.close}
-                        onClick={e => {
+                        onClick={(e) => {
                             e.preventDefault();
                             close();
                         }}>

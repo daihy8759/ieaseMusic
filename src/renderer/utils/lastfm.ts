@@ -1,9 +1,7 @@
 import axios from 'axios';
-import * as qs from 'qs';
-import CRYPTO from './crypto';
-import ISong from 'interface/ISong';
-
-const { md5 } = CRYPTO;
+import md5 from 'md5';
+import qs from 'qs';
+import ISong from '/@/interface/ISong';
 
 const BASE_URL = 'https://ws.audioscrobbler.com/2.0/';
 const API_KEY = '42ce640ff370c0c2a0f73342222edda6';
@@ -27,7 +25,7 @@ async function getSession() {
                 username,
                 authToken,
                 format: 'json',
-                api_sig: apiSig
+                api_sig: apiSig,
             })
         );
         const { session } = res.data;
@@ -67,7 +65,7 @@ function postFm({ method, artist, track, tags }: IPostFmParam) {
             artist,
             track,
             format: 'json',
-            api_sig: apiSig
+            api_sig: apiSig,
         })
     );
 }
@@ -83,7 +81,7 @@ async function initialize(username: string, password: string) {
         api_secret: SECRET,
         authToken,
         username,
-        password
+        password,
     };
 
     return getSession();
@@ -97,8 +95,8 @@ async function scrobble(song: ISong) {
     }
     const res = await postFm({
         method: 'track.scrobble',
-        artist: song.artists.map(e => e.name).join(','),
-        track: song.name
+        artist: song.artists.map((e) => e.name).join(','),
+        track: song.name,
     });
     return res.data;
 }
@@ -111,8 +109,8 @@ async function playing(song: ISong) {
     }
     const res = await postFm({
         method: 'track.updateNowPlaying',
-        artist: song.artists.map(e => e.name).join(','),
-        track: song.name
+        artist: song.artists.map((e) => e.name).join(','),
+        track: song.name,
     });
     return res.data;
 }
@@ -125,8 +123,8 @@ async function love(song: ISong) {
     }
     const res = await postFm({
         method: 'track.love',
-        artist: song.artists.map(e => e.name).join(','),
-        track: song.name
+        artist: song.artists.map((e) => e.name).join(','),
+        track: song.name,
     });
     return res.data;
 }
@@ -140,8 +138,8 @@ async function unlove(song: ISong) {
 
     const res = await postFm({
         method: 'track.unlove',
-        artist: song.artists.map(e => e.name).join(','),
-        track: song.name
+        artist: song.artists.map((e) => e.name).join(','),
+        track: song.name,
     });
     return res.data;
 }
@@ -151,5 +149,5 @@ export default {
     scrobble,
     playing,
     love,
-    unlove
+    unlove,
 };

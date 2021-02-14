@@ -1,4 +1,4 @@
-import { getMusicComments } from 'api/comments';
+import { getMusicComments } from '/@/api/comments';
 import { makeAutoObservable, runInAction } from 'mobx';
 import ISong from 'interface/ISong';
 

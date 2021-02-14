@@ -1,21 +1,24 @@
-import Api from './';
+import { useMusicApi } from '../hooks';
 import { getSimilar } from './artist';
 
-async function getSongUrl(id: number,cookie?: string) {
-    const {body} = await Api.song_url({
-        id,cookie
-    })
+const musicApi = useMusicApi();
+
+async function getSongUrl(id: number, cookie?: string) {
+    const { body } = await musicApi.song_url({
+        id,
+        cookie,
+    });
     return {
         id,
         // @ts-ignore
         src: body.data[0].url,
-    }
+    };
 }
 
 // 相似歌手
 async function getRecentUser(id: number, cookie?: string) {
     try {
-        const { body } = await Api.simi_user({ id, cookie });
+        const { body } = await musicApi.simi_user({ id, cookie });
         if (body.code === 200) {
             const userProfiles: any = body.userprofiles;
             return userProfiles.map((e: any) => {
@@ -23,7 +26,7 @@ async function getRecentUser(id: number, cookie?: string) {
                     id: e.userId,
                     name: e.nickname,
                     avatar: `${e.avatarUrl}?param=50y50`,
-                    link: `/user/${e.userId}`
+                    link: `/user/${e.userId}`,
                 };
             });
         }
@@ -35,7 +38,7 @@ async function getRecentUser(id: number, cookie?: string) {
 
 async function getSimilarPlaylist(id: number, cookie?: string) {
     try {
-        const { body } = await Api.simi_playlist({ id, cookie });
+        const { body } = await musicApi.simi_playlist({ id, cookie });
         if (body.code === 200) {
             const playlists: any = body.playlists;
             return playlists.map((e: any) => {
@@ -43,7 +46,7 @@ async function getSimilarPlaylist(id: number, cookie?: string) {
                     id: e.id,
                     name: e.name,
                     cover: e.coverImgUrl,
-                    link: `/player/0/${e.id}`
+                    link: `/player/0/${e.id}`,
                 };
             });
         }
@@ -55,7 +58,7 @@ async function getSimilarPlaylist(id: number, cookie?: string) {
 
 async function getAlbumBySong(id: number, cookie?: string) {
     try {
-        const { body } = await Api.simi_song({ id, cookie });
+        const { body } = await musicApi.simi_song({ id, cookie });
         if (body.code === 200) {
             const songs: any = body.songs;
             return songs.map((e: any) => {
@@ -65,7 +68,7 @@ async function getAlbumBySong(id: number, cookie?: string) {
                     id: album.id,
                     name: album.name,
                     cover: album.picUrl,
-                    link: `/player/1/${album.id}`
+                    link: `/player/1/${album.id}`,
                 };
             });
         }
@@ -80,12 +83,12 @@ async function getRecommend(songid: number, artistid: number, cookie?: string) {
         getRecentUser(songid, cookie),
         getSimilar(artistid, cookie),
         getAlbumBySong(songid),
-        getSimilarPlaylist(songid)
+        getSimilarPlaylist(songid),
     ]);
     return {
         users,
         artists,
-        playlists: [...playlists1, ...playlists2]
+        playlists: [...playlists1, ...playlists2],
     };
 }
 
@@ -93,7 +96,7 @@ async function getPlayListDetail(type: string, id: number, cookie?: string) {
     const resData: any = {};
     let songs: any = [];
     if (type === '0') {
-        const { body } = await Api.playlist_detail({ id, cookie });
+        const { body } = await musicApi.playlist_detail({ id, cookie });
         const meta: any = body.playlist;
         songs = meta.tracks;
         resData.meta = {
@@ -106,14 +109,14 @@ async function getPlayListDetail(type: string, id: number, cookie?: string) {
                 {
                     id: meta.creator.userId.toString(),
                     name: meta.creator.nickname,
-                    link: `/user/${meta.creator.userId}`
-                }
+                    link: `/user/${meta.creator.userId}`,
+                },
             ],
             played: meta.playCount,
-            subscribed: meta.subscribed
+            subscribed: meta.subscribed,
         };
     } else {
-        const { body } = await Api.album({ id, cookie });
+        const { body } = await musicApi.album({ id, cookie });
         songs = body.songs;
         const meta: any = body.album;
         resData.meta = {
@@ -123,10 +126,10 @@ async function getPlayListDetail(type: string, id: number, cookie?: string) {
             author: meta.artists.map((e: any) => ({
                 id: e.id,
                 name: e.name,
-                link: e.id ? `/artist/${e.id}` : ''
+                link: e.id ? `/artist/${e.id}` : '',
             })),
             company: meta.company,
-            subscribed: meta.info.liked
+            subscribed: meta.info.liked,
         };
     }
     resData.songs = songs.map((d: any) => {
@@ -139,13 +142,13 @@ async function getPlayListDetail(type: string, id: number, cookie?: string) {
                 id: al.id,
                 name: al.name,
                 cover: `${al.picUrl}?param=y100y100`,
-                link: `/player/1/${al.id}`
+                link: `/player/1/${al.id}`,
             },
             artists: ar.map((e: any) => ({
                 id: e.id,
                 name: e.name,
-                link: e.id ? `/artist/${e.id}` : ''
-            }))
+                link: e.id ? `/artist/${e.id}` : '',
+            })),
         };
     });
     return resData;

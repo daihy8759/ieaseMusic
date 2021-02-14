@@ -1,9 +1,10 @@
-import IAlbum from '@/interface/IAlbum';
-import IArtist from '@/interface/IArtist';
-import IPlayList from '@/interface/IPlayList';
-import IUserProfile from '@/interface/IUserProfile';
-import Api from './';
+import { useMusicApi } from '../hooks';
+import IAlbum from '/@/interface/IAlbum';
+import IArtist from '/@/interface/IArtist';
+import IPlayList from '/@/interface/IPlayList';
+import IUserProfile from '/@/interface/IUserProfile';
 
+const musicApi = useMusicApi();
 interface SearchResult {
     playlists?: IPlayList[];
     albums?: IAlbum[];
@@ -15,11 +16,11 @@ interface SearchResult {
 async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult> {
     let playlists = [];
     try {
-        const { body } = await Api.search({
+        const { body } = await musicApi.search({
             offset,
             keywords,
             limit: 30,
-            type: 1000
+            type: 1000,
         });
         if (body.code === 200) {
             const result: any = body.result;
@@ -36,8 +37,8 @@ async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult>
                     creator: {
                         id: creator.id,
                         name: creator.name,
-                        link: `/user/${creator.id}`
-                    }
+                        link: `/user/${creator.id}`,
+                    },
                 };
             });
         }
@@ -46,18 +47,18 @@ async function getPlaylists(keywords: string, offset = 0): Promise<SearchResult>
     }
     return {
         playlists,
-        nextOffset: offset + 30
+        nextOffset: offset + 30,
     };
 }
 
 async function getAlbums(keywords: string, offset = 0) {
     let albums = [];
     try {
-        const { body } = await Api.search({
+        const { body } = await musicApi.search({
             offset,
             keywords,
             limit: 30,
-            type: 10
+            type: 10,
         });
         if (body.code === 200) {
             const result: any = body.result;
@@ -73,8 +74,8 @@ async function getAlbums(keywords: string, offset = 0) {
                     artist: {
                         id: artist.id,
                         name: artist.name,
-                        link: `/artist/${artist.id}`
-                    }
+                        link: `/artist/${artist.id}`,
+                    },
                 };
             });
         }
@@ -83,18 +84,18 @@ async function getAlbums(keywords: string, offset = 0) {
     }
     return {
         albums,
-        nextOffset: offset + 30
+        nextOffset: offset + 30,
     };
 }
 
 async function getArtists(keywords: string, offset = 0) {
     let artists = [];
     try {
-        const { body } = await Api.search({
+        const { body } = await musicApi.search({
             offset,
             keywords,
             limit: 30,
-            type: 100
+            type: 100,
         });
         if (body.code === 200) {
             const result: any = body.result;
@@ -107,7 +108,7 @@ async function getArtists(keywords: string, offset = 0) {
                         'https://p3.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=100y100',
                     followed: e.followed,
                     size: e.albumSize,
-                    link: `/artist/${e.id}`
+                    link: `/artist/${e.id}`,
                 };
             });
         }
@@ -116,18 +117,18 @@ async function getArtists(keywords: string, offset = 0) {
     }
     return {
         artists,
-        nextOffset: offset + 30
+        nextOffset: offset + 30,
     };
 }
 
 async function getUsers(keywords: string, offset = 0) {
     let users = [];
     try {
-        const { body } = await Api.search({
+        const { body } = await musicApi.search({
             offset,
             keywords,
             limit: 30,
-            type: 1002
+            type: 1002,
         });
         if (body.code === 200) {
             const result: any = body.result;
@@ -136,7 +137,7 @@ async function getUsers(keywords: string, offset = 0) {
                     id: e.userId,
                     name: e.nickname,
                     avatar: e.avatarUrl,
-                    link: `/user/${e.userId}`
+                    link: `/user/${e.userId}`,
                 };
             });
         }
@@ -145,7 +146,7 @@ async function getUsers(keywords: string, offset = 0) {
     }
     return {
         users,
-        nextOffset: offset + 30
+        nextOffset: offset + 30,
     };
 }
 

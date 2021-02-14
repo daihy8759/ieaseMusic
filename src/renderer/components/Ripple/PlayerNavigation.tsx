@@ -1,23 +1,26 @@
 import { Zoom } from '@material-ui/core';
 import { FastForwardTwoTone, FastRewindTwoTone } from '@material-ui/icons';
-import { ipcRenderer } from 'electron';
-import * as React from 'react';
+import React from 'react';
 import { useEffectOnce } from 'react-use';
-import styles from './index.less';
+import styles from './index.module.less';
+import { useIpc } from '/@/hooks';
+
+const ipc = useIpc();
 
 const PlayerNavigation: React.FC = () => {
     const [direction, setDirection] = React.useState(true);
     const [zoom, setZoom] = React.useState(false);
 
     useEffectOnce(() => {
-        ipcRenderer.on('player-previous', () => {
-            setDirection(true);
-            zoomTimeout();
-        });
-        ipcRenderer.on('player-next', () => {
-            setDirection(false);
-            zoomTimeout();
-        });
+        // TODO ipc.on
+        // ipc.on('player-previous', () => {
+        //     setDirection(true);
+        //     zoomTimeout();
+        // });
+        // ipc.on('player-next', () => {
+        //     setDirection(false);
+        //     zoomTimeout();
+        // });
     });
 
     const zoomTimeout = () => {

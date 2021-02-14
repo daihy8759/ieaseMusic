@@ -1,72 +1,73 @@
-import { ipcRenderer, remote, shell } from 'electron';
-import { configure } from 'mobx';
-import { observer } from 'mobx-react-lite';
-import * as React from 'react';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import { configure } from 'mobx';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { HashRouter } from 'react-router-dom';
 import { useEffectOnce, useEvent } from 'react-use';
-import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
 import './App.less';
 import { useStore } from './context';
+import { useIpc, useShell } from './hooks';
 import MainRouter from './routes';
+import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from '/@/stores/controller';
 
-const { Menu } = remote;
 configure({ enforceActions: 'observed' });
 
 const theme = createMuiTheme({
-    palette: {}
+    palette: {},
 });
+const shell = useShell();
+const ipc = useIpc();
 
-const App: React.SFC = observer(() => {
+const App = observer(() => {
     const navigatorRef = React.useRef<any>();
     const store = useStore();
     const { controller, playing, fm, menu } = store;
 
     useEffectOnce(() => {
-        ipcRenderer.on('player-toggle', () => {
-            if (navigatorRef.current.history.location.pathname === '/search' || playing.show) {
-                return;
-            }
-            controller.toggle();
-        });
-        ipcRenderer.on('player-pause', () => {
-            if (controller.playing) {
-                controller.toggle();
-            }
-        });
-        // Play the next song
-        ipcRenderer.on('player-next', () => {
-            const FMPlaying = isFMPlaying();
-
-            if (FMPlaying) {
-                fm.next();
-            } else {
-                controller.next();
-            }
-        });
-        // Like a song
-        ipcRenderer.on('player-like', () => toggleLike());
-        // Go the home screen
-        ipcRenderer.on('show-home', () => {
-            navigatorRef.current.history.push('/');
-        });
-        // Show personal FM channel
-        ipcRenderer.on('show-fm', () => {
-            navigatorRef.current.history.push('/fm');
-        });
-        // Show preferences screen
-        ipcRenderer.on('show-preferences', () => {
-            togglePreferences();
-        });
-        // SHow slide menu panel
-        ipcRenderer.on('show-menu', () => {
-            menu.toggle(true);
-        });
-        // Show the next up
-        ipcRenderer.on('show-playing', () => {
-            playing.toggle(true);
-        });
+        // TODO ipc.on
+        // ipc.on('player-toggle', () => {
+        //     if (navigatorRef.current.history.location.pathname === '/search' || playing.show) {
+        //         return;
+        //     }
+        //     controller.toggle();
+        // });
+        // ipc.on('player-pause', () => {
+        //     if (controller.playing) {
+        //         controller.toggle();
+        //     }
+        // });
+        // // Play the next song
+        // ipc.on('player-next', () => {
+        //     const FMPlaying = isFMPlaying();
+        //     if (FMPlaying) {
+        //         fm.next();
+        //     } else {
+        //         controller.next();
+        //     }
+        // });
+        // // Like a song
+        // ipc.on('player-like', () => toggleLike());
+        // // Go the home screen
+        // ipc.on('show-home', () => {
+        //     navigatorRef.current.history.push('/');
+        // });
+        // // Show personal FM channel
+        // ipc.on('show-fm', () => {
+        //     navigatorRef.current.history.push('/fm');
+        // });
+        // // Show preferences screen
+        // ipc.on('show-preferences', () => {
+        //     togglePreferences();
+        // });
+        // // SHow slide menu panel
+        // ipc.on('show-menu', () => {
+        //     menu.toggle(true);
+        // });
+        // // Show the next up
+        // ipc.on('show-playing', () => {
+        //     playing.toggle(true);
+        // });
     });
 
     const isFMPlaying = () => controller.playlist.id === fm.playlist.id;
@@ -98,7 +99,7 @@ const App: React.SFC = observer(() => {
                 label: controller.playing ? 'Pause' : 'Play',
                 click: () => {
                     controller.toggle();
-                }
+                },
             },
             {
                 label: 'Next',
@@ -108,54 +109,54 @@ const App: React.SFC = observer(() => {
                     } else {
                         controller.next();
                     }
-                }
+                },
             },
             {
                 label: 'Previous',
                 click: () => {
                     controller.prev();
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Menu',
                 click: () => {
                     menu.toggle(true);
-                }
+                },
             },
             {
                 label: 'Next Up',
                 click: () => {
                     playing.toggle(true);
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Like/Unlike 💖',
                 enabled: logined,
                 click: () => {
                     toggleLike();
-                }
+                },
             },
             {
                 label: 'Ban 💩',
                 enabled: logined && controller.playlist.id === 'PERSONAL_FM',
                 click: () => {
                     fm.ban(controller.song.id);
-                }
+                },
             },
             {
                 label: 'Download 🍭',
                 click: () => {
-                    ipcRenderer.send('download', { songs: JSON.stringify(controller.song) });
-                }
+                    ipc.send('download', { songs: JSON.stringify(controller.song) });
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Repeat 🤘',
@@ -167,7 +168,7 @@ const App: React.SFC = observer(() => {
                     } else {
                         controller.changeMode(PLAYER_LOOP);
                     }
-                }
+                },
             },
             {
                 label: 'Shuffle ⚡️',
@@ -176,105 +177,105 @@ const App: React.SFC = observer(() => {
                 enabled: !isFMPlaying(),
                 click: () => {
                     controller.changeMode(PLAYER_SHUFFLE);
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Preferences...',
                 click: () => {
                     togglePreferences();
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Home',
                 click: () => {
                     navigator.history.push('/');
-                }
+                },
             },
             {
                 label: 'Search',
                 click: () => {
                     navigator.history.push('/search');
-                }
+                },
             },
             {
                 label: 'Playlist',
                 click: () => {
                     navigator.history.push('/playlist/全部');
-                }
+                },
             },
             {
                 label: 'Made For You',
                 click: () => {
                     navigator.history.push('/fm');
-                }
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Show Comments 💬',
                 click: () => {
                     navigator.history.push('/comments');
-                }
+                },
             },
             {
                 label: 'Show Lyrics 🎤',
                 click: () => {
                     navigator.history.push('/lyrics');
-                }
+                },
             },
             {
                 label: 'Show Cover 💅',
                 click: () => {
                     navigator.history.push('/cover');
-                }
+                },
             },
             {
                 label: 'Show Downloads 🚚',
                 click: () => {
-                    ipcRenderer.send('download-show');
-                }
+                    ipc.send('download-show');
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Minimize 👇',
                 click: () => {
-                    remote.getCurrentWindow().minimize();
-                }
+                    // remote.getCurrentWindow().minimize();
+                },
             },
             {
                 label: 'Goodbye 😘',
                 click: () => {
-                    remote.getCurrentWindow().close();
-                }
+                    // remote.getCurrentWindow().close();
+                },
             },
             {
-                type: 'separator'
+                type: 'separator',
             },
             {
                 label: 'Bug report 🐛',
                 click: () => {
                     shell.openExternal('https://github.com/daihy8759/ieaseMusic/issues');
-                }
+                },
             },
             {
                 label: 'Fork me on Github 🚀',
                 click: () => {
                     shell.openExternal('https://github.com/daihy8759/ieaseMusic');
-                }
-            }
+                },
+            },
         ]);
-        contextmenu.popup({
-            window: remote.getCurrentWindow()
-        });
+        // contextmenu.popup({
+        //     window: remote.getCurrentWindow(),
+        // });
     };
 
     useEvent('contextmenu', handleContextMenu);

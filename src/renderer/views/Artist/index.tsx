@@ -1,9 +1,9 @@
-import { useStore } from '@/context';
+import { useStore } from '/@/context';
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import Header from 'components/Header';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
+import Header from '/@/components/Header';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
 import format from 'date-fns/format';
 // @ts-ignore
 import delegate from 'delegate';
@@ -11,11 +11,11 @@ import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
 import ISong from 'interface/ISong';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import helper from 'utils/helper';
-import styles from './index.less';
+import helper from '/@/utils/helper';
+import styles from './index.module.less';
 import { Fab } from '@material-ui/core';
 
 interface MatchParams {
@@ -24,7 +24,7 @@ interface MatchParams {
 
 interface ArtistProps extends RouteComponentProps<MatchParams> {}
 
-const Artist: React.FC<ArtistProps> = observer(props => {
+const Artist: React.FC<ArtistProps> = observer((props) => {
     const { artist, controller, me } = useStore();
     const { loading, profile, follow } = artist;
     const size = profile.size || {};
@@ -38,7 +38,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
         const navs = Array.from(headerRef.current.querySelectorAll('nav'));
 
         delegate(headerRef.current, 'nav', 'click', (e: any) => {
-            navs.map(d => d.classList.remove(styles.selected));
+            navs.map((d) => d.classList.remove(styles.selected));
             e.target.classList.add(styles.selected);
         });
         artist.getArtist(parseInt(props.match.params.id));
@@ -75,7 +75,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                 id: artist.playlist.id,
                 link: `/artist/${artist.profile.id}`,
                 name: artist.playlist.name,
-                songs: artist.playlist.songs
+                songs: artist.playlist.songs,
             });
             await controller.play(songId);
         }
@@ -92,7 +92,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                         return (
                             <li
                                 className={classnames({
-                                    [styles.playing]: sameToPlaying() && song.id === e.id
+                                    [styles.playing]: sameToPlaying() && song.id === e.id,
                                 })}
                                 key={e.id}
                                 onClick={() => play(e.id)}>
@@ -134,7 +134,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                         return (
                             <div
                                 className={classnames(styles.album, {
-                                    [styles.playing]: highlightAlbum(e.id)
+                                    [styles.playing]: highlightAlbum(e.id),
                                 })}
                                 key={e.id}>
                                 <Link to={e.link}>
@@ -142,7 +142,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                                         {...{
                                             height: 48,
                                             width: 48,
-                                            src: e.cover
+                                            src: e.cover,
                                         }}
                                     />
                                 </Link>
@@ -180,7 +180,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                                     {...{
                                         height: 64,
                                         width: 64,
-                                        src: e.avatar
+                                        src: e.avatar,
                                     }}
                                 />
                             </Link>
@@ -211,7 +211,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
             <Header
                 {...{
                     transparent: true,
-                    showPlaylist: true
+                    showPlaylist: true,
                 }}
             />
 
@@ -221,7 +221,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                         width: window.innerWidth,
                         height: window.innerWidth / (640 / 300),
                         src: profile.background,
-                        thumb: (profile.background || '').replace(/\?.*$/, '?param=20y10')
+                        thumb: (profile.background || '').replace(/\?.*$/, '?param=20y10'),
                     }}
                 />
                 <div className={styles.inner}>
@@ -243,7 +243,7 @@ const Artist: React.FC<ArtistProps> = observer(props => {
                         <button
                             type="button"
                             className={classnames(styles.follow, {
-                                [styles.followed]: followed
+                                [styles.followed]: followed,
                             })}
                             onClick={() => follow(followed)}>
                             {followed ? 'Followed' : 'Follow'}

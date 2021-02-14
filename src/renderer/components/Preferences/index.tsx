@@ -1,21 +1,21 @@
-import { useStore } from '@/context';
-import { Button, Switch, Theme, CircularProgress, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Switch, Theme, Typography } from '@material-ui/core';
 import { FlashOnTwoTone, VerifiedUserTwoTone } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
-import Modal from 'components/Modal';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import styles from './index.less';
+import React from 'react';
+import styles from './index.module.less';
+import Modal from '/@/components/Modal';
+import { useStore } from '/@/context';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         button: {
-            margin: theme.spacing(1)
+            margin: theme.spacing(1),
         },
         leftIcon: {
-            marginRight: theme.spacing(1)
-        }
+            marginRight: theme.spacing(1),
+        },
     })
 );
 
@@ -31,7 +31,7 @@ const Preferences: React.SFC = observer(() => {
         preferences.setLastfm({
             username: usernameRef.current.value,
             password: passwordRef.current.value,
-            connected: preferences.lastFm.connected
+            connected: preferences.lastFm.connected,
         });
     };
 
@@ -112,7 +112,7 @@ const Preferences: React.SFC = observer(() => {
             enableProxy,
             setProxy,
             downloads,
-            setDownloads
+            setDownloads,
         } = preferences;
 
         return (
@@ -234,7 +234,7 @@ const Preferences: React.SFC = observer(() => {
                         </label>
                         <label
                             style={{
-                                display: 'block'
+                                display: 'block',
                             }}>
                             <div style={{ display: 'inline-block' }}>
                                 <h4>HTTP proxy</h4>
@@ -251,7 +251,7 @@ const Preferences: React.SFC = observer(() => {
                             <input
                                 className={styles.textInput}
                                 defaultValue={proxy}
-                                onBlur={ev => setProxy(ev.target.value)}
+                                onBlur={(ev) => setProxy(ev.target.value)}
                                 placeholder="http://your.proxy.com:port"
                             />
                         </label>
@@ -261,15 +261,15 @@ const Preferences: React.SFC = observer(() => {
                                 <input
                                     // directory=""
                                     // webkitdirectory=""
-                                    onChange={e => setDownloads(e.target.files[0])}
+                                    onChange={(e) => setDownloads(e.target.files[0])}
                                     ref={downloadRef}
                                     type="file"
                                 />
                                 <h4>Downloads</h4>
-                                <p onClick={e => choiceDownloadDir(e)}>{downloads}</p>
+                                <p onClick={(e) => choiceDownloadDir(e)}>{downloads}</p>
                             </aside>
 
-                            <Button onClick={e => choiceDownloadDir(e)}>Change</Button>
+                            <Button onClick={(e) => choiceDownloadDir(e)}>Change</Button>
                         </label>
                     </article>
 
@@ -374,7 +374,7 @@ const Preferences: React.SFC = observer(() => {
                         variant="contained"
                         color="primary"
                         className={classnames(classes.button, styles.connect, {
-                            [styles.connected]: isConnected()
+                            [styles.connected]: isConnected(),
                         })}
                         disabled={isConnected() || connecting || !lastFm.username || !lastFm.password}
                         onClick={() => connect()}>
@@ -392,10 +392,10 @@ const Preferences: React.SFC = observer(() => {
                                         <input
                                             className={styles.textInput}
                                             defaultValue={e.background}
-                                            onBlur={ev =>
+                                            onBlur={(ev) =>
                                                 saveBackground(index, {
                                                     type: e.type,
-                                                    background: ev.target.value
+                                                    background: ev.target.value,
                                                 })
                                             }
                                             placeholder="Please entry the background address"

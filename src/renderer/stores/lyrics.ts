@@ -1,4 +1,4 @@
-import getLyric from 'api/lyrics';
+import getLyric from '/@/api/lyrics';
 import { makeAutoObservable, runInAction } from 'mobx';
 import controller from './controller';
 

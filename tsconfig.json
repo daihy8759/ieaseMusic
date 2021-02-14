@@ -1,24 +1,22 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/",
-        "sourceMap": true,
-        "noImplicitAny": true,
-        "module": "commonjs",
-        "target": "es6",
-        "jsx": "react",
-        "baseUrl": "./",
-        "experimentalDecorators": true,
+        "target": "esnext",
+        "lib": ["DOM", "DOM.Iterable", "esnext"],
+        "allowJs": false,
+        "skipLibCheck": false,
+        "esModuleInterop": false,
         "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react",
         "paths": {
-            "@/*": ["src/renderer/*"],
-            "stores/*": ["src/renderer/stores/*"],
-            "components/*": ["src/renderer/components/*"],
-            "utils/*": ["src/renderer/utils/*"],
-            "api/*": ["src/renderer/api/*"],
-            "interface/*": ["src/renderer/interface/*"],
-            "assets/*": ["src/renderer/assets/*"],
-            "root/*": ["/"]
+            "/@/*": ["./src/renderer/*"]
         }
     },
-    "include": ["./src/**/*", "./typings/index.d.ts"]
+    "include": ["./src"]
 }

@@ -1,10 +1,10 @@
-import { useStore } from '@/context';
+import { useStore } from '/@/context';
 import { IconButton } from '@material-ui/core';
 import { BarChartTwoTone, MoreVertTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import styles from './index.less';
+import React from 'react';
+import styles from './index.module.less';
 
 interface IHeaderProps {
     showBack?: boolean;
@@ -14,7 +14,7 @@ interface IHeaderProps {
     transparent?: boolean;
 }
 
-const Header: React.SFC<IHeaderProps> = observer(props => {
+const Header: React.SFC<IHeaderProps> = observer((props) => {
     const { controller, menu, me, player } = useStore();
     const { song } = controller;
     const goBack = () => window.history.back();
@@ -83,7 +83,7 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
                         width: '100%',
                         padding: 0,
                         margin: 0,
-                        overflow: 'hidden'
+                        overflow: 'hidden',
                     }}>
                     <figcaption
                         style={{
@@ -97,7 +97,7 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
                             backgroundImage: `url(${`${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`})`,
                             backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
                             filter: 'blur(20px)',
-                            zIndex: -1
+                            zIndex: -1,
                         }}
                     />
                 </figure>
@@ -107,7 +107,7 @@ const Header: React.SFC<IHeaderProps> = observer(props => {
 
             <section
                 className={classnames({
-                    [styles.transparent]: transparent
+                    [styles.transparent]: transparent,
                 })}>
                 {renderBack()}
                 <div>

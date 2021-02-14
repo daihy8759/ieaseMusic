@@ -1,26 +1,25 @@
-import { useStore } from '@/context';
 import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
+import { ArrowForwardTwoTone } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
-import { ArrowForwardTwoTone } from '@material-ui/icons';
-import Controller from 'components/Controller';
-import Indicator from 'components/Indicator';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
+import Controller from '/@/components/Controller';
+import Indicator from '/@/components/Indicator';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import helper from '/@/utils/helper';
 
 interface IStatusProps {
     playing?: boolean;
 }
 
-const Status: FunctionComponent<IStatusProps> = props => {
+const Status: FunctionComponent<IStatusProps> = (props) => {
     const { playing } = props;
 
     if (!playing) {
@@ -38,8 +37,8 @@ const useStyles = makeStyles({
     bigAvatar: {
         margin: 10,
         width: 64,
-        height: 64
-    }
+        height: 64,
+    },
 });
 
 const ListItemLink = (props: any) => {
@@ -98,7 +97,7 @@ const Welcome = observer(() => {
                         {...{
                             className: styles.background,
                             width: 360,
-                            src: favorite.background
+                            src: favorite.background,
                         }}
                     />
 
@@ -109,7 +108,7 @@ const Welcome = observer(() => {
                             {...{
                                 height: 50,
                                 width: 50,
-                                src: favorite.cover
+                                src: favorite.cover,
                             }}
                         />
 
@@ -141,7 +140,7 @@ const Welcome = observer(() => {
                             {...{
                                 height: 50,
                                 width: 50,
-                                src: recommend.cover
+                                src: recommend.cover,
                             }}
                         />
 
@@ -173,8 +172,8 @@ const Welcome = observer(() => {
                                 width: 360,
                                 src: e.background,
                                 className: classnames(styles.background, {
-                                    [styles.album]: e.type
-                                })
+                                    [styles.album]: e.type,
+                                }),
                             }}
                         />
 
@@ -184,7 +183,7 @@ const Welcome = observer(() => {
                                 {...{
                                     height: 50,
                                     width: 50,
-                                    src: e.cover
+                                    src: e.cover,
                                 }}
                             />
 
@@ -218,7 +217,7 @@ const Welcome = observer(() => {
                             to="/login/0"
                             style={{
                                 fontSize: 14,
-                                letterSpacing: 2
+                                letterSpacing: 2,
                             }}>
                             Sign in
                         </Link>
@@ -237,7 +236,7 @@ const Welcome = observer(() => {
                         <ListItemLink
                             href="#/fm"
                             className={classnames({
-                                [styles.playing]: controller.playlist.id === 'PERSONAL_FM'
+                                [styles.playing]: controller.playlist.id === 'PERSONAL_FM',
                             })}>
                             <ListItemText primary="Made For You" />
                         </ListItemLink>

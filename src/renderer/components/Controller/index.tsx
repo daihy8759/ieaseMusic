@@ -1,4 +1,3 @@
-import { useStore } from '@/context';
 import { IconButton } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import {
@@ -11,24 +10,25 @@ import {
     PlayCircleOutlineTwoTone,
     ReorderTwoTone,
     RepeatTwoTone,
-    ShuffleTwoTone
+    ShuffleTwoTone,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
-import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from 'stores/controller';
-import colors from 'utils/colors';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import { PLAYER_LOOP, PLAYER_REPEAT, PLAYER_SHUFFLE } from '/@/stores/controller';
+import colors from '/@/utils/colors';
+import helper from '/@/utils/helper';
 
 const useStyles = makeStyles({
     liked: {
         color: red[900],
-        textShadow: `0 0 24px ${red[900]}`
-    }
+        textShadow: `0 0 24px ${red[900]}`,
+    },
 });
 
 const Controller: React.FC = observer(() => {
@@ -38,7 +38,7 @@ const Controller: React.FC = observer(() => {
     const seek = (e: any) => {
         const percent = e.clientX / window.innerWidth;
         const {
-            song: { duration }
+            song: { duration },
         } = controller;
         const time = duration * percent;
 
@@ -77,7 +77,7 @@ const Controller: React.FC = observer(() => {
     return (
         <div
             className={styles.container}
-            ref={ele => {
+            ref={(ele) => {
                 if (!ele) return;
 
                 ele.style.backgroundColor = song.id ? 'none' : 'white';
@@ -92,7 +92,7 @@ const Controller: React.FC = observer(() => {
                         width: '100%',
                         padding: 0,
                         margin: 0,
-                        overflow: 'hidden'
+                        overflow: 'hidden',
                     }}>
                     <figcaption
                         style={{
@@ -106,14 +106,14 @@ const Controller: React.FC = observer(() => {
                             backgroundImage: `url(${`${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`})`,
                             backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
                             filter: 'blur(10px)',
-                            zIndex: -1
+                            zIndex: -1,
                         }}
                     />
                 </figure>
             ) : (
                 false
             )}
-            <div id="progress" className={styles.bar} onClick={e => seek(e)}>
+            <div id="progress" className={styles.bar} onClick={(e) => seek(e)}>
                 <div className={styles.playing} />
                 <div className={styles.buffering} />
             </div>
@@ -127,10 +127,10 @@ const Controller: React.FC = observer(() => {
                         height: 50,
                         width: 50,
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                     to={getPlayerLink()}
-                    onClick={e => {
+                    onClick={(e) => {
                         if (e.currentTarget.href.endsWith('#/')) {
                             e.preventDefault();
                         }
@@ -141,9 +141,9 @@ const Controller: React.FC = observer(() => {
                             width: 32,
                             src: song.album.cover,
                             style: {
-                                filter: `drop-shadow(3mm 2mm 4mm ${colors.randomColor()})`
+                                filter: `drop-shadow(3mm 2mm 4mm ${colors.randomColor()})`,
                             },
-                            className: styles.cover
+                            className: styles.cover,
                         }}
                     />
                 </Link>

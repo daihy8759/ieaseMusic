@@ -1,20 +1,22 @@
-import { useStore } from '@/context';
-import FadeImage from 'components/FadeImage';
-import { SvgIcon, IconButton } from '@material-ui/core';
-import { remote, shell } from 'electron';
+import { IconButton, SvgIcon } from '@material-ui/core';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from './index.less';
+import styles from './index.module.less';
+import FadeImage from '/@/components/FadeImage';
+import { useStore } from '/@/context';
+import { useShell } from '/@/hooks';
 
-const Menu: React.SFC = observer(() => {
+const shell = useShell();
+
+const Menu = observer(() => {
     const { menu, me } = useStore();
     const { show } = menu;
     if (!show) {
         return null;
     }
     const doLogout = () => {
-        remote.getCurrentWindow().webContents.session.clearStorageData();
+        // remote.getCurrentWindow().webContents.session.clearStorageData();
         me.logout();
     };
 
@@ -59,7 +61,7 @@ const Menu: React.SFC = observer(() => {
             tabIndex={-1}
             className={styles.container}
             // Press ESC close menu
-            onKeyUp={e => e.keyCode === 27 && close()}>
+            onKeyUp={(e) => e.keyCode === 27 && close()}>
             <div className={styles.overlay} onClick={close} />
             <section className={styles.body}>
                 <div>
@@ -97,7 +99,7 @@ const Menu: React.SFC = observer(() => {
 
                 <div className={styles.social}>
                     <IconButton
-                        onClick={e => {
+                        onClick={(e) => {
                             e.preventDefault();
                             shell.openExternal('https://github.com/daihy8759/ieaseMusic');
                             close();

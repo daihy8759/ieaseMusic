@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 
 const AdapterLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (

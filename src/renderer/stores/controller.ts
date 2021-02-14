@@ -1,19 +1,20 @@
-import { getSongUrl } from 'api/player';
-import { ipcRenderer } from 'electron';
-import IPlayList from 'interface/IPlayList';
-import ISong from 'interface/ISong';
+import { getSongUrl } from '/@/api/player';
+import IPlayList from '/@/interface/IPlayList';
+import ISong from '/@/interface/ISong';
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
-import lastfm from 'utils/lastfm';
+import lastfm from '/@/utils/lastfm';
 import comments from './comments';
 import fm from './fm';
 import me from './me';
 import preferences from './preferences';
 import upnext from './upnext';
+import { useIpc } from '../hooks';
 
 const PLAYER_SHUFFLE = 0;
 const PLAYER_REPEAT = 1;
 const PLAYER_LOOP = 2;
 const MODES = [PLAYER_SHUFFLE, PLAYER_REPEAT, PLAYER_LOOP];
+const ipc = useIpc();
 
 class Controller {
     playing = false;
@@ -46,8 +47,8 @@ class Controller {
         const [song] = playlist.songs;
         this.song = song;
 
-        ipcRenderer.send('update-playing', {
-            songs: playlist.songs.slice().map((d: any) => toJS(d))
+        ipc.send('update-playing', {
+            songs: playlist.songs.slice().map((d: any) => toJS(d)),
         });
     }
 
@@ -64,7 +65,7 @@ class Controller {
         }
 
         if (songId) {
-            song = songs.find(e => e.id === songId);
+            song = songs.find((e) => e.id === songId);
         }
 
         song = song || songs[0];
@@ -72,9 +73,9 @@ class Controller {
         // Save to history list
         if (!this.history.includes(songId)) {
             this.history[forward ? 'push' : 'unshift'](song.id);
-            const songs = this.playlist.songs.filter(e => this.history.includes(e.id)).map(song => toJS(song));
-            ipcRenderer.send('update-history', {
-                songs
+            const songs = this.playlist.songs.filter((e) => this.history.includes(e.id)).map((song) => toJS(song));
+            ipc.send('update-history', {
+                songs,
             });
         }
 
@@ -85,12 +86,12 @@ class Controller {
         if (preferences.showNotification) {
             const notification = new Notification(song.name, {
                 icon: song.album.cover,
-                body: song.artists.map(e => e.name).join(' / '),
-                vibrate: [200, 100, 200]
+                body: song.artists.map((e) => e.name).join(' / '),
+                vibrate: [200, 100, 200],
             });
 
             notification.onclick = () => {
-                ipcRenderer.send('show');
+                ipc.send('show');
             };
         }
 
@@ -128,7 +129,7 @@ class Controller {
         }
 
         if (this.mode === PLAYER_SHUFFLE) {
-            const songs = this.playlist.songs.filter(e => history.indexOf(e.id) === -1);
+            const songs = this.playlist.songs.filter((e) => history.indexOf(e.id) === -1);
             if (songs.length === 0) {
                 await this.play(history[history.length - 1]);
                 return;
@@ -139,7 +140,7 @@ class Controller {
             return;
         }
 
-        index = playlist.songs.findIndex(e => e.id === song.id);
+        index = playlist.songs.findIndex((e) => e.id === song.id);
 
         if (--index < 0) {
             index = playlist.songs.length - 1;
@@ -182,7 +183,7 @@ class Controller {
 
             case this.mode !== PLAYER_SHUFFLE:
                 // Get song from current track list
-                index = songs.findIndex(e => e.id === song.id);
+                index = songs.findIndex((e) => e.id === song.id);
 
                 if (++index < songs.length) {
                     nextSong = songs[index];
@@ -195,7 +196,7 @@ class Controller {
 
             default:
                 // Random a song from the remaining
-                songs = songs.filter(e => !history.includes(e.id));
+                songs = songs.filter((e) => !history.includes(e.id));
 
                 if (songs.length) {
                     next = songs[Math.floor(Math.random() * songs.length)].id;
@@ -212,7 +213,7 @@ class Controller {
         } catch (ex) {
             // Anti-warnning
         }
-        return songs.find(e => e.id === next);
+        return songs.find((e) => e.id === next);
     };
 
     stop = () => {
@@ -261,15 +262,15 @@ class Controller {
     };
 
     updateStatus() {
-        ipcRenderer.send('update-status', {
+        ipc.send('update-status', {
             playing: this.playing,
             song: toJS(this.song),
-            modes: MODES.map(e => {
+            modes: MODES.map((e) => {
                 return {
                     mode: e,
-                    enabled: e === this.mode
+                    enabled: e === this.mode,
                 };
-            })
+            }),
         });
     }
 }

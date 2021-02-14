@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import NeteaseCloudMusicApi from './';
+import { useMusicApi } from '../hooks';
+
+const musicApi = useMusicApi();
 
 async function getSongs(id: number, cookie?: string) {
     try {
-        const res = await NeteaseCloudMusicApi.playlist_detail({ id, cookie });
+        const res = await musicApi.playlist_detail({ id, cookie });
         const { body } = res;
         if (body.code !== 200) {
             throw body;
@@ -19,13 +21,13 @@ async function getSongs(id: number, cookie?: string) {
                     id: al.id,
                     name: al.name,
                     cover: `${al.picUrl}?param=y100y100`,
-                    link: `/player/1/${al.id}`
+                    link: `/player/1/${al.id}`,
                 },
                 artists: ar.map((e: any) => ({
                     id: e.id,
                     name: e.name,
-                    link: e.id ? `/artist/${e.id}` : ''
-                }))
+                    link: e.id ? `/artist/${e.id}` : '',
+                })),
             };
         });
     } catch (e) {
@@ -36,8 +38,8 @@ async function getSongs(id: number, cookie?: string) {
 
 async function getPersonalized(cookie?: string) {
     try {
-        const { body } = await NeteaseCloudMusicApi.personalized({
-            cookie
+        const { body } = await musicApi.personalized({
+            cookie,
         });
         if (body.code !== 200) {
             throw body;
@@ -51,7 +53,7 @@ async function getPersonalized(cookie?: string) {
                 played: d.playCount,
                 cover: `${d.picUrl}?param=130y130`,
                 background: `${d.picUrl}?param=500y500`,
-                link: `/player/0/${d.id}`
+                link: `/player/0/${d.id}`,
             };
         });
     } catch (e) {
@@ -62,7 +64,7 @@ async function getPersonalized(cookie?: string) {
 
 async function getDaily(cookie?: string) {
     let list = [];
-    const { body } = await NeteaseCloudMusicApi.recommend_songs({ cookie });
+    const { body } = await musicApi.recommend_songs({ cookie });
     if (body.code !== 200) {
         throw body;
     }
@@ -83,24 +85,24 @@ async function getDaily(cookie?: string) {
                         id: album.id,
                         name: album.name,
                         cover: `${album.picUrl}?param=100y100`,
-                        link: `/player/1/${album.id}`
+                        link: `/player/1/${album.id}`,
                     },
                     artists: artists.map((e: any) => ({
                         id: e.id,
                         name: e.name,
                         // Broken link
-                        link: e.id ? `/artist/${e.id}` : ''
-                    }))
+                        link: e.id ? `/artist/${e.id}` : '',
+                    })),
                 };
-            })
-        }
+            }),
+        },
     ];
     return list;
 }
 
 async function getLiked(uid: number, cookie?: string) {
     try {
-        const { body } = await NeteaseCloudMusicApi.user_playlist({ uid, cookie });
+        const { body } = await musicApi.user_playlist({ uid, cookie });
         if (body.code !== 200) {
             console.error('Failed to get liked: {}', body);
         } else {
@@ -117,8 +119,8 @@ async function getLiked(uid: number, cookie?: string) {
                     link: `/player/0/${liked.id}`,
                     cover: liked.coverImgUrl,
                     background: liked.creator.backgroundUrl,
-                    songs
-                }
+                    songs,
+                },
             ];
         }
     } catch (ex) {
@@ -129,7 +131,7 @@ async function getLiked(uid: number, cookie?: string) {
 
 async function getRecommend(cookie?: string) {
     try {
-        const { body } = await NeteaseCloudMusicApi.recommend_resource({ cookie });
+        const { body } = await musicApi.recommend_resource({ cookie });
         if (body.code !== 200) {
             throw body;
         } else {
@@ -142,7 +144,7 @@ async function getRecommend(cookie?: string) {
                     played: e.playcount,
                     cover: `${e.picUrl}?param=130y130`,
                     background: e.creator.backgroundUrl,
-                    link: `/player/0/${e.id}`
+                    link: `/player/0/${e.id}`,
                 };
             });
         }
@@ -154,7 +156,7 @@ async function getRecommend(cookie?: string) {
 
 async function getNewest(cookie?: string) {
     try {
-        const { body } = await NeteaseCloudMusicApi.album_newest({ cookie });
+        const { body } = await musicApi.album_newest({ cookie });
         if (body.code !== 200) {
             throw body;
         } else {
@@ -167,7 +169,7 @@ async function getNewest(cookie?: string) {
                     size: e.size,
                     cover: `${e.picUrl}?param=130y130`,
                     background: `${e.artist.picUrl}?param=640y300`,
-                    link: `/player/1/${e.id}`
+                    link: `/player/1/${e.id}`,
                 };
             });
         }
@@ -184,7 +186,7 @@ async function getHomeData(id?: number, cookie?: string) {
             getDaily(cookie),
             getRecommend(cookie),
             getPersonalized(cookie),
-            getNewest(cookie)
+            getNewest(cookie),
         ]);
         return [...liked, ...daily, ...recommend, ...personalizedList, ...newest];
     }

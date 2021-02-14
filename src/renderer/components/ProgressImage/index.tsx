@@ -1,7 +1,7 @@
 import classnames from 'classnames';
-import * as React from 'react';
+import React from 'react';
 import { useUpdateEffect } from 'react-use';
-import styles from './index.less';
+import styles from './index.module.less';
 
 interface ProgressImageProps {
     src: string;
@@ -22,7 +22,7 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
     height,
     width,
     pallet,
-    fallback = 'https://source.unsplash.com/random'
+    fallback = 'https://source.unsplash.com/random',
 }) => {
     let thumbNew = thumb;
     if (!src) return null;
@@ -69,7 +69,7 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
             style={Object.assign(
                 {
                     height,
-                    width
+                    width,
                 },
                 style
             )}>
@@ -81,14 +81,14 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
                 src={src}
                 style={{
                     height,
-                    width
+                    width,
                 }}
             />
             <div
                 className={styles.thumb}
                 ref={thumbRef}
                 style={{
-                    paddingBottom: (height / width) * 100 || 0
+                    paddingBottom: (height / width) * 100 || 0,
                 }}>
                 <img
                     alt=""
@@ -96,12 +96,12 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
                         src: thumbNew,
                         style: {
                             height,
-                            width
+                            width,
                         },
                         onLoad(e: any) {
                             // Default show the gray background, When image has been loaded show the thumb
                             e.target.classList.add(styles.loaded);
-                        }
+                        },
                     }}
                 />
             </div>

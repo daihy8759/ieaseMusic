@@ -1,14 +1,14 @@
-import { useStore } from '@/context';
+import { useStore } from '/@/context';
 import { Zoom } from '@material-ui/core';
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { useUpdateEffect } from 'react-use';
-import styles from './index.less';
+import styles from './index.module.less';
 
 const PlayerStatus: React.FC = observer(() => {
     const {
-        controller: { playing }
+        controller: { playing },
     } = useStore();
     const [zoom, setZoom] = React.useState(false);
 

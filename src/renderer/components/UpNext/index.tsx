@@ -1,12 +1,12 @@
-import { useStore } from '@/context';
-import classnames from 'classnames';
 import { PlayArrowSharp } from '@material-ui/icons';
-import Modal from 'components/Modal';
-import ProgressImage from 'components/ProgressImage';
+import classnames from 'classnames';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import styles from './index.less';
+import React from 'react';
+import styles from './index.module.less';
+import Modal from '/@/components/Modal';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
 
 const UpNext: React.SFC = observer(() => {
     const { upnext, controller } = useStore();
@@ -40,7 +40,7 @@ const UpNext: React.SFC = observer(() => {
                                 className: styles.cover,
                                 height: 140,
                                 width: 140,
-                                src: song.album.cover
+                                src: song.album.cover,
                             }}
                         />
                     </div>

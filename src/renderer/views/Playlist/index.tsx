@@ -1,16 +1,15 @@
-import { useStore } from '@/context';
 import Grid from '@material-ui/core/Grid';
 import classnames from 'classnames';
-import Controller from 'components/Controller';
-import Header from 'components/Header';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
-import { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
+import Controller from '/@/components/Controller';
+import Header from '/@/components/Header';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import helper from '/@/utils/helper';
 
 interface MatchParams {
     type: string;
@@ -18,7 +17,7 @@ interface MatchParams {
 
 interface IPlaylistProps extends RouteComponentProps<MatchParams> {}
 
-const Playlist: FunctionComponent<IPlaylistProps> = observer(props => {
+const Playlist: FunctionComponent<IPlaylistProps> = observer((props) => {
     const { match } = props;
     const { playlist, controller } = useStore();
     const listRef = React.useRef<HTMLElement>();
@@ -62,14 +61,14 @@ const Playlist: FunctionComponent<IPlaylistProps> = observer(props => {
                         <Grid item xs={6} key={index}>
                             <article
                                 className={classnames(styles.item, {
-                                    [styles.playing]: isPlaying(e.id)
+                                    [styles.playing]: isPlaying(e.id),
                                 })}>
                                 <Link to={e.link}>
                                     <ProgressImage
                                         {...{
                                             height: 64,
                                             width: 64,
-                                            src: e.cover
+                                            src: e.cover,
                                         }}
                                     />
                                 </Link>
@@ -90,7 +89,7 @@ const Playlist: FunctionComponent<IPlaylistProps> = observer(props => {
     };
 
     const {
-        match: { params }
+        match: { params },
     } = props;
     const { loading, types, list } = playlist;
 
@@ -99,7 +98,7 @@ const Playlist: FunctionComponent<IPlaylistProps> = observer(props => {
             <Header
                 {...{
                     transparent: true,
-                    showBack: true
+                    showBack: true,
                 }}
             />
 
@@ -113,7 +112,7 @@ const Playlist: FunctionComponent<IPlaylistProps> = observer(props => {
                             <li
                                 key={e.name}
                                 className={classnames(styles.nav, {
-                                    [styles.selected]: selected
+                                    [styles.selected]: selected,
                                 })}>
                                 {selected ? (
                                     <Link to={`/playlist/${encodeURIComponent(e.name)}`}>

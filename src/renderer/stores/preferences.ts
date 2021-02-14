@@ -1,11 +1,10 @@
-import { ipcRenderer, remote } from 'electron';
-import { makeAutoObservable, runInAction } from 'mobx';
-import * as path from 'path';
-import lastfm from 'utils/lastfm';
-import * as pkg from '../../../package.json';
-import storage from '../../shared/storage';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import controller from './controller';
+import { useIpc, useStorage } from '/@/hooks';
+import lastfm from '/@/utils/lastfm';
 
+const ipc = useIpc();
+const storage = useStorage();
 class Preferences {
     show = false;
 
@@ -30,7 +29,7 @@ class Preferences {
     lastFm = {
         username: '', // Your last.fm username
         password: '', // Your last.fm password
-        connected: ''
+        connected: '',
     };
 
     connecting = false;
@@ -43,272 +42,274 @@ class Preferences {
         Xiami: false,
         Kugou: false,
         Baidu: true,
-        kuwo: true
+        kuwo: true,
     };
 
     proxy = '';
 
     disableProxy = false;
 
-    downloads = path.join(remote.app.getPath('music'), pkg.name);
+    // TODO:
+    // downloads = path.join(remote.app.getPath('music'), pkg.name);
+    downloads = '';
 
     backgrounds = [
         {
             type: '全部',
-            background: ''
+            background: '',
         },
         {
             type: '华语',
-            background: ''
+            background: '',
         },
         {
             type: '欧美',
-            background: ''
+            background: '',
         },
         {
             type: '日语',
-            background: ''
+            background: '',
         },
         {
             type: '韩语',
-            background: ''
+            background: '',
         },
         {
             type: '粤语',
-            background: ''
+            background: '',
         },
         {
             type: '小语种',
-            background: ''
+            background: '',
         },
         {
             type: '流行',
-            background: ''
+            background: '',
         },
         {
             type: '摇滚',
-            background: ''
+            background: '',
         },
         {
             type: '民谣',
-            background: ''
+            background: '',
         },
         {
             type: '电子',
-            background: ''
+            background: '',
         },
         {
             type: '舞曲',
-            background: ''
+            background: '',
         },
         {
             type: '说唱',
-            background: ''
+            background: '',
         },
         {
             type: '轻音乐',
-            background: ''
+            background: '',
         },
         {
             type: '爵士',
-            background: ''
+            background: '',
         },
         {
             type: '乡村',
-            background: ''
+            background: '',
         },
         {
             type: 'R&B/Soul',
-            background: ''
+            background: '',
         },
         {
             type: '古典',
-            background: ''
+            background: '',
         },
         {
             type: '金属',
-            background: ''
+            background: '',
         },
         {
             type: '蓝调',
-            background: ''
+            background: '',
         },
         {
             type: '古风',
-            background: ''
+            background: '',
         },
         {
             type: '后摇',
-            background: ''
+            background: '',
         },
         {
             type: 'Bossa Nova',
-            background: ''
+            background: '',
         },
         {
             type: '清晨',
-            background: ''
+            background: '',
         },
         {
             type: '夜晚',
-            background: ''
+            background: '',
         },
         {
             type: '学习',
-            background: ''
+            background: '',
         },
         {
             type: '工作',
-            background: ''
+            background: '',
         },
         {
             type: '午休',
-            background: ''
+            background: '',
         },
         {
             type: '下午茶',
-            background: ''
+            background: '',
         },
         {
             type: '地铁',
-            background: ''
+            background: '',
         },
         {
             type: '驾车',
-            background: ''
+            background: '',
         },
         {
             type: '运动',
-            background: ''
+            background: '',
         },
         {
             type: '旅行',
-            background: ''
+            background: '',
         },
         {
             type: '散步',
-            background: ''
+            background: '',
         },
         {
             type: '酒吧',
-            background: ''
+            background: '',
         },
         {
             type: '怀旧',
-            background: ''
+            background: '',
         },
         {
             type: '清新',
-            background: ''
+            background: '',
         },
         {
             type: '浪漫',
-            background: ''
+            background: '',
         },
         {
             type: '性感',
-            background: ''
+            background: '',
         },
         {
             type: '伤感',
-            background: ''
+            background: '',
         },
         {
             type: '治愈',
-            background: ''
+            background: '',
         },
         {
             type: '放松',
-            background: ''
+            background: '',
         },
         {
             type: '孤独',
-            background: ''
+            background: '',
         },
         {
             type: '感动',
-            background: ''
+            background: '',
         },
         {
             type: '兴奋',
-            background: ''
+            background: '',
         },
         {
             type: '快乐',
-            background: ''
+            background: '',
         },
         {
             type: '安静',
-            background: ''
+            background: '',
         },
         {
             type: '思念',
-            background: ''
+            background: '',
         },
         {
             type: '影视原声',
-            background: ''
+            background: '',
         },
         {
             type: 'ACG',
-            background: ''
+            background: '',
         },
         {
             type: '校园',
-            background: ''
+            background: '',
         },
         {
             type: '游戏',
-            background: ''
+            background: '',
         },
         {
             type: '70后',
-            background: ''
+            background: '',
         },
         {
             type: '80后',
-            background: ''
+            background: '',
         },
         {
             type: '90后',
-            background: ''
+            background: '',
         },
         {
             type: '网络歌曲',
-            background: ''
+            background: '',
         },
         {
             type: 'KTV',
-            background: ''
+            background: '',
         },
         {
             type: '经典',
-            background: ''
+            background: '',
         },
         {
             type: '翻唱',
-            background: ''
+            background: '',
         },
         {
             type: '吉他',
-            background: ''
+            background: '',
         },
         {
             type: '钢琴',
-            background: ''
+            background: '',
         },
         {
             type: '器乐',
-            background: ''
+            background: '',
         },
         {
             type: '儿童',
-            background: ''
+            background: '',
         },
         {
             type: '00后',
-            background: ''
-        }
+            background: '',
+        },
     ];
 
     constructor() {
@@ -316,7 +317,7 @@ class Preferences {
     }
 
     async init() {
-        let preferences: any = storage.get('preferences');
+        let preferences: any = await storage.get('preferences');
         if (!preferences) {
             preferences = {};
             storage.set('preferences', preferences);
@@ -337,7 +338,7 @@ class Preferences {
             enginers = this.enginers,
             proxy = this.proxy,
             disableProxy = this.disableProxy,
-            downloads = this.downloads
+            downloads = this.downloads,
         } = preferences;
         this.showTray = !!showTray;
         this.showMenuBarOnLinux = !!showMenuBarOnLinux;
@@ -378,35 +379,38 @@ class Preferences {
             enginers,
             proxy,
             disableProxy,
-            downloads
+            downloads,
         } = this;
 
-        await storage.set('preferences', {
-            showTray,
-            showMenuBarOnLinux,
-            revertTrayIcon,
-            alwaysOnTop,
-            showNotification,
-            autoPlay,
-            volume,
-            highquality,
-            backgrounds,
-            autoupdate,
-            scrobble,
-            lastFm,
-            enginers,
-            proxy,
-            disableProxy,
-            downloads
-        });
+        await storage.set(
+            'preferences',
+            JSON.stringify({
+                showTray,
+                showMenuBarOnLinux,
+                revertTrayIcon,
+                alwaysOnTop,
+                showNotification,
+                autoPlay,
+                volume,
+                highquality,
+                backgrounds,
+                autoupdate,
+                scrobble,
+                lastFm,
+                enginers,
+                proxy,
+                disableProxy,
+                downloads,
+            })
+        );
 
-        ipcRenderer.send('update-preferences', {
+        ipc.send('update-preferences', {
             playing: controller.playing,
             showTray,
             alwaysOnTop,
             proxy,
             disableProxy,
-            revertTrayIcon
+            revertTrayIcon,
         });
     };
 
@@ -497,7 +501,7 @@ class Preferences {
         }
 
         this.proxy = newProxy;
-        ipcRenderer.send('setProxy', newProxy);
+        ipc.send('setProxy', newProxy);
         this.save();
     };
 
@@ -512,7 +516,7 @@ class Preferences {
             this.setLastfm({
                 username,
                 password,
-                connected: `${username}:${password}`
+                connected: `${username}:${password}`,
             });
         }
         runInAction(() => {

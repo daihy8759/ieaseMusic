@@ -1,4 +1,6 @@
-import Api from './';
+import { useMusicApi } from '../hooks';
+
+const musicApi = useMusicApi();
 
 async function getLyric(id: number) {
     if (!id) {
@@ -6,7 +8,7 @@ async function getLyric(id: number) {
     }
     const result: any = {};
     try {
-        const { body } = await Api.lyric({ id });
+        const { body } = await musicApi.lyric({ id });
         if (body.code === 200) {
             const { lrc } = body;
             if (lrc === undefined) {
@@ -21,10 +23,7 @@ async function getLyric(id: number) {
                     return;
                 }
 
-                const timestamp = match[0]
-                    .replace(/\D/g, ':')
-                    .replace(/^:|:$/g, '')
-                    .split(':');
+                const timestamp = match[0].replace(/\D/g, ':').replace(/^:|:$/g, '').split(':');
                 if (!timestamp[0]) {
                     return;
                 }

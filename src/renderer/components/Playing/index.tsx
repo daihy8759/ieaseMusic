@@ -1,16 +1,16 @@
-import { useStore } from '@/context';
 import classnames from 'classnames';
-import FadeImage from 'components/FadeImage';
-import Indicator from 'components/Indicator';
-import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUpdateEffect } from 'react-use';
-import colors from 'utils/colors';
-import styles from './index.less';
+import styles from './index.module.less';
+import FadeImage from '/@/components/FadeImage';
+import Indicator from '/@/components/Indicator';
+import { useStore } from '/@/context';
+import IArtist from '/@/interface/IArtist';
+import colors from '/@/utils/colors';
 
-const Playing: React.SFC = observer(() => {
+const Playing = observer(() => {
     const { playing, controller } = useStore();
     if (!playing.show) {
         return null;
@@ -28,7 +28,7 @@ const Playing: React.SFC = observer(() => {
 
     const highlight = (offset: number) => {
         const songs = Array.from(listRef.current.querySelectorAll('[data-id]'));
-        let index = songs.findIndex(e => e.classList.contains(styles.active));
+        let index = songs.findIndex((e) => e.classList.contains(styles.active));
 
         if (index > -1) {
             songs[index].classList.remove(styles.active);
@@ -61,7 +61,7 @@ const Playing: React.SFC = observer(() => {
             // Up
             '38': -1,
             // Down
-            '40': +1
+            '40': +1,
         }[keyCode];
 
         if (offset) {
@@ -84,7 +84,7 @@ const Playing: React.SFC = observer(() => {
         const {
             playlist: { songs = [] },
             song = {},
-            play
+            play,
         } = controller;
         const { filtered } = playing;
         let list = songs;
@@ -94,7 +94,7 @@ const Playing: React.SFC = observer(() => {
         if (list.length === 0) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
-        return list.map(e => {
+        return list.map((e) => {
             const playing = e.id === song.id;
 
             return (
@@ -103,7 +103,7 @@ const Playing: React.SFC = observer(() => {
 
                     <aside
                         className={classnames(styles.song, {
-                            [styles.playing]: playing
+                            [styles.playing]: playing,
                         })}
                         data-id={e.id}
                         onClick={() => {
@@ -130,7 +130,7 @@ const Playing: React.SFC = observer(() => {
                         <div
                             className={styles.mask}
                             style={{
-                                background: colors.randomGradient()
+                                background: colors.randomGradient(),
                             }}
                         />
                     </aside>
@@ -157,7 +157,7 @@ const Playing: React.SFC = observer(() => {
     }, [playing.show, playing]);
 
     return (
-        <div className={styles.container} onKeyUp={e => pressEscExit(e)} ref={containerRef} tabIndex={-1}>
+        <div className={styles.container} onKeyUp={(e) => pressEscExit(e)} ref={containerRef} tabIndex={-1}>
             <div className={styles.overlay} onClick={close} />
 
             <section>

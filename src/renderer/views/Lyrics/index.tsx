@@ -1,17 +1,17 @@
-import { useStore } from '@/context';
-import Header from 'components/Header';
-import Hero from 'components/Hero';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
-import styles from './index.less';
+import styles from './index.module.less';
+import Header from '/@/components/Header';
+import Hero from '/@/components/Hero';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
 
 interface ILyricsProps extends RouteComponentProps {}
 
-const Lyrics: React.SFC<ILyricsProps> = observer(props => {
+const Lyrics: React.SFC<ILyricsProps> = observer((props) => {
     const { lyrics, controller } = useStore();
     const { loading, list: lyricsList } = lyrics;
     const { song } = controller;
@@ -40,7 +40,7 @@ const Lyrics: React.SFC<ILyricsProps> = observer(props => {
                 </div>
             );
         }
-        return times.map(e => {
+        return times.map((e) => {
             return (
                 <p data-times={e} key={e}>
                     <span>{lyricsList[e]}</span>
@@ -60,22 +60,22 @@ const Lyrics: React.SFC<ILyricsProps> = observer(props => {
                     {...{
                         height: window.innerHeight,
                         width: window.innerWidth,
-                        src: song.album.cover.replace(/\?.*$/, '')
+                        src: song.album.cover.replace(/\?.*$/, ''),
                     }}
                 />
 
                 <section
-                    onWheel={e => {
+                    onWheel={(e) => {
                         e.currentTarget.setAttribute('scrolling', 'true');
                     }}
-                    onMouseLeave={e => {
+                    onMouseLeave={(e) => {
                         e.currentTarget.removeAttribute('scrolling');
                     }}>
                     <div
                         style={{
                             position: 'relative',
                             paddingTop: '10vh',
-                            paddingBottom: '14vh'
+                            paddingBottom: '14vh',
                         }}>
                         {renderLyrics()}
                     </div>

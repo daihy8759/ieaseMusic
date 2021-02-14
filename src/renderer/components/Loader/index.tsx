@@ -1,7 +1,7 @@
 import classnames from 'classnames';
-import * as React from 'react';
-import colors from 'utils/colors';
-import styles from './index.less';
+import React from 'react';
+import colors from '/@/utils/colors';
+import styles from './index.module.less';
 
 interface ILoaderProps {
     show?: boolean;
@@ -14,7 +14,7 @@ const Loader: React.SFC<ILoaderProps> = ({ show = false }) => {
     return (
         <div
             className={classnames(styles.container, {
-                [styles.show]: show
+                [styles.show]: show,
             })}>
             <div className={classnames(styles.loader, styles.animationLoader)}>
                 <span

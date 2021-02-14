@@ -1,10 +1,12 @@
-import { useStore } from '@/context';
-import { ipcRenderer } from 'electron';
 import throttle from 'lodash.throttle';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
-import helper from 'utils/helper';
+import { useStore } from '/@/context';
+import { useIpc } from '/@/hooks';
+import helper from '/@/utils/helper';
+
+const ipc = useIpc();
 
 const AudioPlayer: React.FC = observer(() => {
     const store = useStore();
@@ -15,15 +17,15 @@ const AudioPlayer: React.FC = observer(() => {
 
     const [audio, state, controls, ref] = useAudio({
         src: song.data ? song.data.src : null,
-        autoPlay: true
+        autoPlay: true,
     });
     const throttled = React.useRef(
-        throttle(throttledValue => {
+        throttle((throttledValue) => {
             onProgress(throttledValue);
         }, 1000)
     );
     const throttledLyrics = React.useRef(
-        throttle(throttledValue => {
+        throttle((throttledValue) => {
             onScrollLyrics(throttledValue);
         }, 200)
     );
@@ -149,17 +151,18 @@ const AudioPlayer: React.FC = observer(() => {
         const { volume, setVolume } = preferences;
         controls.volume(volume);
 
-        ipcRenderer.on('player-volume-up', () => {
-            const volumeUp = state.volume + 0.1;
+        // TODO ipc.on
+        // ipc.on('player-volume-up', () => {
+        //     const volumeUp = state.volume + 0.1;
 
-            controls.volume(volumeUp > 1 ? 1 : volumeUp);
-            setVolume(state.volume);
-        });
-        ipcRenderer.on('player-volume-down', () => {
-            const volumeDown = state.volume - 0.1;
-            controls.volume(volumeDown < 0 ? 0 : volumeDown);
-            setVolume(state.volume);
-        });
+        //     controls.volume(volumeUp > 1 ? 1 : volumeUp);
+        //     setVolume(state.volume);
+        // });
+        // ipc.on('player-volume-down', () => {
+        //     const volumeDown = state.volume - 0.1;
+        //     controls.volume(volumeDown < 0 ? 0 : volumeDown);
+        //     setVolume(state.volume);
+        // });
     });
 
     useUpdateEffect(() => {

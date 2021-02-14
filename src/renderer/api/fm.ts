@@ -1,7 +1,8 @@
-import IArtist from 'interface/IArtist';
-import ISong from 'interface/ISong';
-import Api from './';
+import { useMusicApi } from '../hooks';
+import IArtist from '/@/interface/IArtist';
+import ISong from '/@/interface/ISong';
 
+const musicApi = useMusicApi();
 interface PlaylistResponse {
     id: string | number;
     name: string;
@@ -13,7 +14,7 @@ interface PlaylistResponse {
 async function getPlaylist(): Promise<PlaylistResponse> {
     let songs: any = [];
     try {
-        const { body } = await Api.personal_fm({});
+        const { body } = await musicApi.personal_fm({});
         if (body.code !== 200) {
             throw body;
         }
@@ -41,21 +42,21 @@ async function getPlaylist(): Promise<PlaylistResponse> {
                     id: album.id,
                     name: album.name,
                     cover: album.picUrl,
-                    link: `/player/1/${album.id}`
+                    link: `/player/1/${album.id}`,
                 },
                 artists: artists.map((ar: IArtist) => ({
                     id: ar.id,
                     name: ar.name,
-                    link: ar.id ? `/artist/${ar.id}` : ''
-                }))
+                    link: ar.id ? `/artist/${ar.id}` : '',
+                })),
             };
-        })
+        }),
     };
 }
 
 async function fmTrash(id: number, cookie: string) {
     try {
-        const { body } = await Api.fm_trash({ id, cookie });
+        const { body } = await musicApi.fm_trash({ id, cookie });
         return body;
     } catch (e) {
         console.error(e);

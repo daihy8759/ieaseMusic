@@ -1,9 +1,9 @@
-import { getPlayListDetail, getRecommend } from 'api/player';
+import { getPlayListDetail, getRecommend } from '/@/api/player';
 import ISong from 'interface/ISong';
 import me from './me';
 import { makeAutoObservable, runInAction } from 'mobx';
 import * as pinyin from 'tiny-pinyin';
-import helper from 'utils/helper';
+import helper from '/@/utils/helper';
 import IArtist from 'interface/IArtist';
 
 class Player {
@@ -15,7 +15,7 @@ class Player {
 
     meta: any = {
         pallet: [[0, 0, 0]],
-        author: []
+        author: [],
     };
 
     // Show filter
@@ -90,13 +90,13 @@ class Player {
         // Convert text to chinese pinyin
         text = pinyin.convertToPinyin(text.trim());
 
-        songs = this.songs.filter(e => {
+        songs = this.songs.filter((e) => {
             return (
                 // Fuzzy match the song name
                 pinyin.convertToPinyin(e.name).indexOf(text) > -1 ||
                 // Fuzzy match the album name
                 pinyin.convertToPinyin(e.album.name).indexOf(text) > -1 ||
-                e.artists.findIndex(d => pinyin.convertToPinyin(d.name).indexOf(text) > -1) !== -1
+                e.artists.findIndex((d) => pinyin.convertToPinyin(d.name).indexOf(text) > -1) !== -1
             );
         });
 

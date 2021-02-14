@@ -1,22 +1,20 @@
-import AdapterLink from '@/components/AdapterLink';
-import { useStore } from '@/context';
 import { Button, CircularProgress, Typography } from '@material-ui/core';
 import { ArrowBackSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import styles from './index.less';
+import styles from './index.module.less';
+import AdapterLink from '/@/components/AdapterLink';
+import { useStore } from '/@/context';
 
 interface MatchParams {
     fm: string;
 }
 
-interface ILegacyProps extends RouteComponentProps<MatchParams> {}
-
-const Legacy: React.FC<ILegacyProps> = observer(props => {
+const Legacy: React.FC<RouteComponentProps<MatchParams>> = observer((props) => {
     const {
-        me: { login, logining }
+        me: { login, logining },
     } = useStore();
     const phoneRef = React.useRef<HTMLInputElement>();
     const passwordRef = React.useRef<HTMLInputElement>();
@@ -35,8 +33,8 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
 
         const { history, match } = props;
 
-        if (await login(phone, password)) {
-            // Login success
+        const profile = await login(phone, password);
+        if (profile) {
             history.replace(+match.params.fm ? '/fm' : '/');
             return;
         }
@@ -67,7 +65,7 @@ const Legacy: React.FC<ILegacyProps> = observer(props => {
                 <input onKeyPress={handleEnter} placeholder="Password" ref={passwordRef} type="password" />
                 <p
                     className={classnames(styles.error, {
-                        [styles.show]: showError
+                        [styles.show]: showError,
                     })}>
                     Invalid username or password, Please try again.
                 </p>

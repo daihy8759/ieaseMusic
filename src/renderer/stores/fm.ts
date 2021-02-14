@@ -1,5 +1,5 @@
 import ISong from '@/interface/ISong';
-import { fmTrash, getPlaylist } from 'api/fm';
+import { fmTrash, getPlaylist } from '/@/api/fm';
 import IPlayList from 'interface/IPlayList';
 import { makeAutoObservable, runInAction } from 'mobx';
 import controller from './controller';
@@ -9,11 +9,11 @@ class FM {
     loading = true;
 
     song: ISong = {
-        duration: 0
+        duration: 0,
     };
 
     playlist: IPlayList = {
-        songs: []
+        songs: [],
     };
 
     constructor() {
@@ -58,7 +58,7 @@ class FM {
     };
 
     next = async () => {
-        let index = this.playlist.songs.findIndex(e => e.id === controller.song.id);
+        let index = this.playlist.songs.findIndex((e) => e.id === controller.song.id);
 
         if (controller.playlist.id !== this.playlist.id) {
             this.play();

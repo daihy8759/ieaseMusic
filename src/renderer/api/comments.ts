@@ -1,4 +1,4 @@
-import Api from './';
+import { useMusicApi } from '../hooks';
 
 interface MusicCommentResponse {
     newestList?: [];
@@ -7,11 +7,13 @@ interface MusicCommentResponse {
     nextOffset?: number;
 }
 
+const musicApi = useMusicApi();
+
 async function getMusicComments(songId: number, offset = 0): Promise<MusicCommentResponse> {
     try {
-        const { body } = await Api.comment_music({
+        const { body } = await musicApi.comment_music({
             id: songId,
-            offset
+            offset,
         });
         if (body.code !== 200) {
             throw body;
@@ -23,7 +25,7 @@ async function getMusicComments(songId: number, offset = 0): Promise<MusicCommen
             hotList: body.hotComments,
             // @ts-ignore
             total: body.total,
-            nextOffset: body.more ? offset + 30 : 0
+            nextOffset: body.more ? offset + 30 : 0,
         };
     } catch (e) {
         console.error(e);

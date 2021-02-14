@@ -1,4 +1,4 @@
-import { followUser, getArtist, unFollowUser } from 'api/artist';
+import { followUser, getArtist, unFollowUser } from '/@/api/artist';
 import IAlbum from 'interface/IAlbum';
 import IArtist from 'interface/IArtist';
 import IArtistProfile from 'interface/IArtistProfile';
@@ -19,11 +19,11 @@ class Artist {
 
     // Contains 'id' and 'songs'
     playlist: IPlayList = {
-        songs: []
+        songs: [],
     };
 
     desc = {
-        briefDesc: ''
+        briefDesc: '',
     };
 
     constructor() {
@@ -56,7 +56,7 @@ class Artist {
         if (data.success) {
             runInAction(() => {
                 this.profile = Object.assign({}, this.profile, {
-                    followed: !followed
+                    followed: !followed,
                 });
             });
         }

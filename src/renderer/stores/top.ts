@@ -1,4 +1,4 @@
-import { getTopList } from 'api/top';
+import { getTopList } from '/@/api/top';
 import { makeAutoObservable, runInAction } from 'mobx';
 
 class Top {

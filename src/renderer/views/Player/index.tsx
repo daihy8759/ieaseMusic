@@ -1,20 +1,20 @@
-import { useStore } from '@/context';
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import Controller from 'components/Controller';
-import FadeImage from 'components/FadeImage';
-import Header from 'components/Header';
-import Loader from 'components/Loader';
-import ProgressImage from 'components/ProgressImage';
 import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
 import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
-import colors from 'utils/colors';
-import helper from 'utils/helper';
-import styles from './index.less';
+import styles from './index.module.less';
 import Search from './Search';
+import Controller from '/@/components/Controller';
+import FadeImage from '/@/components/FadeImage';
+import Header from '/@/components/Header';
+import Loader from '/@/components/Loader';
+import ProgressImage from '/@/components/ProgressImage';
+import { useStore } from '/@/context';
+import colors from '/@/utils/colors';
+import helper from '/@/utils/helper';
 
 interface MatchParams {
     id: string;
@@ -22,7 +22,7 @@ interface MatchParams {
 
 interface PlayerProps extends RouteComponentProps<MatchParams> {}
 
-const Player: FC<PlayerProps> = observer(props => {
+const Player: FC<PlayerProps> = observer((props) => {
     const { player, controller, me } = useStore();
     const { song, playing } = controller;
     const { loading, meta, recommend, filter, searching } = player;
@@ -71,7 +71,7 @@ const Player: FC<PlayerProps> = observer(props => {
         const { getRelated } = player;
         const { song } = controller;
         const {
-            match: { params }
+            match: { params },
         } = props;
 
         showLoading();
@@ -141,7 +141,7 @@ const Player: FC<PlayerProps> = observer(props => {
                     id: meta.id,
                     link: `/player/${meta.type}/${meta.id}`,
                     name: meta.name,
-                    songs: player.songs
+                    songs: player.songs,
                 });
                 await controller.play();
             }
@@ -165,7 +165,7 @@ const Player: FC<PlayerProps> = observer(props => {
             id: meta.id,
             link: `/player/${meta.type}/${meta.id}`,
             name: meta.name,
-            songs: player.songs
+            songs: player.songs,
         });
         await controller.play(songId);
     };
@@ -185,7 +185,7 @@ const Player: FC<PlayerProps> = observer(props => {
                 <div
                     className={styles.nothing}
                     style={{
-                        height: '100%'
+                        height: '100%',
                     }}>
                     Nothing ...
                 </div>
@@ -197,7 +197,7 @@ const Player: FC<PlayerProps> = observer(props => {
                 <li
                     key={e.id}
                     className={classnames({
-                        [styles.active]: sameToPlaylist && e.id === song.id
+                        [styles.active]: sameToPlaylist && e.id === song.id,
                     })}
                     onClick={async () => {
                         await play(e.id);
@@ -234,13 +234,13 @@ const Player: FC<PlayerProps> = observer(props => {
                 <div
                     className={styles.hero}
                     style={{
-                        backgroundImage: colors.randomGradient()
+                        backgroundImage: colors.randomGradient(),
                     }}>
                     <ProgressImage
                         {...{
                             height: 260,
                             width: 260,
-                            src: meta.cover
+                            src: meta.cover,
                         }}
                     />
 
@@ -264,7 +264,7 @@ const Player: FC<PlayerProps> = observer(props => {
                         <p
                             className={styles.subtitle}
                             style={{
-                                marginTop: 20
+                                marginTop: 20,
                             }}>
                             <span>{meta.company || `${helper.humanNumber(meta.played)} Played`}</span>
                         </p>
@@ -277,7 +277,7 @@ const Player: FC<PlayerProps> = observer(props => {
                                 display: 'inline-block',
                                 height: 260 / 3,
                                 width: 260 / 3,
-                                marginTop: -2
+                                marginTop: -2,
                             }}>
                             <div className={styles.play} onClick={() => play()}>
                                 {canToggle() && playing ? <PauseSharp /> : <PlayArrowSharp />}
@@ -291,7 +291,7 @@ const Player: FC<PlayerProps> = observer(props => {
                                         {...{
                                             height: 260 / 3,
                                             width: 260 / 3,
-                                            src: e.cover
+                                            src: e.cover,
                                         }}
                                     />
                                 </Link>
@@ -319,7 +319,7 @@ const Player: FC<PlayerProps> = observer(props => {
                         close: () => {
                             player.toggleSearch(false);
                             filter();
-                        }
+                        },
                     }}>
                     <div className={styles.list}>
                         <ul ref={searchingRef}>{renderList()}</ul>

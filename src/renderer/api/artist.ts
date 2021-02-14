@@ -1,34 +1,33 @@
-// @ts-nocheck
-import CRYPTO from 'utils/crypto';
-import IArtist from 'interface/IArtist';
-import IAlbum from 'interface/IAlbum';
-import Api from './';
+import md5 from 'md5';
+import { useMusicApi } from '../hooks';
+import IAlbum from '/@/interface/IAlbum';
+import IArtist from '/@/interface/IArtist';
 
-const { md5 } = CRYPTO;
+const musicApi = useMusicApi();
 
 async function getDesc(id: number) {
     try {
-        const { body } = await Api.artist_desc({ id });
+        const { body } = await musicApi.artist_desc({ id });
         if (body.code !== 200) {
             throw body;
         }
         const { briefDesc, introduction } = body;
         return {
             briefDesc,
-            introduction
+            introduction,
         };
     } catch (e) {
         console.error(e);
     }
     return {
         briefDesc: '',
-        introduction: []
+        introduction: [],
     };
 }
 
 async function getAlbums(id: number) {
     try {
-        const { body } = await Api.artist_album({ id });
+        const { body } = await musicApi.artist_album({ id });
         if (body.code !== 200) {
             throw body;
         }
@@ -39,7 +38,7 @@ async function getAlbums(id: number) {
             name: e.name,
             cover: e.picUrl,
             link: `/player/1/${e.id}`,
-            publishTime: e.publishTime
+            publishTime: e.publishTime,
         }));
     } catch (e) {
         console.error(e);
@@ -51,9 +50,9 @@ async function getAlbums(id: number) {
  * 获取相似歌手
  * ⚠️该接口需要登录
  */
-async function getSimilar(id: number, cookie) {
+async function getSimilar(id: number, cookie: string) {
     try {
-        const { body } = await Api.simi_artist({ id, cookie });
+        const { body } = await musicApi.simi_artist({ id, cookie });
         if (body.code === 200) {
             const artists: any = body.artists;
             return artists.map((e: any) => {
@@ -63,7 +62,7 @@ async function getSimilar(id: number, cookie) {
                     avatar: `${e.picUrl}?param=50y50`,
                     publishTime: e.publishTime,
                     // Broken link
-                    link: e.id ? `/artist/${e.id}` : ''
+                    link: e.id ? `/artist/${e.id}` : '',
                 };
             });
         }
@@ -87,17 +86,14 @@ function id2url(id: string) {
 
     const string = hashCodes.map((e, i) => String.fromCharCode(hashCodes[i])).join('');
     const md5String = md5(string);
-    const result = Buffer.from(md5String)
-        .toString('base64')
-        .replace(/\//g, '_')
-        .replace(/\+/g, '-');
+    const result = Buffer.from(md5String).toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
 
     return `https://p4.music.126.net/${result}/${id}.jpg?param=y177y177`;
 }
 
 async function getArtist(id: number) {
     try {
-        const { body } = await Api.artists({ id });
+        const { body } = await musicApi.artists({ id });
         if (body.code !== 200) {
             throw body;
         }
@@ -113,13 +109,13 @@ async function getArtist(id: number) {
                     id: al.id,
                     name: al.name,
                     cover: id2url(al.pic_str),
-                    link: `/player/1/${al.id}`
+                    link: `/player/1/${al.id}`,
                 },
                 artists: ar.map((d: IArtist) => ({
                     id: d.id,
                     name: d.name,
-                    link: d.id ? `/artist/${d.id}` : ''
-                }))
+                    link: d.id ? `/artist/${d.id}` : '',
+                })),
             };
         });
         const [desc, albums, similar] = await Promise.all([getDesc(id), getAlbums(id), getSimilar(id)]);
@@ -133,8 +129,8 @@ async function getArtist(id: number) {
                 size: {
                     song: artist.musicSize,
                     mv: artist.mvSize,
-                    album: artist.albumSize
-                }
+                    album: artist.albumSize,
+                },
             },
             desc,
             albums,
@@ -143,24 +139,24 @@ async function getArtist(id: number) {
                 id: artist.id,
                 name: `TOP 50 - ${artist.name}`,
                 size: 50,
-                songs
-            }
+                songs,
+            },
         };
     } catch (e) {
         console.error(e);
     }
     return {
         profile: {},
-        playlist: {}
+        playlist: {},
     };
 }
 
 async function followUser(id: number) {
     try {
-        const { body } = await Api.artist_sub({ id, t: 1 });
+        const { body } = await musicApi.artist_sub({ id, t: 1 });
         if (body.code === 200) {
             return {
-                success: false
+                success: false,
             };
         }
     } catch (e) {
@@ -171,10 +167,10 @@ async function followUser(id: number) {
 
 async function unFollowUser(id: number) {
     try {
-        const { body } = await Api.artist_sub({ id, t: 0 });
+        const { body } = await musicApi.artist_sub({ id, t: 0 });
         if (body.code === 200) {
             return {
-                success: false
+                success: false,
             };
         }
     } catch (e) {
