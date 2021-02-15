@@ -50,29 +50,10 @@
     height: 260px;
     margin-left: -130px;
     margin-top: -130px;
-    border-radius: 260px;
     overflow: hidden;
-    box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.4);
     z-index: 9;
-
-    figure {
-        animation-name: animation;
-        animation-duration: '@{360 * 0.2}' s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
-    }
 }
 
 .pause {
     animation-play-state: paused;
-}
-
-@keyframes animation {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }

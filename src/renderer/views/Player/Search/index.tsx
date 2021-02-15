@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { FC } from 'react';
 import styles from './index.module.less';
-import * as closePng from '/@/assets/close.png';
+import closePng from '/@/assets/close.png';
 
 interface ISearchProps {
     show?: boolean;
@@ -9,7 +9,7 @@ interface ISearchProps {
     filter?: any;
 }
 
-const Search: React.SFC<ISearchProps> = observer((props) => {
+const Search: FC<ISearchProps> = observer((props) => {
     const { show, close, filter, children } = props;
 
     if (!show) {
@@ -25,7 +25,12 @@ const Search: React.SFC<ISearchProps> = observer((props) => {
     return (
         <div className={styles.container} onKeyUp={pressEscExit}>
             <header>
-                <input type="text" onInput={(e: any) => filter(e.target.value)} placeholder="Search..." />
+                <input
+                    type="text"
+                    onInput={(e: any) => filter(e.target.value)}
+                    placeholder="Search..."
+                    className="text-black"
+                />
                 <img alt="Close" className={styles.close} onClick={close} src={closePng} />
             </header>
 

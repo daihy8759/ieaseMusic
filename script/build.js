@@ -41,7 +41,7 @@ if (argv.watch) {
                 const serverSocket = net.connect(port || 80, hostname, () => {
                     watchFunc();
                 });
-                serverSocket.on('error', (e) => {
+                serverSocket.on('error', () => {
                     console.log(err);
                     process.exit(1);
                 });

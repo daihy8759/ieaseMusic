@@ -1,5 +1,6 @@
 import { BrowserWindow, ipcMain, Menu, shell } from 'electron';
 import { PlayMode } from '../../shared/interface/controller';
+import { PLAYLIST_FM } from '../../shared/interface/playlist';
 import {
     IPC_CONTEXTMENU,
     IPC_NAVIGATOR,
@@ -56,7 +57,7 @@ export default function (win: BrowserWindow) {
             },
             {
                 label: 'Ban 💩',
-                enabled: config.isLogin && config.playlistId === 'PERSONAL_FM',
+                enabled: config.isLogin && config.playlistId === PLAYLIST_FM,
                 click: () => {
                     win.webContents.send(IPC_SONG_BAN);
                 },

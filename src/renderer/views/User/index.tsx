@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import styles from './index.module.less';
@@ -15,9 +15,7 @@ interface MatchParams {
     id: string;
 }
 
-interface UserProps extends RouteComponentProps<MatchParams> {}
-
-const User: React.FC<UserProps> = observer((props) => {
+const User: FC<RouteComponentProps<MatchParams>> = observer((props) => {
     const { user, controller, me } = useStore();
     const [hovered, setHovered] = React.useState();
 

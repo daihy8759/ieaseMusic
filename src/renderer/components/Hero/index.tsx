@@ -1,22 +1,22 @@
 import { Button, IconButton } from '@material-ui/core';
 import { FavoriteBorderTwoTone, FavoriteTwoTone, ShareTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
-import IArtist from 'interface/IArtist';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import AdapterLink from '../AdapterLink';
 import styles from './index.module.less';
 import Indicator from '/@/components/Indicator';
 import ProgressImage from '/@/components/ProgressImage';
 import { useStore } from '/@/context';
+import IArtist from '/@/interface/IArtist';
 import helper from '/@/utils/helper';
 
 interface IHeroProps {
     location?: any;
 }
 
-const Hero: React.SFC<IHeroProps> = observer((props) => {
+const Hero: FC<IHeroProps> = observer((props) => {
     const { location } = props;
     const { me, comments, controller, share } = useStore();
     const { isLiked, unlike, like } = me;
@@ -31,7 +31,7 @@ const Hero: React.SFC<IHeroProps> = observer((props) => {
                 {...{
                     height: window.innerHeight,
                     width: window.innerHeight,
-                    src: song.album.cover.replace(/100y100$/, '500y500'),
+                    src: song.album?.cover?.replace(/100y100$/, '500y500'),
                 }}
             />
 
@@ -84,8 +84,7 @@ const Hero: React.SFC<IHeroProps> = observer((props) => {
                 <h3>{song.name}</h3>
 
                 <p className={styles.author}>
-                    {song.artists.map((e: IArtist, index: number) => {
-                        // Show the artist
+                    {song.artists?.map((e: IArtist, index: number) => {
                         return (
                             <Link key={index} to={e.link}>
                                 {e.name}

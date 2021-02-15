@@ -1,7 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
-import { useUpdateEffect } from 'react-use';
-import styles from './index.module.less';
+import React, { FC, useEffect, useState } from 'react';
 
 interface FadeImageProps {
     src?: string;
@@ -10,11 +8,12 @@ interface FadeImageProps {
     title?: string;
 }
 
-const FadeImage: React.SFC<FadeImageProps> = (props) => {
+const FadeImage: FC<FadeImageProps> = (props) => {
     const { src, className, fallback = 'https://source.unsplash.com/random' } = props;
+    const [fade, setFade] = useState(false);
 
-    useUpdateEffect(() => {
-        imgRef.current.classList.add(styles.fadein);
+    useEffect(() => {
+        setFade(true);
     }, [src]);
 
     if (!src) return null;
@@ -23,17 +22,20 @@ const FadeImage: React.SFC<FadeImageProps> = (props) => {
         e.target.src = fallback;
     };
 
-    const handleLoad = (e: any) => {
-        e.target.classList.remove(styles.fadein);
+    const handleLoad = () => {
+        setFade(false);
     };
-    const imgRef = React.useRef<HTMLImageElement>();
 
     return (
         <img
-            ref={imgRef}
             src={src}
             alt=""
-            className={classnames(styles.fade, styles.fadein, className)}
+            className={classnames(
+                {
+                    'animate-pulse': fade,
+                },
+                className
+            )}
             onLoad={handleLoad}
             onError={handleError}
         />

@@ -29,61 +29,59 @@ body {
     -webkit-app-region: drag;
 }
 
-:global {
-    .scroll-horizontal {
-        overflow: initial !important;
-    }
-    .clearfix {
-        display: inline-block;
-    }
+.scroll-horizontal {
+    overflow: initial !important;
+}
+.clearfix {
+    display: inline-block;
+}
 
-    .clearfix:after {
-        visibility: hidden;
-        display: block;
-        font-size: 0;
-        content: '';
-        clear: both;
-        height: 0;
-    }
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: '';
+    clear: both;
+    height: 0;
+}
 
-    a:link,
-    a:visited,
-    a:hover,
-    a:active {
-        text-decoration: none;
-    }
+a:link,
+a:visited,
+a:hover,
+a:active {
+    text-decoration: none;
+}
 
-    .tooltip {
-        position: relative;
-    }
+.tooltip {
+    position: relative;
+}
 
-    .tooltip::after {
-        content: attr(data-text);
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: block;
-        padding: 0 8px;
-        height: 32px;
-        line-height: 32px;
-        font-size: 12px;
-        font-family: @google-font;
-        background: #000;
-        color: #fff;
-        white-space: nowrap;
-        visibility: hidden;
-        opacity: 0;
-        transform: translateY(-24px);
-        transition: 0.2s;
-    }
+.tooltip::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    padding: 0 8px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 12px;
+    font-family: @google-font;
+    background: #000;
+    color: #fff;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-24px);
+    transition: 0.2s;
+}
 
-    .tooltip:hover::after {
-        visibility: visible;
-        opacity: 1;
-        transform: translateY(-36px);
-    }
+.tooltip:hover::after {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(-36px);
+}
 
-    ::-webkit-scrollbar {
-        width: 0;
-    }
+::-webkit-scrollbar {
+    width: 0;
 }

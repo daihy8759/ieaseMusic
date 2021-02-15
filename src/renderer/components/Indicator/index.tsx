@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
+import React, { FC } from 'react';
 import styles from './index.module.less';
 
 interface IIndicatorProps {
@@ -7,7 +7,7 @@ interface IIndicatorProps {
     style?: any;
 }
 
-const Indicator: React.SFC<IIndicatorProps> = (props) => {
+const Indicator: FC<IIndicatorProps> = (props) => {
     const { className, style } = props;
     return (
         <div className={classnames(styles.container, className)} style={style}>

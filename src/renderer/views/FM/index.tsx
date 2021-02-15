@@ -121,7 +121,7 @@ const FM: FC<RouteComponentProps> = observer((props) => {
                         }}
                     />
 
-                    <aside>
+                    <aside className="space-y-2">
                         <p className={styles.title}>
                             <span title={song.name}>{song.name}</span>
                         </p>

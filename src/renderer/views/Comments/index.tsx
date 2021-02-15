@@ -1,23 +1,22 @@
-import { useStore } from '/@/context';
 import { ThumbUpAltTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
+import formatDistance from 'date-fns/formatDistance';
+import { observer } from 'mobx-react-lite';
+import React, { FC, useRef } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
+import styles from './index.module.less';
 import Header from '/@/components/Header';
 import Hero from '/@/components/Hero';
 import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
-import formatDistance from 'date-fns/formatDistance';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useStore } from '/@/context';
 import helper from '/@/utils/helper';
-import styles from './index.module.less';
 
-interface CommentsProps extends RouteComponentProps {}
-
-const Comments: React.SFC<CommentsProps> = observer((props) => {
+const Comments: FC<RouteComponentProps> = observer((props) => {
     const { comments } = useStore();
     const { loading, song, like, loadMore, hotList, newestList } = comments;
+    const listRef = useRef<HTMLElement>(null);
 
     useEffectOnce(() => {
         if (!song || !song.id) {
@@ -29,21 +28,21 @@ const Comments: React.SFC<CommentsProps> = observer((props) => {
         return <Loader show />;
     }
 
-    const listRef = React.useRef<HTMLElement>();
-
     const loadmore = async () => {
         const container = listRef.current;
 
-        // Drop the duplicate invoke
-        if (container.classList.contains(styles.loadmore)) {
-            return;
-        }
+        if (container) {
+            // Drop the duplicate invoke
+            if (container.classList.contains(styles.loadmore)) {
+                return;
+            }
 
-        if (container.scrollTop + container.offsetHeight + 100 > container.scrollHeight) {
-            // Mark as loading
-            container.classList.add(styles.loadmore);
-            await loadMore(song.id);
-            container.classList.remove(styles.loadmore);
+            if (container.scrollTop + container.offsetHeight + 100 > container.scrollHeight) {
+                // Mark as loading
+                container.classList.add(styles.loadmore);
+                await loadMore(song.id);
+                container.classList.remove(styles.loadmore);
+            }
         }
     };
 

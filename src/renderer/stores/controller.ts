@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { PlayMode } from '../../shared/interface/controller';
+import { PLAYLIST_FM } from '../../shared/interface/Playlist';
 import { useIpc } from '../hooks';
 import comments from './comments';
 import fm from './fm';
@@ -37,7 +38,7 @@ class Controller {
     }
 
     async setup(playlist: any) {
-        if (this.playlist.id === playlist.id && playlist.id !== 'PERSONAL_FM') {
+        if (this.playlist.id === playlist.id && playlist.id !== PLAYLIST_FM) {
             return;
         }
 
@@ -81,7 +82,7 @@ class Controller {
             });
         }
 
-        if (this.playlist.id === 'PERSONAL_FM') {
+        if (this.playlist.id === PLAYLIST_FM) {
             fm.song = song;
         }
 
@@ -180,7 +181,7 @@ class Controller {
                 next = this.song.id;
                 break;
 
-            case this.playlist.id === 'PERSONAL_FM':
+            case this.playlist.id === PLAYLIST_FM:
                 fm.next();
                 return;
 

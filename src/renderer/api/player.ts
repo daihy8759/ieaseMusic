@@ -8,9 +8,11 @@ async function getSongUrl(id: number, cookie?: string) {
         id,
         cookie,
     });
+    const [d] = body.data;
     return {
         id,
-        src: body.data[0].url,
+        src: d.url,
+        bitRate: d.br,
     };
 }
 

@@ -34,7 +34,7 @@ export function createStore() {
         artist,
         playlist,
         user,
-        fm
+        fm,
     };
 }
 

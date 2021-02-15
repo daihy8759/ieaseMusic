@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import React from 'react';
+import React, { FC } from 'react';
 import { TransitionProps } from 'react-transition-group/Transition';
 import { Zoom } from '@material-ui/core';
 
@@ -59,7 +59,7 @@ interface ModalProps {
     onCancel?: () => void;
 }
 
-const Modal: React.SFC<ModalProps> = (props) => {
+const Modal: FC<ModalProps> = (props) => {
     const { visible, title, content, fullScreen, onCancel } = props;
     return (
         <Dialog

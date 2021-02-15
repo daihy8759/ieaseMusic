@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
+import React, { FC } from 'react';
 import colors from '/@/utils/colors';
 import styles from './index.module.less';
 
@@ -7,7 +7,7 @@ interface ILoaderProps {
     show?: boolean;
 }
 
-const Loader: React.SFC<ILoaderProps> = ({ show = false }) => {
+const Loader: FC<ILoaderProps> = ({ show = false }) => {
     if (!show) {
         return null;
     }

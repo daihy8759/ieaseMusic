@@ -1,7 +1,7 @@
 import Grid from '@material-ui/core/Grid';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import React, { FunctionComponent } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import styles from './index.module.less';
 import Controller from '/@/components/Controller';
@@ -15,14 +15,12 @@ interface MatchParams {
     type: string;
 }
 
-interface IPlaylistProps extends RouteComponentProps<MatchParams> {}
-
-const Playlist: FunctionComponent<IPlaylistProps> = observer((props) => {
+const Playlist: FC<RouteComponentProps<MatchParams>> = observer((props) => {
     const { match } = props;
     const { playlist, controller } = useStore();
-    const listRef = React.useRef<HTMLElement>();
+    const listRef = React.useRef<HTMLElement>(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         loadList();
     }, [match.params.type]);
 

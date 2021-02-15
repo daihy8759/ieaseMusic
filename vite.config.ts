@@ -10,7 +10,7 @@ export default defineConfig({
     root,
     base: './',
     resolve: {
-        alias: { '/@': root },
+        alias: { '/@': root, shared: join(__dirname, 'src/shared') },
     },
     build: {
         outDir: join('../../dist/renderer'),

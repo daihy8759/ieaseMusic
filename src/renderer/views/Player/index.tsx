@@ -1,7 +1,7 @@
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import React, { FC } from 'react';
+import React, { FC, useRef } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import styles from './index.module.less';
@@ -24,8 +24,10 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
     const { player, controller, me } = useStore();
     const { song, playing } = controller;
     const { loading, meta, recommend, filter, searching } = player;
-    const searchingRef = React.useRef<HTMLUListElement>();
-    const listRef = React.useRef<HTMLUListElement>();
+    const searchingRef = useRef<HTMLUListElement>(null);
+    const listRef = useRef<HTMLUListElement>(null);
+    const recommendWidth = 260;
+    const recommendHeight = 230;
 
     useEffectOnce(() => {
         load();
@@ -268,15 +270,15 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
                         </p>
                     </summary>
 
-                    <div className={styles.recommend}>
+                    <div className={classnames('space-x-1 space-y-1', styles.recommend)}>
                         <div
                             style={{
                                 position: 'relative',
                                 display: 'inline-block',
-                                height: 260 / 3,
-                                width: 260 / 3,
-                                marginTop: -2,
-                            }}>
+                                height: recommendHeight / 3,
+                                width: recommendWidth / 3,
+                            }}
+                            className="ml-1">
                             <div className={styles.play} onClick={() => play()}>
                                 {canToggle() && playing ? <PauseSharp /> : <PlayArrowSharp />}
                             </div>
@@ -287,8 +289,8 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
                                 <Link className="clearfix" key={e.link + index} to={e.link}>
                                     <ProgressImage
                                         {...{
-                                            height: 260 / 3,
-                                            width: 260 / 3,
+                                            height: recommendHeight / 3,
+                                            width: recommendWidth / 3,
                                             src: e.cover,
                                         }}
                                     />

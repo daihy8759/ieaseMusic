@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useUpdateEffect } from 'react-use';
 import styles from './index.module.less';
@@ -12,13 +12,30 @@ import colors from '/@/utils/colors';
 
 const Playing = observer(() => {
     const { playing, controller } = useStore();
+    const listRef = useRef<HTMLUListElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const searchRef = useRef<HTMLInputElement>(null);
+
+    useUpdateEffect(() => {
+        listRef.current.scrollTop = 0;
+    }, [playing.filtered]);
+
+    useUpdateEffect(() => {
+        if (playing.show) {
+            const { song } = controller;
+            const playing = Array.from(listRef.current.querySelectorAll('[data-id]')).find(
+                (e: any) => e.dataset.id === song.id
+            );
+
+            if (playing) {
+                playing.scrollIntoView();
+            }
+        }
+    }, [playing.show, playing]);
+
     if (!playing.show) {
         return null;
     }
-
-    const listRef = React.useRef<HTMLUListElement>();
-    const containerRef = React.useRef<HTMLDivElement>();
-    const searchRef = React.useRef<HTMLInputElement>();
 
     const pressEscExit = (e: any) => {
         if (e.keyCode === 27) {
@@ -138,23 +155,6 @@ const Playing = observer(() => {
             );
         });
     };
-
-    useUpdateEffect(() => {
-        listRef.current.scrollTop = 0;
-    }, [playing.filtered]);
-
-    useUpdateEffect(() => {
-        if (playing.show) {
-            const { song } = controller;
-            const playing = Array.from(listRef.current.querySelectorAll('[data-id]')).find(
-                (e: any) => e.dataset.id === song.id
-            );
-
-            if (playing) {
-                playing.scrollIntoView();
-            }
-        }
-    }, [playing.show, playing]);
 
     return (
         <div className={styles.container} onKeyUp={(e) => pressEscExit(e)} ref={containerRef} tabIndex={-1}>

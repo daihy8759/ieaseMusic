@@ -141,8 +141,8 @@ const AudioPlayer = observer(() => {
                     return;
                 }
                 console.error('Break by %o', e);
-                // resetProgress();
-                // tryTheNext();
+                resetProgress();
+                tryTheNext();
             };
 
             audioRef.onended = () => {

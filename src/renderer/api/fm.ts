@@ -1,3 +1,4 @@
+import { PLAYLIST_FM } from '../../shared/interface/Playlist';
 import { useMusicApi } from '../hooks';
 import IArtist from '/@/interface/IArtist';
 import ISong from '/@/interface/ISong';
@@ -27,7 +28,7 @@ async function getPlaylist(): Promise<PlaylistResponse> {
         console.error(e);
     }
     return {
-        id: 'PERSONAL_FM',
+        id: PLAYLIST_FM,
         name: 'Made For You',
         link: '/fm',
         size: songs.length,

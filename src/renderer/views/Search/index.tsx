@@ -165,7 +165,7 @@ const Search: React.FC = observer(() => {
                     <aside>
                         <span>{e.name}</span>
 
-                        <span>{e.artist?.name}</span>
+                        <span>{e.artist.name}</span>
 
                         <span className={styles.publish}>{format(e.publishTime, 'L')}</span>
                     </aside>
@@ -263,8 +263,8 @@ const Search: React.FC = observer(() => {
     };
 
     const handleTabChange = async (_: any, newValue: any) => {
-        setValue(newValue);
-        searchByKeyword(searchRef.current?.value);
+        await setValue(newValue);
+        searchByKeyword(searchRef.current.value);
     };
 
     const { loading, getPlaylists, getAlbums, getArtists, getUsers } = search;

@@ -35,7 +35,10 @@ module.exports = (env = 'production') => {
                 json(),
                 pluginEsbuild(),
                 alias({
-                    entries: [{ find: '@main', replacement: path.join(__dirname, '../src/main') }],
+                    entries: [
+                        { find: '@main', replacement: path.join(__dirname, '../src/main') },
+                        { find: '@shared', replacement: path.join(__dirname, '../src/shared') },
+                    ],
                 }),
             ],
             external,

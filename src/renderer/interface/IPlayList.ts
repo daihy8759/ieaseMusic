@@ -1,7 +1,7 @@
 import ISong from './ISong';
 
 export default interface IPlayList {
-    id?: number | string;
+    id?: string;
     songs?: ISong[];
     name?: string;
     link?: string;

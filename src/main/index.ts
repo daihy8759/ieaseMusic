@@ -1,4 +1,12 @@
-import { IPC_NAVIGATOR } from './../shared/ipc/index';
+import {
+    IPC_NAVIGATOR,
+    IPC_PLAYER_TOGGLE,
+    IPC_PLAYER_NEXT,
+    IPC_PLAYER_PREV,
+    IPC_PLAYER_VOLUME_UP,
+    IPC_PLAYER_VOLUME_DOWN,
+    IPC_SONG_LIKE,
+} from './../shared/ipc/index';
 import { app, BrowserWindow, Menu, shell } from 'electron';
 import installer, { ExtensionReference, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import windowStateKeeper from 'electron-window-state';
@@ -75,7 +83,7 @@ const mainMenu = [
                 accelerator: 'Space',
                 click() {
                     win.show();
-                    win.webContents.send('player-toggle');
+                    win.webContents.send(IPC_PLAYER_TOGGLE);
                 },
             },
             {
@@ -83,7 +91,7 @@ const mainMenu = [
                 accelerator: 'Right',
                 click() {
                     win.show();
-                    win.webContents.send('player-next');
+                    win.webContents.send(IPC_PLAYER_NEXT);
                 },
             },
             {
@@ -91,7 +99,7 @@ const mainMenu = [
                 accelerator: 'Left',
                 click() {
                     win.show();
-                    win.webContents.send('player-previous');
+                    win.webContents.send(IPC_PLAYER_PREV);
                 },
             },
             {
@@ -99,7 +107,7 @@ const mainMenu = [
                 accelerator: 'Up',
                 click() {
                     win.show();
-                    win.webContents.send('player-volume-up');
+                    win.webContents.send(IPC_PLAYER_VOLUME_UP);
                 },
             },
             {
@@ -107,7 +115,7 @@ const mainMenu = [
                 accelerator: 'Down',
                 click() {
                     win.show();
-                    win.webContents.send('player-volume-down');
+                    win.webContents.send(IPC_PLAYER_VOLUME_DOWN);
                 },
             },
             {
@@ -115,7 +123,7 @@ const mainMenu = [
                 accelerator: 'Cmd+L',
                 click() {
                     win.show();
-                    win.webContents.send('player-like');
+                    win.webContents.send(IPC_SONG_LIKE);
                 },
             },
         ],

@@ -5,24 +5,30 @@ import controller from './controller';
 import me from './me';
 import preferences from './preferences';
 
-interface IHomeData {
+export interface HomeData {
     id?: number;
+    name: string;
+    type: number;
+    played: number;
     size: any;
+    link: string;
     pallet: any;
     cover: string;
+    background: string;
+    updateTime: number;
 }
 
 class Home {
     loading = true;
 
-    list: IHomeData[] = [];
+    list: HomeData[] = [];
 
     constructor() {
         makeAutoObservable(this);
     }
 
     async load() {
-        let list: IHomeData[];
+        let list: HomeData[];
         if (me.hasLogin()) {
             list = await homeApi.getHomeData(me.profile.userId, me.profile.cookie);
             const [favorite, recommend] = list;
@@ -51,23 +57,17 @@ class Home {
             const [song] = controller.playlist.songs;
             controller.song = song || { id: undefined, name: undefined };
         }
+        // Get the color pallets
+        await Promise.all(
+            list.map(async (e) => {
+                if (!e.cover) return;
 
-        list.forEach((e) => {
-            e.pallet = false;
-        });
-
+                const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
+                e.pallet = pallet;
+            })
+        );
         runInAction(() => {
             this.list = list;
-        });
-        // Get the color pallets
-        list.map(async (e, index: number) => {
-            if (!e.cover) return;
-
-            const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
-            e.pallet = pallet;
-
-            // Force update list
-            this.updateShadow(e, index);
         });
     }
 
@@ -83,10 +83,6 @@ class Home {
             });
         }
     }
-
-    updateShadow = (e: IHomeData, index: number) => {
-        this.list = [...this.list.slice(0, index), e, ...this.list.slice(index + 1, this.list.length)];
-    };
 }
 
 const self = new Home();

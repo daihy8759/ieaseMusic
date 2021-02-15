@@ -1,10 +1,10 @@
-import { useStore } from '/@/context';
 import { IconButton } from '@material-ui/core';
 import { BarChartTwoTone, MoreVertTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { FC } from 'react';
 import styles from './index.module.less';
+import { useStore } from '/@/context';
 
 interface IHeaderProps {
     showBack?: boolean;
@@ -14,7 +14,7 @@ interface IHeaderProps {
     transparent?: boolean;
 }
 
-const Header: React.SFC<IHeaderProps> = observer((props) => {
+const Header: FC<IHeaderProps> = observer((props) => {
     const { controller, menu, me, player } = useStore();
     const { song } = controller;
     const goBack = () => window.history.back();

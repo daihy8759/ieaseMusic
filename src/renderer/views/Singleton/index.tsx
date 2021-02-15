@@ -3,7 +3,7 @@ import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { useUpdateEffect } from 'react-use';
+import { useHistory } from 'react-router-dom';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
@@ -11,23 +11,18 @@ import { useStore } from '/@/context';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
-const Singleton: React.SFC = observer(() => {
+const Singleton = observer(() => {
     const { me, controller } = useStore();
-    const circleRef = React.useRef<HTMLDivElement>();
+    const history = useHistory();
 
     const { isLiked, like, unlike } = me;
     const { song, playing } = controller;
     const liked = isLiked(song.id);
 
-    useUpdateEffect(() => {
-        const ele = circleRef.current;
-        if (!ele) return;
-        if (playing) {
-            ele.firstElementChild.classList.remove(styles.pause);
-        } else {
-            ele.firstElementChild.classList.add(styles.pause);
-        }
-    }, [playing]);
+    if (!song.album?.cover) {
+        history.push('/');
+        return null;
+    }
 
     return (
         <div className={styles.container}>
@@ -38,7 +33,7 @@ const Singleton: React.SFC = observer(() => {
                 }}
             />
 
-            <summary>
+            <summary className="pt-6 pl-4">
                 <IconButton
                     className={classnames({
                         [styles.liked]: liked,
@@ -56,12 +51,12 @@ const Singleton: React.SFC = observer(() => {
 
             <main>
                 <div
-                    className={styles.circle}
+                    className={classnames('rounded-full opacity-75', styles.circle)}
                     style={{
                         filter: `drop-shadow(3mm 6mm 12mm ${colors.randomColor()})`,
-                    }}
-                    ref={circleRef}>
+                    }}>
                     <ProgressImage
+                        className={classnames(playing ? 'animate-spin-slow' : 'animate-none')}
                         {...{
                             width: 260,
                             height: 260,

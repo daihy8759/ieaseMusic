@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { useNetwork } from 'react-use';
 import styles from './index.module.less';
 
@@ -6,7 +6,7 @@ interface IOfflineProps {
     show?: boolean;
 }
 
-const Offline: React.FC<IOfflineProps> = ({ show = false }) => {
+const Offline: FC<IOfflineProps> = ({ show = false }) => {
     if (!show) {
         return null;
     }

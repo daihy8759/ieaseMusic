@@ -6,18 +6,17 @@ import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
 import formatDistance from 'date-fns/formatDistance';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
 import styles from './index.module.less';
 
 const Top = observer(() => {
     const { top } = useStore();
     const { loading } = top;
 
-    useEffectOnce(() => {
+    useEffect(() => {
         top.getList();
-    });
+    }, []);
 
     if (loading) {
         return <Loader show />;
@@ -40,12 +39,10 @@ const Top = observer(() => {
                     }}
                 />
 
-                <article className={styles.info}>
+                <article className={classnames('space-y-4', styles.info)}>
                     <p>{item.name}</p>
-
                     <div className={styles.line} />
-
-                    <span>{formatDistance(item.updateTime, new Date())}</span>
+                    <div>{formatDistance(item.updateTime, new Date())}</div>
                 </article>
             </Link>
         );
@@ -54,10 +51,16 @@ const Top = observer(() => {
     const renderList = () => {
         const { list } = top;
         const columns = [];
+        const listLen = list.length;
+        const listRaw = list.slice();
 
-        for (let i = 0, length = Math.ceil(list.length / 2); i < length; ++i) {
-            const item = list[i * 2];
-            const next = list[i * 2 + 1];
+        for (let i = 0, length = Math.ceil(listLen / 2); i < length; ++i) {
+            const pos = i * 2;
+            if (listLen < pos) {
+                break;
+            }
+            const item = listRaw[pos];
+            const next = listLen >= pos + 1 ? listRaw[pos + 1] : null;
 
             columns.push(
                 <li key={i} className="clearfix">
