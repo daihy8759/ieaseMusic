@@ -1,31 +1,38 @@
 import throttle from 'lodash.throttle';
-import { toJS } from 'mobx';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IPC_PLAYER_VOLUME_DOWN, IPC_PLAYER_VOLUME_UP } from '../../../shared/ipc';
-import { useStore } from '/@/context';
 import { useChannel } from '/@/hooks';
+import { playingState, songDetailState, toggleNextState } from '/@/stores/controller';
+import { fetchLyricState } from '/@/stores/lyrics';
+import { volumeState } from '/@/stores/preferences';
 import helper from '/@/utils/helper';
 
 const channel = useChannel();
 
-const AudioPlayer = observer(() => {
-    const store = useStore();
-    const { controller, preferences } = store;
-    const { song, tryTheNext, playing, scrobble, next } = controller;
-    const [passed, setPassed] = React.useState(0.0);
+const AudioPlayer = () => {
+    const [passed, setPassed] = useState(0.0);
     let timer: number;
+    const song = useRecoilValue(songDetailState);
+    const { duration } = song;
+    const playing = useRecoilValue(playingState);
+    const lyric = useRecoilValue(fetchLyricState(song.id));
+    const { list: lyrics } = lyric;
+    const [volume, setVolume] = useRecoilState(volumeState);
+    const toggleNext = useSetRecoilState(toggleNextState);
 
-    const throttled = React.useRef(
-        throttle((throttledValue) => {
-            onProgress(throttledValue);
-        }, 1000)
+    const throttleProcess = useCallback(
+        throttle((time, duration) => {
+            onProgress(time, duration);
+        }, 1000),
+        []
     );
-    const throttledLyrics = React.useRef(
-        throttle((throttledValue) => {
-            onScrollLyrics(throttledValue);
-        }, 200)
+    const throttleLyrics = useCallback(
+        throttle((time) => {
+            onScrollLyrics(time);
+        }, 300),
+        []
     );
 
     const [audio, state, controls, ref] = useAudio({
@@ -34,8 +41,8 @@ const AudioPlayer = observer(() => {
     });
 
     useUpdateEffect(() => {
-        throttled.current(state.time);
-        throttledLyrics.current(state.time);
+        throttleProcess(state.time, duration);
+        throttleLyrics(state.time);
     }, [state.time]);
 
     // buffered
@@ -83,17 +90,16 @@ const AudioPlayer = observer(() => {
         }
     };
 
-    const onProgress = (currentTime = 0) => {
-        const { duration } = store.controller.song;
+    const onProgress = (currentTime = 0, duration: number) => {
         const progress = document.getElementById('progress');
-        if (progress && duration) {
+        if (progress) {
             const passedTime = currentTime * 1000;
             if (passedTime - passed < 1000) {
                 return;
             }
             const percent = passedTime / duration;
             setPosition(percent, progress);
-            progress.firstElementChild.setAttribute(
+            progress.firstElementChild?.setAttribute(
                 'data-time',
                 `${helper.getTime(passedTime)} / ${helper.getTime(duration)}`
             );
@@ -109,7 +115,6 @@ const AudioPlayer = observer(() => {
         if (!lyricsEle) {
             return;
         }
-        const { list: lyrics } = store.lyrics;
         if (lyricsEle) {
             const key = helper.getLyricsKey(currentTime * 1000, lyrics);
             const currentPlaying = lyricsEle.querySelector(`[playing][data-times='${key}']`);
@@ -123,7 +128,8 @@ const AudioPlayer = observer(() => {
                 Array.from(playingEleArray).forEach((e: Element) => e.removeAttribute('playing'));
                 if (playing && !playing.getAttribute('playing')) {
                     playing.setAttribute('playing', 'true');
-                    if (lyricsEle.querySelector('section').getAttribute('scrolling')) {
+                    const sectionElm = lyricsEle.querySelector('section');
+                    if (sectionElm && sectionElm.getAttribute('scrolling')) {
                         return;
                     }
                     // @ts-ignore
@@ -142,20 +148,18 @@ const AudioPlayer = observer(() => {
                 }
                 console.error('Break by %o', e);
                 resetProgress();
-                tryTheNext();
+                // tryTheNext();
             };
 
             audioRef.onended = () => {
-                scrobble();
                 resetProgress();
-                next(true);
+                toggleNext(true);
             };
 
             audioRef.onseeked = () => {
                 setPassed(0.0);
             };
         }
-        const { volume, setVolume } = preferences;
         controls.volume(volume);
 
         channel.listen(IPC_PLAYER_VOLUME_UP, () => {
@@ -172,15 +176,10 @@ const AudioPlayer = observer(() => {
     });
 
     useUpdateEffect(() => {
-        const { autoPlay } = preferences;
-        if (!ref.current.src && !autoPlay) {
-            controller.play(song.id);
-        } else {
-            setupPlay(playing);
-        }
+        setupPlay(playing);
     }, [playing]);
 
     return <>{audio}</>;
-});
+};
 
 export default AudioPlayer;

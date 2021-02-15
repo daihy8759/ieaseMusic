@@ -1,57 +1,53 @@
 import Grid from '@material-ui/core/Grid';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useRef } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Controller from '/@/components/Controller';
 import Header from '/@/components/Header';
-import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
+import { playListState } from '/@/stores/controller';
+import { fetchListState, types } from '/@/stores/playlist';
 import helper from '/@/utils/helper';
 
 interface MatchParams {
     type: string;
 }
 
-const Playlist: FC<RouteComponentProps<MatchParams>> = observer((props) => {
-    const { match } = props;
-    const { playlist, controller } = useStore();
-    const listRef = React.useRef<HTMLElement>(null);
+const Playlist: FC<RouteComponentProps<MatchParams>> = (props) => {
+    const {
+        match: { params },
+    } = props;
+    const type = params.type;
+    const playlist = useRecoilValue(fetchListState(type));
+    const listRef = useRef<HTMLElement>(null);
+    const playList = useRecoilValue(playListState);
+    const { playList: list, nextOffset } = playlist;
 
-    useEffect(() => {
-        loadList();
-    }, [match.params.type]);
-
-    const isPlaying = (id: number) => {
-        return controller.playlist.id === id;
+    const isPlaying = (id: string) => {
+        return playList.id === id;
     };
 
-    const loadList = () => {
-        const { match } = props;
-        playlist.getList(match.params.type);
-    };
-
-    const loadmore = async () => {
+    const loadMore = async () => {
         const container = listRef.current;
-        // Drop the duplicate invoke
-        if (container.classList.contains(styles.loadmore)) {
-            return;
-        }
+        if (container) {
+            // Drop the duplicate invoke
+            if (container.classList.contains(styles.loadmore)) {
+                return;
+            }
 
-        if (container.scrollTop + container.offsetHeight + 50 > container.scrollHeight) {
-            // Mark as loading
-            container.classList.add(styles.loadmore);
-
-            await playlist.loadmore();
-            container.classList.remove(styles.loadmore);
+            if (container.scrollTop + container.offsetHeight + 50 > container.scrollHeight) {
+                // Mark as loading
+                container.classList.add(styles.loadmore);
+                // TODO load more
+                // await playlist.loadmore();
+                container.classList.remove(styles.loadmore);
+            }
         }
     };
 
     const renderList = () => {
-        const { list } = playlist;
-
         return (
             <Grid container>
                 {list.map((e: any, index: number) => {
@@ -86,11 +82,6 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = observer((props) => {
         );
     };
 
-    const {
-        match: { params },
-    } = props;
-    const { loading, types, list } = playlist;
-
     return (
         <div className={styles.container} data-type={encodeURIComponent(params.type)}>
             <Header
@@ -101,8 +92,6 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = observer((props) => {
             />
 
             <div className={styles.inner}>
-                <Loader show={loading} />
-
                 <ul className={styles.navs}>
                     {types.map((e: any) => {
                         const selected = params.type === e.name;
@@ -124,7 +113,7 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = observer((props) => {
                     })}
                 </ul>
 
-                <section className={styles.list} ref={listRef} onScroll={loadmore}>
+                <section className={styles.list} ref={listRef} onScroll={loadMore}>
                     {renderList()}
                 </section>
 
@@ -132,6 +121,6 @@ const Playlist: FC<RouteComponentProps<MatchParams>> = observer((props) => {
             </div>
         </div>
     );
-});
+};
 
 export default Playlist;

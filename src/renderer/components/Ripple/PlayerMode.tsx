@@ -1,21 +1,19 @@
 import { Zoom } from '@material-ui/core';
 import { ReorderTwoTone, RepeatTwoTone, ShuffleTwoTone } from '@material-ui/icons';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useState } from 'react';
 import { useUpdateEffect } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import { PlayMode } from '../../../shared/interface/controller';
 import styles from './index.module.less';
-import { useStore } from '/@/context';
+import { playModeState } from '/@/stores/controller';
 
-const PlayerMode = observer(() => {
-    const {
-        controller: { mode },
-    } = useStore();
-    const [zoom, setZoom] = React.useState(false);
+const PlayerMode = () => {
+    const playMode = useRecoilValue(playModeState);
+    const [zoom, setZoom] = useState(false);
 
     useUpdateEffect(() => {
         zoomTimeout();
-    }, [mode]);
+    }, [playMode]);
 
     const zoomTimeout = () => {
         setZoom(true);
@@ -42,9 +40,9 @@ const PlayerMode = observer(() => {
 
     return (
         <Zoom in={zoom}>
-            <div className={styles.container}>{renderIndicator(mode)}</div>
+            <div className={styles.container}>{renderIndicator(playMode)}</div>
         </Zoom>
     );
-});
+};
 
 export default PlayerMode;

@@ -1,27 +1,21 @@
-import { observer } from 'mobx-react-lite';
 import React, { FC } from 'react';
 import styles from '../index.module.less';
 import Favorite from './Favorite';
 import renderPlaylist from './Playlist';
 import Recommend from './Recommend';
-import { useStore } from '/@/context';
 import { HomeData } from '/@/stores/home';
 
 interface PlaylistProps {
     logined: boolean;
+    list?: HomeData[];
     currentPlaylistId?: string;
     play?: (playlist: HomeData) => void;
 }
 
-const Playlist: FC<PlaylistProps> = observer((props) => {
-    const {
-        home: { list },
-    } = useStore();
+const Playlist: FC<PlaylistProps> = (props) => {
+    const { logined, list, currentPlaylistId, play } = props;
 
-    console.log(props);
-    const { logined, currentPlaylistId, play } = props;
-
-    if (list.length === 0) {
+    if (!list || list.length === 0) {
         return <div className={styles.placeholder} />;
     }
 
@@ -35,6 +29,6 @@ const Playlist: FC<PlaylistProps> = observer((props) => {
             {renderPlaylist({ list: playlist, currentPlaylistId })}
         </section>
     );
-});
+};
 
 export default Playlist;

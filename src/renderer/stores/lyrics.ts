@@ -1,26 +1,20 @@
+import { profileState } from '/@/stores/me';
 import getLyric from '/@/api/lyrics';
-import { makeAutoObservable, runInAction } from 'mobx';
-import controller from './controller';
+import { selectorFamily } from 'recoil';
 
-class Lyrics {
-    loading = true;
-
-    list: { [propName: string]: any } = {};
-
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    getLyrics = async () => {
-        this.loading = true;
-
-        const data = await getLyric(controller.song.id);
-        runInAction(() => {
-            this.list = data;
-            this.loading = false;
-        });
-    };
-}
-
-const lyrics = new Lyrics();
-export default lyrics;
+export const fetchLyricState = selectorFamily({
+    key: 'fetchLyric',
+    get: (id: number) => async ({ get }) => {
+        if (!id) {
+            return {
+                list: [],
+            };
+        }
+        console.log('load lyric:', id);
+        const profile = get(profileState);
+        const data = await getLyric(id, profile.cookie);
+        return {
+            list: data,
+        };
+    },
+});

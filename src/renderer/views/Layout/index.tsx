@@ -1,10 +1,9 @@
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { FC, Suspense } from 'react';
 import { useEffectOnce, useNetwork, useWindowSize } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import AudioPlayer from '/@/components/AudioPlayer';
-import Loader from '/@/components/Loader';
 import Menu from '/@/components/Menu';
 import Offline from '/@/components/Offline';
 import Playing from '/@/components/Playing';
@@ -16,18 +15,15 @@ import PlayerStatus from '/@/components/Ripple/PlayerStatus';
 import VolumeUpDown from '/@/components/Ripple/VolumeUpDown';
 import Share from '/@/components/Share';
 import UpNext from '/@/components/UpNext';
-import { useStore } from '/@/context';
-import lastfm from '/@/utils/lastfm';
+import { songState } from '/@/stores/controller';
 
 interface IBackgroundProps {
     controller?: any;
 }
 
-const Background: React.FC<IBackgroundProps> = observer(() => {
-    const {
-        controller: { song },
-    } = useStore();
+const Background: FC<IBackgroundProps> = () => {
     const { width } = useWindowSize();
+    const song = useRecoilValue(songState);
 
     return (
         <div className={styles.cover}>
@@ -36,7 +32,7 @@ const Background: React.FC<IBackgroundProps> = observer(() => {
                     className={styles.background}
                     {...{
                         width,
-                        src: `${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`,
+                        src: `${song.album?.cover?.replace(/\?param=.*/, '')}?param=800y800`,
                     }}
                 />
             ) : (
@@ -44,21 +40,17 @@ const Background: React.FC<IBackgroundProps> = observer(() => {
             )}
         </div>
     );
-});
+};
 
-interface ILayoutProps {}
-
-const Layout: React.FC<ILayoutProps> = observer((props) => {
+const Layout: FC = (props) => {
     const { children } = props;
-    const store = useStore();
-    const { me, preferences } = store;
 
     useEffectOnce(() => {
         const init = async () => {
-            await preferences.init();
-            await me.init();
-            const { username, password } = preferences.lastFm;
-            await lastfm.initialize(username, password);
+            // await preferences.init();
+            // await me.init();
+            // const { username, password } = preferences.lastFm;
+            // await lastfm.initialize(username, password);
         };
         init();
     });
@@ -67,9 +59,7 @@ const Layout: React.FC<ILayoutProps> = observer((props) => {
     if (!networkState.online) {
         return <Offline show />;
     }
-    if (!me.initialized) {
-        return <Loader show />;
-    }
+
     return (
         <div className={styles.container}>
             <main
@@ -78,11 +68,15 @@ const Layout: React.FC<ILayoutProps> = observer((props) => {
                 })}>
                 {children}
             </main>
-            <AudioPlayer />
+            <Suspense fallback={null}>
+                <AudioPlayer />
+            </Suspense>
             <UpNext />
             <Share />
             <Preferences />
-            <Menu />
+            <Suspense fallback={null}>
+                <Menu />
+            </Suspense>
             <VolumeUpDown />
             <Playing />
             <PlayerNavigation />
@@ -91,6 +85,6 @@ const Layout: React.FC<ILayoutProps> = observer((props) => {
             <Background />
         </div>
     );
-});
+};
 
 export default Layout;

@@ -1,89 +1,71 @@
+import { selector } from 'recoil';
+import { profileState } from './me';
 import homeApi from '/@/api/home';
-import { makeAutoObservable, runInAction } from 'mobx';
+import { useStorage } from '/@/hooks';
+import ISong from '/@/interface/ISong';
 import helper from '/@/utils/helper';
-import controller from './controller';
-import me from './me';
-import preferences from './preferences';
 
 export interface HomeData {
     id?: number;
     name: string;
-    type: number;
-    played: number;
     size: any;
     link: string;
+    background: string;
+    played: number;
+    type: number;
     pallet: any;
     cover: string;
-    background: string;
-    updateTime: number;
+    songs: ISong[];
 }
 
-class Home {
-    loading = true;
+const namespace = 'home';
+const storage = useStorage();
 
-    list: HomeData[] = [];
-
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    async load() {
+export const homeListQuery = selector({
+    key: `${namespace}:list`,
+    get: async ({ get }) => {
+        console.log('get home list');
+        const profile = get(profileState);
         let list: HomeData[];
-        if (me.hasLogin()) {
-            list = await homeApi.getHomeData(me.profile.userId, me.profile.cookie);
-            const [favorite, recommend] = list;
-
-            me.rocking(favorite);
-
-            if (favorite.size) {
-                controller.setup(favorite);
-            } else if (recommend.size) {
-                controller.setup(recommend);
-            } else {
-                controller.setup(list[2]);
-            }
-        } else {
-            list = await homeApi.getHomeData();
-            if (list.length === 0) {
-                console.error('get home request failed');
-                return;
-            }
-            controller.setup(list[0]);
-        }
-
-        if (preferences.autoPlay) {
-            controller.play();
-        } else {
-            const [song] = controller.playlist.songs;
-            controller.song = song || { id: undefined, name: undefined };
-        }
-        // Get the color pallets
-        await Promise.all(
-            list.map(async (e) => {
-                if (!e.cover) return;
-
-                const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
-                e.pallet = pallet;
-            })
-        );
-        runInAction(() => {
-            this.list = list;
-        });
-    }
-
-    async getList() {
-        this.loading = true;
-        // @ts-ignore
-        this.getList = Function;
+        let hasFavorite = false;
+        let hasRecommend = false;
         try {
-            await this.load();
-        } finally {
-            runInAction(() => {
-                this.loading = false;
-            });
-        }
-    }
-}
+            if (profile.userId && profile.cookie) {
+                list = await homeApi.getHomeData(profile.userId, profile.cookie);
+                const [favorite, recommend] = list;
 
-const self = new Home();
-export default self;
+                if (favorite.size > 0) {
+                    const likes: number[] = [];
+                    favorite.songs.forEach((song) => {
+                        likes.push(song.id);
+                    });
+                    await storage.set('likes', likes);
+                    hasFavorite = true;
+                }
+                if (recommend.size > 0) {
+                    hasRecommend = true;
+                }
+            } else {
+                list = await homeApi.getHomeData();
+                if (list.length === 0) {
+                    console.error('get home request failed');
+                }
+            }
+            await Promise.all(
+                list.map(async (e) => {
+                    e.pallet = false;
+                    if (!e.cover) return;
+                    const pallet = await helper.getPallet(`${e.cover.replace(/\?param=.*/, '')}?param=20y20`);
+                    e.pallet = pallet;
+                })
+            );
+            return {
+                list,
+                hasFavorite,
+                hasRecommend,
+            };
+        } catch (e) {
+            console.error('load home list failed');
+        }
+    },
+});

@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { RecoilRoot } from 'recoil';
 import App from './App';
-import { StoreProvider } from './context';
 
 if (import.meta.env.MODE === 'development') {
     localStorage.debug = '*';
 }
 
 ReactDOM.render(
-    <StoreProvider>
+    <RecoilRoot>
         <App />
-    </StoreProvider>,
+    </RecoilRoot>,
     document.getElementById('app')
 );

@@ -13,14 +13,23 @@ import {
     ShuffleTwoTone,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
-import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { PlayMode } from '../../../shared/interface/controller';
 import styles from './index.module.less';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
 import IArtist from '/@/interface/IArtist';
+import { fetchListState } from '/@/stores/comments';
+import {
+    playingState,
+    playListState,
+    playModeState,
+    songState,
+    toggleNextState,
+    togglePrevState,
+} from '/@/stores/controller';
+import { isLiked, loginState, toggleLikeState } from '/@/stores/me';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
@@ -31,37 +40,51 @@ const useStyles = makeStyles({
     },
 });
 
-const Controller = observer(() => {
-    const { controller, me, comments } = useStore();
+const MODES = [PlayMode.PLAYER_LOOP, PlayMode.PLAYER_REPEAT, PlayMode.PLAYER_SHUFFLE];
+
+const Controller = () => {
     const classes = useStyles();
+    const song = useRecoilValue(songState);
+    const { duration } = song;
+    const [mode, setMode] = useRecoilState(playModeState);
+    const [playing, setPlaying] = useRecoilState(playingState);
+    const playList = useRecoilValue(playListState);
+    const logined = useRecoilValue(loginState);
+    const toggleNext = useSetRecoilState(toggleNextState);
+    const togglePrev = useSetRecoilState(togglePrevState);
+    const toggleLike = useSetRecoilState(toggleLikeState);
+    const comments = useRecoilValue(fetchListState(song.id));
+    const liked = isLiked(song.id);
 
     const seek = (e: any) => {
         const percent = e.clientX / window.innerWidth;
-        const {
-            song: { duration },
-        } = controller;
         if (duration) {
             const time = duration * percent;
-            document.querySelector('audio').currentTime = time / 1000;
+            const audioEle = document.querySelector('audio');
+            audioEle && (audioEle.currentTime = time / 1000);
         }
     };
 
     const getPlayerLink = () => {
-        return controller.playlist.link || '/';
+        return playList.link || '/';
     };
 
     const getPlaylistName = () => {
-        return `🎉 ${controller.playlist.name}`;
+        return `🎉 ${playList.name}`;
     };
-
-    const { song, mode, prev, next, toggle, playing, changeMode } = controller;
-    const { hasLogin, isLiked, like, unlike } = me;
-    const { total: commentsTotal } = comments;
-    const liked = isLiked(song.id);
 
     if (!song.id) {
         return null;
     }
+
+    const changeMode = () => {
+        let index = MODES.indexOf(mode);
+        if (++index > MODES.length) {
+            index = 0;
+        }
+        setMode(MODES[index]);
+        return;
+    };
 
     const renderPlayMode = () => {
         if (mode === PlayMode.PLAYER_SHUFFLE) {
@@ -116,7 +139,7 @@ const Controller = observer(() => {
                             height: window.innerWidth,
                             padding: 0,
                             margin: 0,
-                            backgroundImage: `url(${`${song.album.cover.replace(/\?param=.*/, '')}?param=800y800`})`,
+                            backgroundImage: `url(${`${song.album?.cover?.replace(/\?param=.*/, '')}?param=800y800`})`,
                             backgroundSize: `${window.innerWidth}px ${window.innerWidth}px`,
                             filter: 'blur(10px)',
                             zIndex: -1,
@@ -152,7 +175,7 @@ const Controller = observer(() => {
                         {...{
                             height: 32,
                             width: 32,
-                            src: song.album.cover,
+                            src: song.album?.cover,
                             style: {
                                 filter: `drop-shadow(3mm 2mm 4mm ${colors.randomColor()})`,
                             },
@@ -165,18 +188,19 @@ const Controller = observer(() => {
                     <div className={styles.info}>
                         <p className={styles.title} title={song.name}>
                             {/* Click the song name show the album screen */}
-                            <Link to={song.album.link}>{song.name}</Link>
+                            <Link to={song.album?.link || '#'}>{song.name}</Link>
                         </p>
 
                         <p className={styles.author}>
-                            {song.artists.map((e: IArtist, index: number) => {
-                                // Show the artist
-                                return (
-                                    <Link key={index} to={e.link} title={e.name}>
-                                        {e.name}
-                                    </Link>
-                                );
-                            })}
+                            {song.artists &&
+                                song.artists.map((e: IArtist, index: number) => {
+                                    // Show the artist
+                                    return (
+                                        <Link key={index} to={e.link} title={e.name}>
+                                            {e.name}
+                                        </Link>
+                                    );
+                                })}
                         </p>
                     </div>
 
@@ -192,11 +216,14 @@ const Controller = observer(() => {
                             LRC
                         </Link>
                         <Link className={styles.text} to="/comments">
-                            {helper.humanNumber(commentsTotal)} Comments
+                            {helper.humanNumber(comments.total)} Comments
                         </Link>
                         <div className={styles.controls}>
-                            <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
-                                {hasLogin() && liked ? (
+                            <IconButton
+                                onClick={() => {
+                                    toggleLike({ id: song.id, like: !liked });
+                                }}>
+                                {logined && liked ? (
                                     <FavoriteTwoTone className={classes.liked} />
                                 ) : (
                                     <FavoriteBorderTwoTone />
@@ -206,13 +233,19 @@ const Controller = observer(() => {
                             <IconButton>
                                 <CloudDownloadTwoTone />
                             </IconButton>
-                            <IconButton onClick={prev}>
+                            <IconButton
+                                onClick={() => {
+                                    togglePrev(true);
+                                }}>
                                 <FastRewindTwoTone />
                             </IconButton>
-                            <IconButton onClick={toggle}>
+                            <IconButton
+                                onClick={() => {
+                                    setPlaying(!playing);
+                                }}>
                                 {playing ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
                             </IconButton>
-                            <IconButton onClick={() => next()}>
+                            <IconButton onClick={() => toggleNext(true)}>
                                 <FastForwardTwoTone />
                             </IconButton>
                         </div>
@@ -221,6 +254,6 @@ const Controller = observer(() => {
             </section>
         </div>
     );
-});
+};
 
 export default Controller;

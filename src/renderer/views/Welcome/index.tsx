@@ -1,16 +1,16 @@
 import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { PLAYLIST_FM } from '../../../shared/interface/playlist';
 import styles from './index.module.less';
 import Playlist from './Playlist';
 import Controller from '/@/components/Controller';
-import Loader from '/@/components/Loader';
-import { useStore } from '/@/context';
+import { playListState, togglePlayListState, togglePlaySongState } from '/@/stores/controller';
+import { homeListQuery } from '/@/stores/home';
+import { loginState, profileState } from '/@/stores/me';
 
 const useStyles = makeStyles({
     bigAvatar: {
@@ -24,23 +24,40 @@ const ListItemLink = (props: any) => {
     return <ListItem button component="a" {...props} />;
 };
 
-const Welcome = observer(() => {
-    const { me, controller, home } = useStore();
+const preparePlaylist = (homeData: any) => {
+    if (homeData.hasFavorite) {
+        return homeData.list[0];
+    }
+    if (homeData.hasRecommend) {
+        return homeData.list[1];
+    }
+    return homeData[2];
+};
+
+const Welcome = () => {
+    const logined = useRecoilValue(loginState);
+    const playList = useRecoilValue(playListState);
+    const profile = useRecoilValue(profileState);
+    const homeData = useRecoilValue(homeListQuery);
+    const setPlaylist = useSetRecoilState(togglePlayListState);
+    const togglePlaySong = useSetRecoilState(togglePlaySongState);
+    const togglePlayList = useSetRecoilState(togglePlayListState);
+
     const classes = useStyles();
-    useEffectOnce(() => {
-        home.getList();
-    });
+
+    useEffect(() => {
+        setPlaylist({ playList: preparePlaylist(homeData) });
+    }, [homeData]);
 
     const play = (playlist: any) => {
-        if (controller.playlist.id === playlist.id) {
-            controller.toggle();
+        if (playList.id === playlist.id) {
+            togglePlaySong(null);
+        } else {
+            togglePlayList(playlist);
         }
-        controller.setup(playlist);
-        controller.play();
     };
 
     const renderProfile = () => {
-        const { profile } = me;
         const link = `/user/${profile.userId}`;
         return (
             <article className={styles.profile}>
@@ -58,13 +75,8 @@ const Welcome = observer(() => {
         );
     };
 
-    const { list } = home;
-    const logined = me.hasLogin();
-    const songId = controller.song ? controller.song.id : '';
-
     return (
         <div className={styles.container}>
-            <Loader show={home.loading} />
             <main>
                 <aside className={styles.navs}>
                     {logined ? (
@@ -93,18 +105,18 @@ const Welcome = observer(() => {
                         <ListItemLink
                             href="#/fm"
                             className={classnames({
-                                [styles.playing]: controller.playlist.id === PLAYLIST_FM,
+                                [styles.playing]: playList.id === PLAYLIST_FM,
                             })}>
                             <ListItemText primary="Made For You" />
                         </ListItemLink>
                     </List>
                 </aside>
-                <Playlist logined={logined} currentPlaylistId={controller.playlist.id} play={play} />
+                <Playlist logined={logined} list={homeData?.list} currentPlaylistId={playList.id} play={play} />
             </main>
 
-            <Controller key={songId} />
+            <Controller />
         </div>
     );
-});
+};
 
 export default Welcome;

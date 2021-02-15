@@ -1,32 +1,25 @@
 import { ThumbUpAltTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import formatDistance from 'date-fns/formatDistance';
-import { observer } from 'mobx-react-lite';
-import React, { FC, useRef } from 'react';
+import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import Hero from '/@/components/Hero';
-import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
+import { fetchListState } from '/@/stores/comments';
+import { songState } from '/@/stores/controller';
 import helper from '/@/utils/helper';
 
-const Comments: FC<RouteComponentProps> = observer((props) => {
-    const { comments } = useStore();
-    const { loading, song, like, loadMore, hotList, newestList } = comments;
-    const listRef = useRef<HTMLElement>(null);
-
-    useEffectOnce(() => {
-        if (!song || !song.id) {
-            props.history.replace('/');
-        }
-    });
-
-    if (loading || !song.id) {
-        return <Loader show />;
+const Comments: FC<RouteComponentProps> = (props) => {
+    const controllerSong = useRecoilValue(songState);
+    if (!controllerSong || !controllerSong.id) {
+        props.history.replace('/');
     }
+    const comments = useRecoilValue(fetchListState(controllerSong.id));
+    const { hotList, newestList } = comments;
+    const listRef = React.useRef<HTMLElement>(null);
 
     const loadmore = async () => {
         const container = listRef.current;
@@ -132,6 +125,6 @@ const Comments: FC<RouteComponentProps> = observer((props) => {
             </aside>
         </div>
     );
-});
+};
 
 export default Comments;

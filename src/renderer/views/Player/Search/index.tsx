@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react-lite';
-import React, { FC } from 'react';
+import throttle from 'lodash.throttle';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import styles from './index.module.less';
 import closePng from '/@/assets/close.png';
 
@@ -9,8 +9,11 @@ interface ISearchProps {
     filter?: any;
 }
 
-const Search: FC<ISearchProps> = observer((props) => {
+const Search: FC<ISearchProps> = (props) => {
     const { show, close, filter, children } = props;
+    const [keywords, setKeywords] = useState('');
+    const throttled = useRef(throttle((newValue) => filter(newValue), 1000));
+    useEffect(() => throttled.current(keywords), [keywords]);
 
     if (!show) {
         return null;
@@ -27,7 +30,7 @@ const Search: FC<ISearchProps> = observer((props) => {
             <header>
                 <input
                     type="text"
-                    onInput={(e: any) => filter(e.target.value)}
+                    onChange={(e: any) => setKeywords(e.target.value)}
                     placeholder="Search..."
                     className="text-black"
                 />
@@ -37,6 +40,6 @@ const Search: FC<ISearchProps> = observer((props) => {
             <div className={styles.list}>{children}</div>
         </div>
     );
-});
+};
 
 export default Search;

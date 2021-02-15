@@ -1,32 +1,32 @@
-import { observer } from 'mobx-react-lite';
 import * as QRCode from 'qrcode';
 import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
-import * as closePng from '/@/assets/close.png';
-import * as socialFacebook from '/@/assets/social-facebook.png';
-import * as socialTwitter from '/@/assets/social-twitter.png';
+import closePng from '/@/assets/close.png';
+import socialFacebook from '/@/assets/social-facebook.png';
+import socialTwitter from '/@/assets/social-twitter.png';
 import Modal from '/@/components/Modal';
-import { useStore } from '/@/context';
 import { useShell } from '/@/hooks';
 import IArtist from '/@/interface/IArtist';
+import { songState } from '/@/stores/controller';
+import { shareShowState } from '/@/stores/share';
 
 const shell = useShell();
 
-const Share: React.SFC = observer(() => {
-    const {
-        share,
-        controller: { song },
-    } = useStore();
+const Share = () => {
+    const song = useRecoilValue(songState);
+    const [show, setShow] = useRecoilState(shareShowState);
+
     if (!song.id) {
         return null;
     }
     const close = () => {
-        share.toggle(false);
+        setShow(false);
     };
 
     const renderContent = () => {
         const url = `https://music.163.com/#/song?id=${song.id}`;
-        const text = `${song.name} - ${song.artists.map((e: IArtist) => e.name).join()}`;
+        const text = `${song.name} - ${song.artists?.map((e: IArtist) => e.name).join()}`;
 
         return (
             <div className={styles.container}>
@@ -91,7 +91,7 @@ const Share: React.SFC = observer(() => {
         );
     };
 
-    return <Modal visible={share.show} fullScreen content={renderContent()} onCancel={close} />;
-});
+    return <Modal visible={show} fullScreen content={renderContent()} onCancel={close} />;
+};
 
 export default Share;

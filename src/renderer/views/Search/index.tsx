@@ -2,13 +2,13 @@ import { Box, IconButton, Tab, Tabs, Typography } from '@material-ui/core';
 import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import format from 'date-fns/format';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
+import { keywordState, playlistQueryState } from '/@/stores/search';
 import helper from '/@/utils/helper';
 
 const a11yProps = (index: any) => {
@@ -40,10 +40,12 @@ const TabPanel = (props: TabPanelProps) => {
     );
 };
 
-const Search: React.FC = observer(() => {
-    const { search, artist } = useStore();
-    const searchRef = React.useRef<HTMLInputElement>();
-    const [value, setValue] = React.useState(0);
+const Search = () => {
+    const [keyword, setKeyword] = useRecoilState(keywordState);
+    const playlists = useRecoilValue(playlistQueryState);
+
+    const searchRef = useRef<HTMLInputElement>(null);
+    const [value, setValue] = useState(0);
 
     const loadMore = (e: any) => {
         const { loading, scrollLoading } = search;
@@ -69,35 +71,7 @@ const Search: React.FC = observer(() => {
 
     const reset = () => {};
 
-    const doSearch = async (e: any) => {
-        if (e.keyCode !== 13) {
-            return;
-        }
-        searchByKeyword(e.target.value);
-    };
-
-    const searchByKeyword = (searchValue: any) => {
-        const keyword = searchValue && searchValue.trim();
-        if (!keyword) {
-            return;
-        }
-        switch (value) {
-            case 1:
-                getAlbums(keyword);
-                break;
-            case 2:
-                getArtists(keyword);
-                break;
-            case 3:
-                getUsers(keyword);
-            default:
-                getPlaylists(keyword);
-        }
-    };
-
     const renderPlaylist = () => {
-        const { playlists } = search;
-
         if (playlists.length === 0) {
             return (
                 <div className={styles.placeholder}>
@@ -267,8 +241,6 @@ const Search: React.FC = observer(() => {
         searchByKeyword(searchRef.current.value);
     };
 
-    const { loading, getPlaylists, getAlbums, getArtists, getUsers } = search;
-
     return (
         <div className={styles.container}>
             <Header
@@ -280,7 +252,14 @@ const Search: React.FC = observer(() => {
 
             <main>
                 <summary>
-                    <input ref={searchRef} type="text" onKeyUp={doSearch} placeholder="Search ..." />
+                    <input
+                        type="text"
+                        value={keyword}
+                        placeholder="Search ..."
+                        onChange={(e) => {
+                            setKeyword(e.target.value);
+                        }}
+                    />
                 </summary>
                 <Tabs value={value} onChange={handleTabChange}>
                     <Tab label="Playlist" {...a11yProps(0)} />
@@ -335,6 +314,6 @@ const Search: React.FC = observer(() => {
             </main>
         </div>
     );
-});
+};
 
 export default Search;

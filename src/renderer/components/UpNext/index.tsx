@@ -1,27 +1,26 @@
 import { PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Modal from '/@/components/Modal';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
 import IArtist from '/@/interface/IArtist';
+import { upNextShowState, upNextSongState } from '/@/stores/upnext';
 
-const UpNext = observer(() => {
-    const { upnext, controller } = useStore();
+const UpNext = () => {
+    const [show, setShow] = useRecoilState(upNextShowState);
+    const song = useRecoilValue(upNextSongState);
 
     const close = () => {
-        upnext.hide();
+        setShow(false);
     };
 
     const renderContent = () => {
-        const { song } = upnext;
-
         return (
             <div className={styles.container}>
                 <p>
-                    {song.name} - {song.artists.map((e: IArtist) => e.name).join()}
+                    {song.name} - {song.artists?.map((e: IArtist) => e.name).join()}
                 </p>
 
                 <figure className={styles.circle} data-percent="75">
@@ -31,7 +30,7 @@ const UpNext = observer(() => {
                             className={classnames('remixicon-play-fill', styles.play)}
                             onClick={() => {
                                 close();
-                                controller.play(song.id);
+                                // controller.play(song.id);
                             }}
                         />
 
@@ -40,7 +39,7 @@ const UpNext = observer(() => {
                                 className: styles.cover,
                                 height: 140,
                                 width: 140,
-                                src: song.album.cover,
+                                src: song.album?.cover,
                             }}
                         />
                     </div>
@@ -49,11 +48,11 @@ const UpNext = observer(() => {
                         <circle
                             className={styles.outter}
                             onAnimationEnd={() => {
-                                if (!upnext.show) {
+                                if (!show) {
                                     return;
                                 }
                                 close();
-                                controller.play(song.id);
+                                // controller.play(song.id);
                             }}
                             cx="70"
                             cy="70"
@@ -66,8 +65,8 @@ const UpNext = observer(() => {
                 <button
                     type="button"
                     onClick={() => {
-                        upnext.cancel();
-                        controller.pause();
+                        // upnext.cancel();
+                        // controller.pause();
                     }}>
                     Cancel
                 </button>
@@ -75,7 +74,7 @@ const UpNext = observer(() => {
         );
     };
 
-    return <Modal visible={upnext.show} content={renderContent()} />;
-});
+    return <Modal visible={show} content={renderContent()} />;
+};
 
 export default UpNext;

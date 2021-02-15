@@ -1,34 +1,31 @@
 import { Zoom } from '@material-ui/core';
 import { VolumeDownTwoTone, VolumeMuteTwoTone, VolumeUpTwoTone } from '@material-ui/icons';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { useEffectOnce } from 'react-use';
+import React, { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+import { IPC_PLAYER_VOLUME_DOWN, IPC_PLAYER_VOLUME_UP } from '../../../shared/ipc';
 import styles from './index.module.less';
-import { useStore } from '/@/context';
-import { useIpc } from '/@/hooks';
+import { useChannel } from '/@/hooks';
+import { volumeState } from '/@/stores/preferences';
 
-const ipc = useIpc();
+const channel = useChannel();
 
-const VolumeUpDown = observer(() => {
-    const {
-        preferences: { volume },
-    } = useStore();
+const VolumeUpDown = () => {
+    const volume = useRecoilValue(volumeState);
     const isMuted = volume === 0;
-    const containerRef = React.useRef<HTMLDivElement>();
+    const containerRef = React.useRef<HTMLDivElement>(null);
     const [direction, setDirection] = React.useState(true);
     const [zoom, setZoom] = React.useState(false);
 
-    useEffectOnce(() => {
-        // TODO ipc.on
-        // ipc.on('player-volume-up', () => {
-        //     setDirection(true);
-        //     zoomTimeout();
-        // });
-        // ipc.on('player-volume-down', () => {
-        //     setDirection(false);
-        //     zoomTimeout();
-        // });
-    });
+    useEffect(() => {
+        channel.listen(IPC_PLAYER_VOLUME_UP, () => {
+            setDirection(true);
+            zoomTimeout();
+        });
+        channel.listen(IPC_PLAYER_VOLUME_DOWN, () => {
+            setDirection(false);
+            zoomTimeout();
+        });
+    }, []);
 
     const zoomTimeout = () => {
         setZoom(true);
@@ -54,6 +51,6 @@ const VolumeUpDown = observer(() => {
             </div>
         </Zoom>
     );
-});
+};
 
 export default VolumeUpDown;

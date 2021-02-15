@@ -1,26 +1,16 @@
-import { useStore } from '/@/context';
 import classnames from 'classnames';
+import formatDistance from 'date-fns/formatDistance';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import styles from './index.module.less';
 import Controller from '/@/components/Controller';
 import Header from '/@/components/Header';
-import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
-import formatDistance from 'date-fns/formatDistance';
-import { observer } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import styles from './index.module.less';
+import { fetchListState } from '/@/stores/top';
 
-const Top = observer(() => {
-    const { top } = useStore();
-    const { loading } = top;
-
-    useEffect(() => {
-        top.getList();
-    }, []);
-
-    if (loading) {
-        return <Loader show />;
-    }
+const Top = () => {
+    const list = useRecoilValue(fetchListState);
 
     const renderItem = (item: any) => {
         if (!item) {
@@ -49,7 +39,6 @@ const Top = observer(() => {
     };
 
     const renderList = () => {
-        const { list } = top;
         const columns = [];
         const listLen = list.length;
         const listRaw = list.slice();
@@ -86,6 +75,6 @@ const Top = observer(() => {
             <Controller />
         </div>
     );
-});
+};
 
 export default Top;

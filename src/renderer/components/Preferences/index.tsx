@@ -2,11 +2,11 @@ import { Button, CircularProgress, Switch, Theme, Typography } from '@material-u
 import { FlashOnTwoTone, VerifiedUserTwoTone } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useRef } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Modal from '/@/components/Modal';
-import { useStore } from '/@/context';
+import { preferencesShowState } from '/@/stores/preferences';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -19,13 +19,13 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const Preferences: React.SFC = observer(() => {
-    const { preferences } = useStore();
-    const downloadRef = React.useRef<HTMLInputElement>();
-    const usernameRef = React.useRef<HTMLInputElement>();
-    const passwordRef = React.useRef<HTMLInputElement>();
-    // @ts-ignore
+const Preferences = () => {
+    const downloadRef = useRef<HTMLInputElement>(null);
+    const usernameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
     const classes = useStyles();
+
+    const [show, setShow] = useRecoilState(preferencesShowState);
 
     const saveLastfm = () => {
         preferences.setLastfm({
@@ -54,7 +54,7 @@ const Preferences: React.SFC = observer(() => {
     };
 
     const close = () => {
-        preferences.hide();
+        setShow(false);
     };
 
     const renderFm = () => {
@@ -84,40 +84,9 @@ const Preferences: React.SFC = observer(() => {
     };
 
     const renderOptions = () => {
-        const {
-            showTray,
-            setShowTray,
-            showMenuBarOnLinux,
-            setShowMenuBarOnLinux,
-            revertTrayIcon,
-            setRevertTrayIcon,
-            alwaysOnTop,
-            setAlwaysOnTop,
-            autoPlay,
-            setAutoPlay,
-            showNotification,
-            setShowNotification,
-            highquality,
-            setHighquality,
-            backgrounds,
-            autoupdate,
-            setAutoupdate,
-            scrobble,
-            lastFm,
-            connect,
-            connecting,
-            enginers,
-            proxy,
-            disableProxy,
-            enableProxy,
-            setProxy,
-            downloads,
-            setDownloads,
-        } = preferences;
-
         return (
             <div className={styles.container}>
-                <section>
+                {/* <section>
                     <article>
                         <label htmlFor="alwaysOnTop">
                             <div>
@@ -405,12 +374,12 @@ const Preferences: React.SFC = observer(() => {
                                 );
                             })}
                     </article>
-                </section>
+                </section> */}
             </div>
         );
     };
 
-    return <Modal title="Preferences..." visible={preferences.show} onCancel={close} content={renderOptions()} />;
-});
+    return <Modal title="Preferences..." visible={show} onCancel={close} content={renderOptions()} />;
+};
 
 export default Preferences;

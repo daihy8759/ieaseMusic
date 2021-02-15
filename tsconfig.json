@@ -16,8 +16,7 @@
         "jsx": "react",
         "types": ["vite/client"],
         "paths": {
-            "/@/*": ["./src/renderer/*"],
-            "/@shared/*": ["./src/shared/*"]
+            "/@/*": ["./src/renderer/*"]
         }
     },
     "include": ["./src"]

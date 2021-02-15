@@ -1,45 +1,32 @@
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useUpdateEffect } from 'react-use';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import FadeImage from '/@/components/FadeImage';
 import Indicator from '/@/components/Indicator';
-import { useStore } from '/@/context';
 import IArtist from '/@/interface/IArtist';
+import { playListState, songState } from '/@/stores/controller';
+import { filteredSongsState, playingShowState } from '/@/stores/playing';
 import colors from '/@/utils/colors';
 
-const Playing = observer(() => {
-    const { playing, controller } = useStore();
+const Playing = () => {
+    const [show, setShow] = useRecoilState(playingShowState);
+    const filteredSongs = useRecoilState(filteredSongsState);
+    const playList = useRecoilValue(playListState);
+    const controllerSong = useRecoilValue(songState);
+
     const listRef = useRef<HTMLUListElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLInputElement>(null);
 
-    useUpdateEffect(() => {
-        listRef.current.scrollTop = 0;
-    }, [playing.filtered]);
-
-    useUpdateEffect(() => {
-        if (playing.show) {
-            const { song } = controller;
-            const playing = Array.from(listRef.current.querySelectorAll('[data-id]')).find(
-                (e: any) => e.dataset.id === song.id
-            );
-
-            if (playing) {
-                playing.scrollIntoView();
-            }
-        }
-    }, [playing.show, playing]);
-
-    if (!playing.show) {
+    if (!show) {
         return null;
     }
 
     const pressEscExit = (e: any) => {
         if (e.keyCode === 27) {
-            playing.toggle(false);
+            setShow(false);
         }
     };
 
@@ -93,26 +80,21 @@ const Playing = observer(() => {
         if (active) {
             // @ts-ignore
             const songid = active.dataset.id;
-            controller.play(songid);
+            // controller.play(songid);
         }
     };
 
     const renderList = () => {
-        const {
-            playlist: { songs = [] },
-            song = {},
-            play,
-        } = controller;
-        const { filtered } = playing;
-        let list = songs;
+        // const { filtered } = playing;
+        let list = playList.songs;
         if (searchRef.current && searchRef.current.value.trim()) {
-            list = filtered;
+            list = filteredSongs;
         }
         if (list.length === 0) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
         return list.map((e) => {
-            const playing = e.id === song.id;
+            const playing = e.id === controllerSong.id;
 
             return (
                 <li key={e.id}>
@@ -124,7 +106,7 @@ const Playing = observer(() => {
                         })}
                         data-id={e.id}
                         onClick={() => {
-                            play(e.id);
+                            // play(e.id);
                             close();
                         }}>
                         <Link to={e.album.link}>
@@ -177,6 +159,6 @@ const Playing = observer(() => {
             </section>
         </div>
     );
-});
+};
 
 export default Playing;

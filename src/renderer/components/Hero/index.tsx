@@ -1,28 +1,35 @@
 import { Button, IconButton } from '@material-ui/core';
 import { FavoriteBorderTwoTone, FavoriteTwoTone, ShareTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import AdapterLink from '../AdapterLink';
 import styles from './index.module.less';
 import Indicator from '/@/components/Indicator';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
 import IArtist from '/@/interface/IArtist';
+import { fetchListState } from '/@/stores/comments';
+import { songState } from '/@/stores/controller';
+import { isLiked, toggleLikeState } from '/@/stores/me';
+import { shareShowState } from '/@/stores/share';
 import helper from '/@/utils/helper';
 
 interface IHeroProps {
     location?: any;
 }
 
-const Hero: FC<IHeroProps> = observer((props) => {
+const Hero: FC<IHeroProps> = (props) => {
     const { location } = props;
-    const { me, comments, controller, share } = useStore();
-    const { isLiked, unlike, like } = me;
-    const { total: commentsTotal } = comments;
-    const { song } = controller;
     const { pathname } = location;
+    const song = useRecoilValue(songState);
+    if (!song || !song.id) {
+        return null;
+    }
+    const comments = useRecoilValue(fetchListState(song.id));
+    const { total: commentsTotal } = comments;
+    const setShow = useSetRecoilState(shareShowState);
+    const toggleLike = useSetRecoilState(toggleLikeState);
     const liked = isLiked(song.id);
 
     return (
@@ -41,16 +48,18 @@ const Hero: FC<IHeroProps> = observer((props) => {
                 to=""
                 onClick={(e: any) => {
                     e.preventDefault();
-                    share.toggle(true);
+                    setShow(true);
                 }}>
                 <ShareTwoTone />
             </Button>
 
             <summary>
-                <IconButton onClick={() => (liked ? unlike(song) : like(song))}>
+                <IconButton
+                    onClick={() => {
+                        toggleLike({ id: song.id, like: !liked });
+                    }}>
                     {liked ? <FavoriteTwoTone className={styles.liked} /> : <FavoriteBorderTwoTone />}
                 </IconButton>
-
                 <span className={styles.badge}>{helper.getRate(song)}</span>
 
                 <span className={styles.badge}>
@@ -95,6 +104,6 @@ const Hero: FC<IHeroProps> = observer((props) => {
             </footer>
         </div>
     );
-});
+};
 
 export default Hero;

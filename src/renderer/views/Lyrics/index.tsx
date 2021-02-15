@@ -1,33 +1,20 @@
-import { observer } from 'mobx-react-lite';
 import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce, useUpdateEffect } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import Hero from '/@/components/Hero';
-import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
+import { songState } from '/@/stores/controller';
+import { fetchLyricState } from '/@/stores/lyrics';
 
-const Lyrics: FC<RouteComponentProps> = observer((props) => {
-    const { lyrics, controller } = useStore();
-    const { loading, list: lyricsList } = lyrics;
-    const { song } = controller;
-
-    useEffectOnce(() => {
-        if (!song.id) {
-            props.history.replace('/');
-        }
-        lyrics.getLyrics();
-    });
-
-    useUpdateEffect(() => {
-        lyrics.getLyrics();
-    }, [song.id]);
-
-    if (loading) {
-        return <Loader show />;
+const Lyrics: FC<RouteComponentProps> = (props) => {
+    const song = useRecoilValue(songState);
+    if (!song || !song.id) {
+        props.history.replace('/');
     }
+    const lyric = useRecoilValue(fetchLyricState(song.id));
+    const { list: lyricsList } = lyric;
 
     const renderLyrics = () => {
         const times = lyricsList && Object.keys(lyricsList);
@@ -38,7 +25,7 @@ const Lyrics: FC<RouteComponentProps> = observer((props) => {
                 </div>
             );
         }
-        return times.map((e) => {
+        return times.map((e: number) => {
             return (
                 <p data-times={e} key={e}>
                     <span>{lyricsList[e]}</span>
@@ -58,7 +45,7 @@ const Lyrics: FC<RouteComponentProps> = observer((props) => {
                     {...{
                         height: window.innerHeight,
                         width: window.innerWidth,
-                        src: song.album.cover.replace(/\?.*$/, ''),
+                        src: song.album?.cover?.replace(/\?.*$/, ''),
                     }}
                 />
 
@@ -81,6 +68,6 @@ const Lyrics: FC<RouteComponentProps> = observer((props) => {
             </aside>
         </div>
     );
-});
+};
 
 export default Lyrics;

@@ -1,34 +1,37 @@
 import { IconButton, SvgIcon } from '@material-ui/core';
-import { observer } from 'mobx-react-lite';
+import classnames from 'classnames';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import FadeImage from '/@/components/FadeImage';
-import { useStore } from '/@/context';
 import { useShell } from '/@/hooks';
+import { loginState, profileState } from '/@/stores/me';
+import { menuShowState } from '/@/stores/menu';
 
 const shell = useShell();
 
-const Menu = observer(() => {
-    const { menu, me } = useStore();
-    const { show } = menu;
+const Menu = () => {
+    const hasLogin = useRecoilValue(loginState);
+    const profile = useRecoilValue(profileState);
+    const [show, setShow] = useRecoilState(menuShowState);
     if (!show) {
         return null;
     }
     const doLogout = () => {
+        // TODO logout
         // remote.getCurrentWindow().webContents.session.clearStorageData();
-        me.logout();
+        // me.logout();
     };
 
     const close = () => {
-        menu.toggle(false);
+        setShow(false);
     };
 
     const renderMe = () => {
-        const { hasLogin, profile } = me;
         const link = `/user/${profile.userId}`;
 
-        if (!hasLogin()) {
+        if (!hasLogin) {
             return (
                 <p>
                     <Link onClick={close} to="/login/0">
@@ -63,7 +66,7 @@ const Menu = observer(() => {
             // Press ESC close menu
             onKeyUp={(e) => e.keyCode === 27 && close()}>
             <div className={styles.overlay} onClick={close} />
-            <section className={styles.body}>
+            <section className={classnames('pl-2', styles.body)}>
                 <div>
                     {renderMe()}
 
@@ -114,6 +117,6 @@ const Menu = observer(() => {
             </section>
         </div>
     );
-});
+};
 
 export default Menu;

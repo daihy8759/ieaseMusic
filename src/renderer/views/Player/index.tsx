@@ -1,94 +1,66 @@
 import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
 import React, { FC, useRef } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useEffectOnce, useUpdateEffect } from 'react-use';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styles from './index.module.less';
 import Search from './Search';
 import Controller from '/@/components/Controller';
 import FadeImage from '/@/components/FadeImage';
 import Header from '/@/components/Header';
-import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
 import IArtist from '/@/interface/IArtist';
+import { playingState, playListState, songState, togglePlayListState, togglePlaySongState } from '/@/stores/controller';
+import { loginState } from '/@/stores/me';
+import {
+    fetchListDetailState,
+    fetchRelatedState,
+    filterSongsState,
+    playerKeywordState,
+    playerSearchState,
+} from '/@/stores/player';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
 interface MatchParams {
     id: string;
+    type: string;
 }
 
-const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
-    const { player, controller, me } = useStore();
-    const { song, playing } = controller;
-    const { loading, meta, recommend, filter, searching } = player;
+const Player: FC<RouteComponentProps<MatchParams>> = (props) => {
+    const { id, type } = props.match.params;
+    const song = useRecoilValue(songState);
+    const related = useRecoilValue(
+        fetchRelatedState({
+            songId: song.id,
+            artistId: song.artists ? song.artists[0].id : undefined,
+        })
+    );
+    const { recommend, artists, users } = related;
+    const [searching, setSearching] = useRecoilState(playerSearchState);
+    const listDetail = useRecoilValue(fetchListDetailState({ id, type }));
+    const togglePlaylist = useSetRecoilState(togglePlayListState);
+    const togglePlaySong = useSetRecoilState(togglePlaySongState);
+    const hasLogin = useRecoilValue(loginState);
+    const { meta, songs } = listDetail;
+    const [keywords, setKeywords] = useRecoilState(playerKeywordState);
+    const filterSongs = useRecoilValue(
+        filterSongsState({
+            keywords,
+            songs,
+        })
+    );
+    const [playing, setPlaying] = useRecoilState(playingState);
+    const playList = useRecoilValue(playListState);
     const searchingRef = useRef<HTMLUListElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
     const recommendWidth = 260;
     const recommendHeight = 230;
 
-    useEffectOnce(() => {
-        load();
-    });
-
-    useUpdateEffect(() => {
-        player.getRelated(song);
-    }, [song.id]);
-
-    useUpdateEffect(() => {
-        load();
-    }, [props.match.params.id]);
-
-    useUpdateEffect(() => {
-        const { searching } = player;
-        const ele = searching ? searchingRef.current : listRef.current;
-        if (!ele) {
-            return;
-        }
-        const playing = ele.querySelector(styles.active);
-
-        if (playing) {
-            playing.scrollIntoViewIfNeeded();
-        }
-    }, [playing]);
-
-    const showLoading = () => {
-        player.toggleLoading(true);
-    };
-
-    const hideLoading = () => {
-        setTimeout(() => player.toggleLoading(false), 500);
-    };
-
-    const getList = async (args: any) => {
-        const { id, type } = args;
-        await player.getDetail(type, id);
-    };
-
-    const load = async () => {
-        const { getRelated } = player;
-        const { song } = controller;
-        const {
-            match: { params },
-        } = props;
-
-        showLoading();
-        try {
-            await getList(params);
-            await getRelated(song);
-        } finally {
-            hideLoading();
-        }
-    };
-
     const renderPeople = () => {
-        const { artists, users } = player;
-        const { hasLogin } = me;
         const content = [];
 
-        if (!hasLogin()) {
+        if (!hasLogin) {
             return <div className={styles.nothing}>Nothing ...</div>;
         }
 
@@ -124,61 +96,49 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
     };
 
     const canToggle = () => {
-        return controller.playlist.id === player.meta.id;
+        return playList.id === meta.id;
     };
 
     const play = async (songId?: number) => {
-        const { meta } = player;
-        const currentPlayId = controller.playlist.id;
+        const currentPlayId = playList.id;
         const sameToPlaying = currentPlayId && currentPlayId === meta.id;
         if (!songId) {
-            // Change the
             if (sameToPlaying) {
-                controller.toggle();
+                setPlaying(!playing);
             } else {
-                // Play a new playlist
-                controller.setup({
-                    id: meta.id,
-                    link: `/player/${meta.type}/${meta.id}`,
-                    name: meta.name,
-                    songs: player.songs,
+                togglePlaylist({
+                    playList: {
+                        id: meta.id,
+                        link: `/player/${meta.type}/${meta.id}`,
+                        name: meta.name,
+                        songs,
+                    },
                 });
-                await controller.play();
             }
-
             return;
         }
 
         if (sameToPlaying) {
-            // Song is playing
-            if (songId === controller.song.id) {
-                controller.toggle();
+            if (songId === song.id) {
+                setPlaying(!playing);
                 return;
             }
-
-            await controller.play(songId);
+            togglePlaySong(songId);
             return;
         }
-
-        // Change playlist and play specific song
-        controller.setup({
-            id: meta.id,
-            link: `/player/${meta.type}/${meta.id}`,
-            name: meta.name,
-            songs: player.songs,
+        togglePlaylist({
+            playList: {
+                id: meta.id,
+                link: `/player/${meta.type}/${meta.id}`,
+                name: meta.name,
+                songs,
+            },
         });
-        await controller.play(songId);
-    };
-
-    const canifav = () => {
-        return player.meta.type === 0 && me.likes.get('id') !== player.meta.id;
     };
 
     const renderList = () => {
-        const { songs, keywords, searching, filtered } = player;
-        const { song } = controller;
         const sameToPlaylist = canToggle();
-        const list = searching && keywords ? filtered : songs;
+        const list = searching ? filterSongs : songs;
 
         if (list.length === 0) {
             return (
@@ -218,7 +178,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
                         {e.name}
                     </span>
 
-                    <span className={styles.time}>{helper.getTime(e.duration)}</span>
+                    <span className={styles.time}>{helper.getTime(e.duration || 0)}</span>
                 </li>
             );
         });
@@ -226,9 +186,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
 
     return (
         <div className={styles.container}>
-            <Loader show={loading} />
-
-            <Header transparent showFav={canifav()} />
+            <Header transparent />
 
             <section>
                 <div
@@ -305,7 +263,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
 
                     <div className={styles.list}>
                         <header>
-                            <span onClick={() => player.toggleSearch(true)}>Track/SEARCH</span>
+                            <span onClick={() => setSearching(true)}>Track/SEARCH</span>
                             <span>Time</span>
                         </header>
                         <ul ref={listRef}>{renderList()}</ul>
@@ -314,11 +272,10 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
 
                 <Search
                     {...{
-                        filter,
+                        filter: setKeywords,
                         show: searching,
                         close: () => {
-                            player.toggleSearch(false);
-                            filter();
+                            setSearching(false);
                         },
                     }}>
                     <div className={styles.list}>
@@ -330,6 +287,6 @@ const Player: FC<RouteComponentProps<MatchParams>> = observer((props) => {
             <Controller />
         </div>
     );
-});
+};
 
 export default Player;

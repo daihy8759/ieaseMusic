@@ -1,193 +1,112 @@
-import _debug from 'debug';
-import { makeAutoObservable, runInAction } from 'mobx';
-import { useDialog, useMusicApi, useStorage } from '../hooks';
-import home from './home';
-import player from './player';
-import QRCodeApi, { LoginType } from '/@/api/qrcode';
-import ISong from '/@/interface/ISong';
+import { atom, selector } from 'recoil';
+import { songState } from './controller';
+import QRCodeApi from '/@/api/qrcode';
+import { useMusicApi, useStorage } from '/@/hooks';
 import IUserProfile from '/@/interface/IUserProfile';
 import helper from '/@/utils/helper';
-import lastfm from '/@/utils/lastfm';
 
 const { generate, polling } = QRCodeApi;
-const dialog = useDialog();
-const musicApi = useMusicApi();
 const storage = useStorage();
-const error = _debug('dev:me:error');
+const musicApi = useMusicApi();
 
-class Me {
-    initialized = false;
+const namespace = 'me';
 
-    logining = false;
+// export const qrcodeState =
 
-    profile: IUserProfile = {};
+export const profileState = atom({
+    key: 'profile',
+    default: selector({
+        key: 'profile/default',
+        get: async () => {
+            let profile: IUserProfile = await storage.get('profile');
 
-    qrcode: any = {};
-
-    likes = new Map();
-
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    async init() {
-        let profile: IUserProfile = await storage.get('profile');
-        if (!profile) {
-            profile = {};
-        } else {
-            try {
-                await musicApi.login_refresh({
-                    cookie: profile.cookie,
-                });
-            } catch (e) {
+            if (!profile) {
                 profile = {};
-                await storage.delete('profile');
-            }
-        }
-        runInAction(() => {
-            this.profile = profile;
-            this.initialized = true;
-        });
-    }
-
-    generate = async (type: LoginType) => {
-        const data: any = await generate(type);
-
-        if (data.success === false) {
-            window.alert('Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.');
-            return;
-        }
-
-        this.qrcode = {
-            ...data,
-            type,
-        };
-    };
-
-    waiting = async (done: any) => {
-        const { ticket, state, type } = this.qrcode;
-        const data = await polling({
-            ticket,
-            state,
-            type,
-        });
-        if (data.success === false) {
-            dialog.showErrorBox(
-                '错误',
-                'Failed to login with QRCode, Please check your console(Press ⌘+⌥+I) and report it.'
-            );
-            return;
-        }
-
-        const { body } = await musicApi.login_status({});
-        // @ts-ignore
-        this.profile = body.profile;
-        await storage.set('profile', {
-            ...this.profile,
-            cookie: body.cookie,
-        });
-        await this.init();
-        await home.load();
-        done();
-        this.logining = false;
-    };
-
-    login = async (phone: string, password: string) => {
-        this.logining = true;
-
-        const formatter = helper.formatPhone(phone);
-        try {
-            const { body } = await musicApi.login_cellphone({
-                countrycode: formatter.code.toString(),
-                phone: formatter.phone.toString(),
-                password,
-            });
-            if (body.code !== 200) {
-                console.error(`Failed to login: ${body.msg}`);
-                this.logining = false;
-                return false;
-            }
-
-            runInAction(() => {
-                const accountProfile = body.profile || {};
-                const cookie = body.cookie as string[];
-                this.profile = {
-                    ...accountProfile,
-                    cookie: cookie.join(''),
-                };
-            });
-            // await storage.set('profile', this.profile);
-            return this.profile;
-        } catch (e) {
-            error('me: Login Fail %s', e);
-        } finally {
-            runInAction(() => {
-                this.logining = false;
-            });
-        }
-    };
-
-    rocking = (likes: any) => {
-        const mapping = new Map();
-        mapping.set('id', likes.id);
-        likes.songs.forEach((e: any) => {
-            mapping.set(e.id, true);
-        });
-        // @ts-ignore
-        this.likes.replace(mapping);
-    };
-
-    isLiked = (id: number) => {
-        return this.hasLogin() && this.likes.get(id);
-    };
-
-    hasLogin = () => {
-        return !!this.profile.userId;
-    };
-
-    async exeLike(song: ISong, like: boolean) {
-        const cookie = this.profile.cookie;
-        const { body } = await musicApi.like({ id: song.id, like, cookie });
-
-        if (this.likes.get('id') === player.meta.id) {
-            let { songs } = player;
-            const index = songs.findIndex((e) => e.id === song.id);
-
-            if (index === -1) {
-                songs = [song, ...songs];
             } else {
-                songs = [...songs.slice(0, index), ...songs.slice(index + 1, songs.length)];
+                try {
+                    await musicApi.login_refresh({
+                        cookie: profile.cookie,
+                    });
+                } catch (e) {
+                    profile = {};
+                    await storage.delete('profile');
+                }
             }
+            return profile;
+        },
+    }),
+});
 
-            player.songs = songs;
-        }
-
-        return body.code === 200;
-    }
-
-    async logout() {
-        // @ts-ignore
-        await storage.remove('profile');
-    }
-
-    like = async (song: ISong) => {
-        await lastfm.love(song);
-        const result = await this.exeLike(song, true);
-        runInAction(() => {
-            if (result) {
-                this.likes.set(song.id, true);
-            }
-        });
-    };
-
-    unlike = async (song: ISong) => {
-        await lastfm.unlove(song);
-        const result = await this.exeLike(song, false);
-        runInAction(() => {
-            this.likes.set(song.id, !result);
-        });
-    };
+interface ToggleLike {
+    id: number;
+    like: boolean;
 }
 
-const self = new Me();
-export default self;
+export const likedState = selector({
+    key: `${namespace}:liked`,
+    get: ({ get }) => {
+        const song = get(songState);
+        return isLiked(song.id);
+    },
+});
+
+// 歌曲喜欢与取消喜欢
+export const toggleLikeState = selector({
+    key: 'toggleLike',
+    get: () => {
+        return {} as ToggleLike | null;
+    },
+    set: async ({ get }, params) => {
+        const song = get(songState);
+        const profile = get(profileState);
+        if (params) {
+            const likeParam = params as ToggleLike;
+            await musicApi.like({ id: likeParam.id, like: likeParam.like, cookie: profile.cookie });
+            return;
+        }
+        if (song) {
+            const liked = isLiked(song.id);
+            await musicApi.like({ id: song.id, like: !liked, cookie: profile.cookie });
+        }
+    },
+});
+
+export const loginState = selector({
+    key: `${namespace}:login`,
+    get: ({ get }) => {
+        const profile = get(profileState);
+        return !!profile.userId;
+    },
+});
+
+export function logout() {
+    return storage.delete('profile');
+}
+
+export async function isLiked(id: number) {
+    const likes = (await storage.get('likes')) || [];
+    return likes.includes(id);
+}
+
+export async function login(phone: string, password: string) {
+    const formatter = helper.formatPhone(phone);
+    if (formatter && formatter.code && formatter.phone) {
+        const { body } = await musicApi.login_cellphone({
+            countrycode: formatter.code.toString(),
+            phone: formatter.phone.toString(),
+            password,
+        });
+        if (body.code !== 200) {
+            console.error(`Failed to login: ${body.msg}`);
+            return false;
+        }
+        const accountProfile = body.profile || {};
+        const profile = {
+            ...accountProfile,
+            cookie: body.cookie,
+        };
+        storage.set('profile', profile);
+        return profile;
+    }
+    return null;
+}

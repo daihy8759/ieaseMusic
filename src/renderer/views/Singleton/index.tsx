@@ -1,22 +1,22 @@
 import { IconButton } from '@material-ui/core';
 import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
-import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
-import { useStore } from '/@/context';
+import { playingState, songState } from '/@/stores/controller';
+import { isLiked, toggleLikeState } from '/@/stores/me';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
-const Singleton = observer(() => {
-    const { me, controller } = useStore();
+const Singleton = () => {
     const history = useHistory();
-
-    const { isLiked, like, unlike } = me;
-    const { song, playing } = controller;
+    const song = useRecoilValue(songState);
+    const playing = useRecoilValue(playingState);
+    const toggleLike = useSetRecoilState(toggleLikeState);
     const liked = isLiked(song.id);
 
     if (!song.album?.cover) {
@@ -42,7 +42,9 @@ const Singleton = observer(() => {
                         cursor: 'pointer',
                         display: 'table',
                     }}
-                    onClick={() => (liked ? unlike(song) : like(song))}>
+                    onClick={() => {
+                        toggleLike({ id: song.id, like: !liked });
+                    }}>
                     <FavoriteSharp />
                 </IconButton>
 
@@ -67,6 +69,6 @@ const Singleton = observer(() => {
             </main>
         </div>
     );
-});
+};
 
 export default Singleton;

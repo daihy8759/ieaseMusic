@@ -1,15 +1,15 @@
-import Loader from '/@/components/Loader';
 import React from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import Layout from '../views/Layout';
-import Welcome from '../views/Welcome';
+import Loader from '/@/components/Loader';
 
 const { Suspense } = React;
 
 const Main = withRouter((props: any) => <Layout {...props} />);
 
+const Welcome = React.lazy(() => import('../views/Welcome'));
 const LoginByLegacy = React.lazy(() => import('../views/Login/Legacy'));
-const LoginByQrCode = React.lazy(() => import('../views/Login/QrCode'));
+const LoginByQrCode = React.lazy(() => import('../views/Login/QRCode'));
 const Player = React.lazy(() => import('../views/Player'));
 const User = React.lazy(() => import('../views/User'));
 const Artist = React.lazy(() => import('../views/Artist'));
@@ -32,7 +32,7 @@ function LazyComponent(Component: any) {
 const MainRouter = (
     <Main>
         <Switch>
-            <Route exact path="/" component={Welcome} />
+            <Route exact path="/" component={LazyComponent(Welcome)} />
             <Route exact path="/login/:fm" component={LazyComponent(LoginByLegacy)} />
             <Route exact path="/login/qrcode/:type/:fm" component={LazyComponent(LoginByQrCode)} />
             <Route exact path="/player/:type/:id" component={LazyComponent(Player)} />

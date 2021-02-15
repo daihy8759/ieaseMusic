@@ -1,16 +1,8 @@
-import { makeAutoObservable } from 'mobx';
+import { atom } from 'recoil';
 
-class Menu {
-    show = false;
+const namespace = 'menu';
 
-    constructor() {
-        makeAutoObservable(this);
-    }
-
-    toggle = (show = !this.show) => {
-        this.show = show;
-    };
-}
-
-const self = new Menu();
-export default self;
+export const menuShowState = atom({
+    key: `${namespace}:show`,
+    default: false,
+});

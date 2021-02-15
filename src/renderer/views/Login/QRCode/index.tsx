@@ -1,23 +1,18 @@
 import { Button } from '@material-ui/core';
 import { ArrowBackSharp } from '@material-ui/icons';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import styles from './index.module.less';
 import * as qrcodePlaceholder from '/@/assets/qrcode-placeholder.png';
 import AdapterLink from '/@/components/AdapterLink';
 import FadeImage from '/@/components/FadeImage';
-import { useStore } from '/@/context';
 
 interface MatchParams {
     fm: string;
     type: '10' | '2';
 }
 
-interface IQRCodeProps extends RouteComponentProps<MatchParams> {}
-
-const QRCode: React.SFC<IQRCodeProps> = observer((props) => {
-    const { me } = useStore();
+const QRCode: FC<RouteComponentProps<MatchParams>> = (props) => {
     let timer: number;
     const pleaseLogin = async () => {
         const {
@@ -81,6 +76,6 @@ const QRCode: React.SFC<IQRCodeProps> = observer((props) => {
             </figure>
         </div>
     );
-});
+};
 
 export default QRCode;
