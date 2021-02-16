@@ -1,0 +1,69 @@
+@import '/@/theme.less';
+
+.bar {
+    width: 100vw;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+        &,
+        & .playing,
+        & .buffering {
+            height: 16px;
+        }
+
+        & .playing:after {
+            bottom: 16px;
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    &,
+    & .playing,
+    & .buffering {
+        position: fixed;
+        left: 0;
+        bottom: 50px;
+        height: 2px;
+    }
+
+    & .playing {
+        width: 100%;
+        background: linear-gradient(
+            to right;#62efab 5%;#f2ea7d 15%;#f2ea7d 25%;#ff8797 35%;#ff8797 45%; #e1a4f4 55%;#e1a4f4 65%;#82fff4
+                75%;#82fff4 85%;#62efab 95%
+        );
+        background-size: 200%;
+        background-position: 0;
+        z-index: 1;
+        transform: translate3d(-100%; 0; 0);
+        transition: 0.2s ease-out;
+    }
+
+    & .playing:after {
+        content: attr(data-time);
+        position: absolute;
+        right: 0;
+        bottom: 2px;
+        display: inline-block;
+        opacity: 0;
+        visibility: hidden;
+        padding: 10px 6px;
+        font-family: @google-font;
+        font-size: 12px;
+        color: #fff;
+        background: #000;
+        white-space: nowrap;
+        transition: 0.2s ease-out;
+    }
+
+    & .buffering {
+        width: 100%;
+        background: @randomGradient;
+        background-position: 0;
+        opacity: 0.2;
+        transform: translate3d(-100%; 0; 0);
+        transition: 0.2s ease-out;
+    }
+}

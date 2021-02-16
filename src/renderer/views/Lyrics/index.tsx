@@ -36,6 +36,7 @@ const Lyrics: FC<RouteComponentProps> = (props) => {
                         e.currentTarget.removeAttribute('scrolling');
                     }}>
                     <div
+                        id="lyricWrapper"
                         style={{
                             position: 'relative',
                             paddingTop: '10vh',

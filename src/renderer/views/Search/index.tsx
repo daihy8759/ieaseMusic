@@ -70,7 +70,6 @@ const Search = () => {
                         }}
                     />
                 </summary>
-                {value}
                 <Tabs value={value} onChange={handleTabChange}>
                     <Tab label="Playlist" {...a11yProps(0)} />
                     <Tab label="Album" {...a11yProps(1)} />

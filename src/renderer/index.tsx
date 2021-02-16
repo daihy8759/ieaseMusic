@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 // import RecoilizeDebugger from 'recoilize';
+import DebugObserver from './DebugObserver';
 import App from './App';
 
 const isDev = import.meta.env.MODE === 'development';
@@ -14,8 +15,9 @@ const app = document.getElementById('app');
 
 ReactDOM.render(
     <RecoilRoot>
-        // TODO: post promise object
+        {/* TODO: post promise object /*}
         {/* {isDev && <RecoilizeDebugger root={app} />} */}
+        {isDev && <DebugObserver />}
         <App />
     </RecoilRoot>,
     app

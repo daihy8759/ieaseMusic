@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import { songState } from '/@/stores/controller';
@@ -11,7 +11,13 @@ const LyricList = () => {
     const { list: lyrics } = lyric;
     const scrollTimeKey = useRecoilValue(lyricScrollTimeState(lyrics));
 
-    console.log(scrollTimeKey);
+    useEffect(() => {
+        const lyricWrapper = document.getElementById('lyricWrapper');
+        const playing = lyricWrapper?.querySelector(`[data-times='${scrollTimeKey}']`);
+        if (playing) {
+            playing.scrollIntoView();
+        }
+    }, [scrollTimeKey]);
 
     const renderLyrics = () => {
         const times = lyrics && Object.keys(lyrics);

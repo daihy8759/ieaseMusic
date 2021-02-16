@@ -15,22 +15,18 @@ import helper from '/@/utils/helper';
 const FM = () => {
     const history = useHistory();
     const hasLogin = useRecoilValue(loginState);
-    if (!hasLogin) {
-        history.replace('/login/1');
-        return null;
-    }
-    const song = useRecoilValue(songState);
-    if (!song || !song.id) {
-        history.replace('/');
-        return null;
-    }
     const playList = useRecoilValue(playListState);
-    const comments = useRecoilValue(fetchListState(song.id));
     const togglePlaylist = useTogglePlayList();
     const fmPlayList = useRecoilValue(fetchFmListState);
     const songs = fmPlayList.songs || [];
+    const song = useRecoilValue(songState);
+    const comments = useRecoilValue(fetchListState(song.id));
 
     useEffect(() => {
+        if (!hasLogin) {
+            history.replace('/login/1');
+            return;
+        }
         togglePlaylist({ playList: fmPlayList });
     }, []);
 

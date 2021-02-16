@@ -1,5 +1,7 @@
-import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { atom, selector, useRecoilCallback, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { PlayMode } from '../../shared/interface/controller';
+import helper from '../utils/helper';
+import { bufferTimeState } from './audio';
 import { profileState } from './me';
 import { getSongUrl } from '/@/api/player';
 import IPlayList from '/@/interface/IPlayList';
@@ -113,26 +115,20 @@ export function useTogglePrev() {
 
 // 下一首
 export function useToggleNext() {
-    const playList = useRecoilValue(playListState);
-    const [song, setSong] = useRecoilState(songState);
-    const setPlaying = useSetRecoilState(playingState);
-
-    const setNext = () => {
-        console.log(playList);
+    return useRecoilCallback(({ set, snapshot: { getPromise } }) => async () => {
+        const playList = await getPromise(playListState);
+        const song = await getPromise(songState);
         const songs = playList.songs;
         if (songs) {
             const index = songs.findIndex((d) => d.id === song.id);
-            // TODO depend play mode
             if (index === songs.length - 1) {
-                setSong(songs[0]);
+                set(songState, songs[0]);
             } else {
-                setSong(songs[index + 1]);
+                set(songState, songs[index + 1]);
             }
         }
-        setPlaying(true);
-    };
-
-    return setNext;
+        set(playingState, true);
+    });
 }
 
 // 切换歌曲
@@ -154,3 +150,26 @@ export function useToggleSong() {
 
     return setSongAsync;
 }
+
+// TODO Selectors don't propagate updates if their computed value hasn't changed
+// see https://github.com/facebookexperimental/Recoil/pull/749
+export const progressBufferTimeState = selector({
+    key: `${namespace}:progressBufferTime`,
+    get: ({ get }) => {
+        const song = get(songState);
+        const { duration } = song;
+        if (duration) {
+            const currentTime = get(bufferTimeState);
+            const passedTime = currentTime * 1000;
+            const percent = passedTime / duration;
+            return {
+                percent,
+                time: `${helper.getTime(passedTime)} / ${helper.getTime(duration)}`,
+            };
+        }
+        return {
+            percent: 0,
+            time: '',
+        };
+    },
+});

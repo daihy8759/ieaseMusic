@@ -7,6 +7,7 @@ import styles from './index.module.less';
 import LikeButton from './LikeButton';
 import PlayingButton from './PlayingButton';
 import PlayModeButton from './PlayModeButton';
+import Progress from './Progress';
 import ProgressImage from '/@/components/ProgressImage';
 import IArtist from '/@/interface/IArtist';
 import { fetchListState } from '/@/stores/comments';
@@ -16,20 +17,10 @@ import helper from '/@/utils/helper';
 
 const Controller = () => {
     const song = useRecoilValue(songState);
-    const { duration } = song;
     const playList = useRecoilValue(playListState);
     const toggleNext = useToggleNext();
     const togglePrev = useTogglePrev();
     const comments = useRecoilValue(fetchListState(song.id));
-
-    const seek = (e: any) => {
-        const percent = e.clientX / window.innerWidth;
-        if (duration) {
-            const time = duration * percent;
-            const audioEle = document.querySelector('audio');
-            audioEle && (audioEle.currentTime = time / 1000);
-        }
-    };
 
     const getPlayerLink = () => {
         return playList.link || '/';
@@ -82,10 +73,7 @@ const Controller = () => {
             ) : (
                 false
             )}
-            <div id="progress" className={styles.bar} onClick={(e) => seek(e)}>
-                <div className={styles.playing} />
-                <div className={styles.buffering} />
-            </div>
+            <Progress />
             <section>
                 {/* Click the cover show the player screen */}
                 <Link
