@@ -12,7 +12,7 @@ const helper = {
         return `${this.pad(minutes)}:${this.pad(second)}`;
     },
     getPallet(image: string) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             const imageWithParam = `${image.replace(/\?.*$/, '')}?param=20y20`;
             new AlbumColors(imageWithParam)
                 .getColors()
@@ -20,11 +20,15 @@ const helper = {
                     resolve(colors);
                 })
                 .catch(() => {
-                    resolve([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+                    resolve([
+                        [0, 0, 0],
+                        [0, 0, 0],
+                        [0, 0, 0],
+                    ]);
                 });
         });
     },
-    getLyricsKey(times: any, lyrics: any) {
+    getLyricsKey(times: number, lyrics: string[]) {
         const keys = Object.keys(lyrics);
         return keys.find((e, index) => times > +e && index < keys.length - 1 && times < +keys[index + 1]);
     },
@@ -32,7 +36,7 @@ const helper = {
         if (!phone.startsWith('+86') && /1[34578][012356789]\d{8}|134[012345678]\d{7}/.test(phone)) {
             return {
                 code: '86',
-                phone
+                phone,
             };
         }
 
@@ -44,7 +48,7 @@ const helper = {
 
         return {
             code: parsed.countryCallingCode,
-            phone: parsed.nationalNumber
+            phone: parsed.nationalNumber,
         };
     },
     formatNumber(number = 0) {
@@ -75,7 +79,7 @@ const helper = {
         }
 
         return `${song.data.bitRate / 1000} Kbps`;
-    }
+    },
 };
 
 export default helper;

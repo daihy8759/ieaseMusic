@@ -11,7 +11,7 @@ import ProgressImage from '/@/components/ProgressImage';
 import IArtist from '/@/interface/IArtist';
 import { fetchListState } from '/@/stores/comments';
 import { songState } from '/@/stores/controller';
-import { isLiked } from '/@/stores/me';
+import { isLiked, useToggleLike } from '/@/stores/me';
 import { shareShowState } from '/@/stores/share';
 import helper from '/@/utils/helper';
 

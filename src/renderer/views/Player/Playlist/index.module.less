@@ -1,0 +1,60 @@
+@import '/@/theme.less';
+
+.index {
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+}
+
+.time {
+    display: inline-block;
+    width: 60px;
+    font-size: 12px;
+}
+
+.name {
+    flex: 0.8;
+    font-size: 13px;
+    color: #654b58;
+    letter-spacing: 0.5px;
+    word-spacing: 2px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 248px;
+}
+
+li {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 32px;
+    line-height: 32px;
+    cursor: pointer;
+    transition: 0.2s;
+
+    svg {
+        position: absolute;
+        left: -32px;
+        top: 0;
+        display: inline-block;
+        height: 32px;
+        width: 32px;
+        color: #fff;
+        text-align: center;
+        background: linear-gradient(to bottom, #1cd8d2, #93edc7);
+        box-shadow: 0 0 24px 0 #48cfad;
+    }
+
+    &:not(.active):hover {
+        transform: translateX(32px);
+    }
+
+    &.active svg {
+        left: 0;
+        width: 60px;
+        background: linear-gradient(to left, #ff512f, #dd2476);
+        box-shadow: 0 0 24px 0 #ea4c89;
+    }
+}

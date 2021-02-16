@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
+// import RecoilizeDebugger from 'recoilize';
 import App from './App';
-import DebugObserver from './DebugObserver';
 
 const isDev = import.meta.env.MODE === 'development';
 
@@ -10,10 +10,13 @@ if (isDev) {
     localStorage.debug = '*';
 }
 
+const app = document.getElementById('app');
+
 ReactDOM.render(
     <RecoilRoot>
-        {isDev && <DebugObserver />}
+        // TODO: post promise object
+        {/* {isDev && <RecoilizeDebugger root={app} />} */}
         <App />
     </RecoilRoot>,
-    document.getElementById('app')
+    app
 );

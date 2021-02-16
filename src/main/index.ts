@@ -21,7 +21,11 @@ let win: BrowserWindow;
 let menu;
 
 const installExtensions = async () => {
-    const extensions = [REACT_DEVELOPER_TOOLS];
+    const RECOILIZE_TOOLS = {
+        id: 'jhfmmdhbinleghabnblahfjfalfgidik',
+        electron: '>8.0.0',
+    };
+    const extensions = [REACT_DEVELOPER_TOOLS, RECOILIZE_TOOLS];
 
     return Promise.all(extensions.map((name: ExtensionReference) => installer(name, false)));
 };

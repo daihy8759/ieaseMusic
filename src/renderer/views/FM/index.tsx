@@ -1,56 +1,38 @@
-import { IconButton } from '@material-ui/core';
-import { red } from '@material-ui/core/colors';
-import {
-    CloudDownloadTwoTone,
-    DeleteForeverTwoTone,
-    FastForwardTwoTone,
-    FavoriteBorderTwoTone,
-    FavoriteTwoTone,
-    PauseCircleOutlineTwoTone,
-    PlayCircleOutlineTwoTone,
-} from '@material-ui/icons';
-import { makeStyles } from '@material-ui/styles';
-import React, { FC } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import React, { useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import Controller from './Controller';
 import styles from './index.module.less';
-import Controller from '/@/components/Controller';
 import FadeImage from '/@/components/FadeImage';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
 import { fetchListState } from '/@/stores/comments';
-import { playingState, playListState, songState, useToggleNext } from '/@/stores/controller';
+import { playListState, songState, useTogglePlayList } from '/@/stores/controller';
 import { fetchFmListState } from '/@/stores/fm';
-import { likedState, loginState, useToggleLike } from '/@/stores/me';
+import { loginState } from '/@/stores/me';
 import helper from '/@/utils/helper';
 
-const useStyles = makeStyles({
-    liked: {
-        color: red[900],
-        textShadow: `0 0 24px ${red[900]}`,
-    },
-});
-
-const FM: FC<RouteComponentProps> = (props) => {
-    const classes = useStyles();
+const FM = () => {
+    const history = useHistory();
     const hasLogin = useRecoilValue(loginState);
     if (!hasLogin) {
-        props.history.replace('/login/1');
+        history.replace('/login/1');
         return null;
     }
     const song = useRecoilValue(songState);
     if (!song || !song.id) {
-        props.history.replace('/');
+        history.replace('/');
         return null;
     }
     const playList = useRecoilValue(playListState);
-    const [playing, setPlaying] = useRecoilState(playingState);
     const comments = useRecoilValue(fetchListState(song.id));
-    const toggleLike = useToggleLike();
-    const toggleNext = useToggleNext();
+    const togglePlaylist = useTogglePlayList();
     const fmPlayList = useRecoilValue(fetchFmListState);
-    const liked = useRecoilValue(likedState);
     const songs = fmPlayList.songs || [];
+
+    useEffect(() => {
+        togglePlaylist({ playList: fmPlayList });
+    }, []);
 
     const renderBg = () => {
         return (
@@ -80,10 +62,6 @@ const FM: FC<RouteComponentProps> = (props) => {
 
     const isFMPlaying = () => {
         return playList.id === fmPlayList.id;
-    };
-
-    const isPlaying = () => {
-        return playing && playList.id === fmPlayList.id;
     };
 
     if (songs.length === 0) {
@@ -161,26 +139,7 @@ const FM: FC<RouteComponentProps> = (props) => {
                     )}
                 </div>
 
-                <div>
-                    <IconButton
-                        onClick={() => {
-                            toggleLike({ id: song.id, like: !liked });
-                        }}>
-                        {liked ? <FavoriteTwoTone className={classes.liked} /> : <FavoriteBorderTwoTone />}
-                    </IconButton>
-                    <IconButton onClick={() => ban(song.id)}>
-                        <DeleteForeverTwoTone />
-                    </IconButton>
-                    <IconButton>
-                        <CloudDownloadTwoTone />
-                    </IconButton>
-                    <IconButton onClick={() => setPlaying(!playing)}>
-                        {isPlaying() ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
-                    </IconButton>
-                    <IconButton onClick={() => toggleNext(true)}>
-                        <FastForwardTwoTone />
-                    </IconButton>
-                </div>
+                <Controller />
             </section>
         </div>
     );

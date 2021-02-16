@@ -1,11 +1,11 @@
 import throttle from 'lodash.throttle';
 import React, { useCallback, useState } from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IPC_PLAYER_VOLUME_DOWN, IPC_PLAYER_VOLUME_UP } from '../../../shared/ipc';
 import { useChannel } from '/@/hooks';
+import { bufferTimeState } from '/@/stores/audio';
 import { playingState, songDetailState, useToggleNext } from '/@/stores/controller';
-import { fetchLyricState } from '/@/stores/lyrics';
 import { volumeState } from '/@/stores/preferences';
 import helper from '/@/utils/helper';
 
@@ -15,23 +15,17 @@ const AudioPlayer = () => {
     const [passed, setPassed] = useState(0.0);
     let timer: number;
     const song = useRecoilValue(songDetailState);
+    const setBufferTime = useSetRecoilState(bufferTimeState);
     const { duration } = song;
     const playing = useRecoilValue(playingState);
-    const lyric = useRecoilValue(fetchLyricState(song.id));
-    const { list: lyrics } = lyric;
     const [volume, setVolume] = useRecoilState(volumeState);
     const toggleNext = useToggleNext();
 
     const throttleProcess = useCallback(
         throttle((time, duration) => {
+            setBufferTime(time);
             onProgress(time, duration);
         }, 1000),
-        []
-    );
-    const throttleLyrics = useCallback(
-        throttle((time) => {
-            onScrollLyrics(time);
-        }, 300),
         []
     );
 
@@ -44,7 +38,6 @@ const AudioPlayer = () => {
         if (duration) {
             throttleProcess(state.time, duration);
         }
-        throttleLyrics(state.time);
     }, [state.time]);
 
     // buffered
@@ -106,38 +99,6 @@ const AudioPlayer = () => {
                 `${helper.getTime(passedTime)} / ${helper.getTime(duration)}`
             );
             setPassed(passedTime);
-        }
-    };
-
-    const onScrollLyrics = (currentTime = 0) => {
-        if (window.location.hash !== '#/lyrics') {
-            return false;
-        }
-        const lyricsEle = document.getElementById('lyrics');
-        if (!lyricsEle) {
-            return;
-        }
-        if (lyricsEle) {
-            const key = helper.getLyricsKey(currentTime * 1000, lyrics);
-            const currentPlaying = lyricsEle.querySelector(`[playing][data-times='${key}']`);
-            // 减少dom更新
-            if (currentPlaying) {
-                return;
-            }
-            if (key) {
-                const playingEleArray = lyricsEle.querySelectorAll('[playing]');
-                const playing = lyricsEle.querySelector(`[data-times='${key}']`);
-                Array.from(playingEleArray).forEach((e: Element) => e.removeAttribute('playing'));
-                if (playing && !playing.getAttribute('playing')) {
-                    playing.setAttribute('playing', 'true');
-                    const sectionElm = lyricsEle.querySelector('section');
-                    if (sectionElm && sectionElm.getAttribute('scrolling')) {
-                        return;
-                    }
-                    // @ts-ignore
-                    playing.scrollIntoViewIfNeeded();
-                }
-            }
         }
     };
 

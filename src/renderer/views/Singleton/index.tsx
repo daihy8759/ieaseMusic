@@ -7,8 +7,8 @@ import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
-import { playingState, songState, useToggleLike } from '/@/stores/controller';
-import { isLiked } from '/@/stores/me';
+import { playingState, songState } from '/@/stores/controller';
+import { isLiked, useToggleLike } from '/@/stores/me';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 

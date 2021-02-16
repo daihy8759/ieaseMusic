@@ -2,38 +2,17 @@ import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
+import LyricList from './LyricList';
 import Header from '/@/components/Header';
 import Hero from '/@/components/Hero';
 import ProgressImage from '/@/components/ProgressImage';
 import { songState } from '/@/stores/controller';
-import { fetchLyricState } from '/@/stores/lyrics';
 
 const Lyrics: FC<RouteComponentProps> = (props) => {
     const song = useRecoilValue(songState);
     if (!song || !song.id) {
         props.history.replace('/');
     }
-    const lyric = useRecoilValue(fetchLyricState(song.id));
-    const { list: lyricsList } = lyric;
-
-    const renderLyrics = () => {
-        const times = lyricsList && Object.keys(lyricsList);
-        if (!times || times.length === 0) {
-            return (
-                <div className={styles.placeholder}>
-                    <span>Nothing ...</span>
-                </div>
-            );
-        }
-        return times.map((e: number) => {
-            return (
-                <p data-times={e} key={e}>
-                    <span>{lyricsList[e]}</span>
-                </p>
-            );
-        });
-    };
-
     return (
         <div className={styles.container}>
             <Header transparent showBack />
@@ -62,7 +41,7 @@ const Lyrics: FC<RouteComponentProps> = (props) => {
                             paddingTop: '10vh',
                             paddingBottom: '14vh',
                         }}>
-                        {renderLyrics()}
+                        <LyricList />
                     </div>
                 </section>
             </aside>
