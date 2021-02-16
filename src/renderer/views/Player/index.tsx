@@ -136,6 +136,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = (props) => {
                 name: meta.name,
                 songs,
             },
+            songId,
         });
     };
 

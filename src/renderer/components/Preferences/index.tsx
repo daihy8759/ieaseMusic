@@ -1,9 +1,8 @@
-import { Button, CircularProgress, Switch, Theme, Typography } from '@material-ui/core';
+import { CircularProgress, Theme, Typography } from '@material-ui/core';
 import { FlashOnTwoTone, VerifiedUserTwoTone } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/styles';
-import classnames from 'classnames';
 import React, { useRef } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styles from './index.module.less';
 import Modal from '/@/components/Modal';
 import { preferencesShowState } from '/@/stores/preferences';

@@ -7,6 +7,8 @@ import ISong from '/@/interface/ISong';
 
 const namespace = 'controller';
 
+export const PLAY_MODES = [PlayMode.PLAYER_SHUFFLE, PlayMode.PLAYER_REPEAT, PlayMode.PLAYER_LOOP];
+
 export const songState = atom({
     key: `${namespace}:song`,
     default: {} as ISong,
@@ -116,9 +118,11 @@ export function useToggleNext() {
     const setPlaying = useSetRecoilState(playingState);
 
     const setNext = () => {
+        console.log(playList);
         const songs = playList.songs;
         if (songs) {
             const index = songs.findIndex((d) => d.id === song.id);
+            // TODO depend play mode
             if (index === songs.length - 1) {
                 setSong(songs[0]);
             } else {

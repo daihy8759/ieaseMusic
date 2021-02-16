@@ -9,8 +9,8 @@ import { PLAYLIST_FM } from '../../../shared/interface/playlist';
 import styles from './index.module.less';
 import Playlist from './Playlist';
 import Controller from '/@/components/Controller';
-import { playListState, useTogglePlayList } from '/@/stores/controller';
-import { homeListQuery } from '/@/stores/home';
+import { playListState } from '/@/stores/controller';
+import { homeListState, useSetupHome } from '/@/stores/home';
 import { loginState, profileState } from '/@/stores/me';
 
 const useStyles = makeStyles({
@@ -25,27 +25,17 @@ const ListItemLink = (props: any) => {
     return <ListItem button component="a" {...props} />;
 };
 
-const preparePlaylist = (homeData: any) => {
-    if (homeData.hasFavorite) {
-        return homeData.list[0];
-    }
-    if (homeData.hasRecommend) {
-        return homeData.list[1];
-    }
-    return homeData[2];
-};
-
 const Welcome = () => {
     const logined = useRecoilValue(loginState);
     const playList = useRecoilValue(playListState);
     const profile = useRecoilValue(profileState);
-    const homeData = useRecoilValue(homeListQuery);
-    const setPlaylist = useTogglePlayList();
+    const homeData = useRecoilValue(homeListState);
+    const setupHome = useSetupHome();
 
     const classes = useStyles();
 
     useEffectOnce(() => {
-        setPlaylist({ playList: preparePlaylist(homeData) });
+        setupHome();
     });
 
     const renderProfile = () => {

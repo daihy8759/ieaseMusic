@@ -1,4 +1,5 @@
-import { selector } from 'recoil';
+import { atom, selector, useRecoilValue } from 'recoil';
+import { useTogglePlayList } from './controller';
 import { profileState } from './me';
 import homeApi from '/@/api/home';
 import { useStorage } from '/@/hooks';
@@ -19,11 +20,13 @@ export interface HomeData {
 }
 
 const namespace = 'home';
+const initHome = 'initHome';
 const storage = useStorage();
 
-export const homeListQuery = selector({
+export const homeListDefault = selector({
     key: `${namespace}:list`,
     get: async ({ get }) => {
+        localStorage.setItem(initHome, '0');
         console.log('get home list');
         const profile = get(profileState);
         let list: HomeData[];
@@ -69,3 +72,32 @@ export const homeListQuery = selector({
         }
     },
 });
+
+export const homeListState = atom({
+    key: '${namespace}:list',
+    default: homeListDefault,
+});
+
+const preparePlaylist = (homeData: any) => {
+    if (homeData.hasFavorite) {
+        return homeData.list[0];
+    }
+    if (homeData.hasRecommend) {
+        return homeData.list[1];
+    }
+    return homeData[2];
+};
+
+export function useSetupHome() {
+    const homeData = useRecoilValue(homeListState);
+    const setPlaylist = useTogglePlayList();
+
+    const setupHome = () => {
+        if (localStorage.getItem(initHome) === '0') {
+            setPlaylist({ playList: preparePlaylist(homeData) });
+            localStorage.setItem(initHome, '1');
+        }
+    };
+
+    return setupHome;
+}

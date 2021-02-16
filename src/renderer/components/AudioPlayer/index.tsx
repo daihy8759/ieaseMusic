@@ -141,6 +141,12 @@ const AudioPlayer = () => {
         }
     };
 
+    // ⚠️在audioRef.onended直接调用会导致获取状态有问题
+    const toggleNextWrapper = () => {
+        resetProgress();
+        toggleNext();
+    };
+
     useEffectOnce(() => {
         const audioRef = ref.current;
         if (audioRef) {
@@ -154,8 +160,7 @@ const AudioPlayer = () => {
             };
 
             audioRef.onended = () => {
-                resetProgress();
-                toggleNext();
+                toggleNextWrapper();
             };
 
             audioRef.onseeked = () => {

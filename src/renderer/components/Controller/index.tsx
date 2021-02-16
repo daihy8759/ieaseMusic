@@ -1,67 +1,26 @@
-import { IconButton, Tooltip } from '@material-ui/core';
-import { red } from '@material-ui/core/colors';
-import {
-    CloudDownloadTwoTone,
-    FastForwardTwoTone,
-    FastRewindTwoTone,
-    FavoriteBorderTwoTone,
-    FavoriteTwoTone,
-    PauseCircleOutlineTwoTone,
-    PlayCircleOutlineTwoTone,
-    ReorderTwoTone,
-    RepeatTwoTone,
-    ShuffleTwoTone,
-} from '@material-ui/icons';
-import { makeStyles } from '@material-ui/styles';
-import React, { useEffect } from 'react';
+import { IconButton } from '@material-ui/core';
+import { CloudDownloadTwoTone, FastForwardTwoTone, FastRewindTwoTone } from '@material-ui/icons';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { PlayMode } from '../../../shared/interface/controller';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
+import LikeButton from './LikeButton';
+import PlayingButton from './PlayingButton';
+import PlayModeButton from './PlayModeButton';
 import ProgressImage from '/@/components/ProgressImage';
 import IArtist from '/@/interface/IArtist';
 import { fetchListState } from '/@/stores/comments';
-import {
-    playingState,
-    playListState,
-    playModeState,
-    songState,
-    useToggleNext,
-    useTogglePrev,
-} from '/@/stores/controller';
-import { isLiked, likedState, loginState, useToggleLike } from '/@/stores/me';
+import { playListState, songState, useToggleNext, useTogglePrev } from '/@/stores/controller';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
-const useStyles = makeStyles({
-    liked: {
-        color: red[900],
-        textShadow: `0 0 24px ${red[900]}`,
-    },
-});
-
-const MODES = [PlayMode.PLAYER_LOOP, PlayMode.PLAYER_REPEAT, PlayMode.PLAYER_SHUFFLE];
-
 const Controller = () => {
-    const classes = useStyles();
     const song = useRecoilValue(songState);
     const { duration } = song;
-    const [mode, setMode] = useRecoilState(playModeState);
-    const [playing, setPlaying] = useRecoilState(playingState);
     const playList = useRecoilValue(playListState);
-    const logined = useRecoilValue(loginState);
     const toggleNext = useToggleNext();
     const togglePrev = useTogglePrev();
-    const toggleLike = useToggleLike();
     const comments = useRecoilValue(fetchListState(song.id));
-    const [liked, setLiked] = useRecoilState(likedState);
-
-    const fetchLiked = async () => {
-        setLiked(await isLiked(song.id));
-    };
-    useEffect(() => {
-        fetchLiked();
-    }, [song.id]);
 
     const seek = (e: any) => {
         const percent = e.clientX / window.innerWidth;
@@ -83,39 +42,6 @@ const Controller = () => {
     if (!song.id) {
         return null;
     }
-
-    const changeMode = () => {
-        let index = MODES.indexOf(mode);
-        if (++index > MODES.length) {
-            index = 0;
-        }
-        setMode(MODES[index]);
-        return;
-    };
-
-    const renderPlayMode = () => {
-        if (mode === PlayMode.PLAYER_SHUFFLE) {
-            return (
-                <Tooltip title="随机播放">
-                    <ShuffleTwoTone />
-                </Tooltip>
-            );
-        }
-        if (mode === PlayMode.PLAYER_REPEAT) {
-            return (
-                <Tooltip title="顺序播放">
-                    <ReorderTwoTone />
-                </Tooltip>
-            );
-        }
-        if (mode === PlayMode.PLAYER_LOOP) {
-            return (
-                <Tooltip title="单曲循环">
-                    <RepeatTwoTone />
-                </Tooltip>
-            );
-        }
-    };
 
     return (
         <div
@@ -226,34 +152,16 @@ const Controller = () => {
                             {helper.humanNumber(comments.total)} Comments
                         </Link>
                         <div className={styles.controls}>
-                            <IconButton
-                                onClick={() => {
-                                    toggleLike({ id: song.id, like: !liked });
-                                    fetchLiked();
-                                }}>
-                                {logined && liked ? (
-                                    <FavoriteTwoTone className={classes.liked} />
-                                ) : (
-                                    <FavoriteBorderTwoTone />
-                                )}
-                            </IconButton>
-                            <IconButton onClick={() => changeMode()}>{renderPlayMode()}</IconButton>
+                            <LikeButton />
+                            <PlayModeButton />
                             <IconButton>
                                 <CloudDownloadTwoTone />
                             </IconButton>
-                            <IconButton
-                                onClick={() => {
-                                    togglePrev(true);
-                                }}>
+                            <IconButton onClick={togglePrev}>
                                 <FastRewindTwoTone />
                             </IconButton>
-                            <IconButton
-                                onClick={() => {
-                                    setPlaying(!playing);
-                                }}>
-                                {playing ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
-                            </IconButton>
-                            <IconButton onClick={() => toggleNext(true)}>
+                            <PlayingButton />
+                            <IconButton onClick={toggleNext}>
                                 <FastForwardTwoTone />
                             </IconButton>
                         </div>
