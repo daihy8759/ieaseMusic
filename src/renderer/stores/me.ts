@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil';
+import { atom, atomFamily, selector, selectorFamily, useRecoilValue, useSetRecoilState } from 'recoil';
 import { songState } from './controller';
 import QRCodeApi from '/@/api/qrcode';
 import { useMusicApi, useStorage } from '/@/hooks';
@@ -14,7 +14,7 @@ const namespace = 'me';
 // export const qrcodeState =
 
 export const profileState = atom({
-    key: 'profile',
+    key: `${namespace}:profile`,
     default: selector({
         key: 'profile/default',
         get: async () => {
@@ -42,34 +42,38 @@ interface ToggleLike {
     like: boolean;
 }
 
-export const likedState = selector({
+export const likedState = atom({
     key: `${namespace}:liked`,
-    get: ({ get }) => {
-        const song = get(songState);
-        return isLiked(song.id);
-    },
+    default: false,
 });
 
-// 歌曲喜欢与取消喜欢
-export const toggleLikeState = selector({
-    key: 'toggleLike',
-    get: () => {
-        return {} as ToggleLike | null;
-    },
-    set: async ({ get }, params) => {
-        const song = get(songState);
-        const profile = get(profileState);
-        if (params) {
-            const likeParam = params as ToggleLike;
-            await musicApi.like({ id: likeParam.id, like: likeParam.like, cookie: profile.cookie });
-            return;
+// ♥️ 歌曲
+export function useToggleLike() {
+    const song = useRecoilValue(songState);
+    const profile = useRecoilValue(profileState);
+    const setLiked = useSetRecoilState(likedState);
+
+    const setAsync = async (likeParam?: ToggleLike) => {
+        let songId = song.id;
+        let liked = !isLiked(song.id);
+        if (likeParam) {
+            songId = likeParam.id;
+            liked = likeParam.like;
         }
-        if (song) {
-            const liked = isLiked(song.id);
-            await musicApi.like({ id: song.id, like: !liked, cookie: profile.cookie });
+        const res = await musicApi.like({ id: songId, like: liked, cookie: profile.cookie });
+        if (res.body.code === 200) {
+            let likes = (await storage.get('likes')) || [];
+            if (liked) {
+                likes.push(songId);
+            } else {
+                likes = likes.filter((d: number) => d !== songId);
+            }
+            await storage.set('likes', likes);
+            setLiked(liked);
         }
-    },
-});
+    };
+    return setAsync;
+}
 
 export const loginState = selector({
     key: `${namespace}:login`,
@@ -103,7 +107,7 @@ export async function login(phone: string, password: string) {
         const accountProfile = body.profile || {};
         const profile = {
             ...accountProfile,
-            cookie: body.cookie,
+            cookie: body.cookie.join(''),
         };
         storage.set('profile', profile);
         return profile;

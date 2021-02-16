@@ -11,7 +11,7 @@ import ProgressImage from '/@/components/ProgressImage';
 import IArtist from '/@/interface/IArtist';
 import { fetchListState } from '/@/stores/comments';
 import { songState } from '/@/stores/controller';
-import { isLiked, toggleLikeState } from '/@/stores/me';
+import { isLiked } from '/@/stores/me';
 import { shareShowState } from '/@/stores/share';
 import helper from '/@/utils/helper';
 
@@ -29,7 +29,7 @@ const Hero: FC<IHeroProps> = (props) => {
     const comments = useRecoilValue(fetchListState(song.id));
     const { total: commentsTotal } = comments;
     const setShow = useSetRecoilState(shareShowState);
-    const toggleLike = useSetRecoilState(toggleLikeState);
+    const toggleLike = useToggleLike();
     const liked = isLiked(song.id);
 
     return (

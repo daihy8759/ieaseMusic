@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil';
+import { atom, useRecoilState } from 'recoil';
 
 const namespace = 'preferences';
 
@@ -12,14 +12,15 @@ export const preferencesShowState = atom({
     default: false,
 });
 
-export const togglePreferenceShowState = selector({
-    key: 'togglePreferencesShow',
-    get: () => {},
-    set: ({ set, get }) => {
-        const show = get(showState);
-        set(showState, !show);
-    },
-});
+export function useTogglePreference() {
+    const [show, setShow] = useRecoilState(preferencesShowState);
+
+    const setShowAsync = () => {
+        setShow(!show);
+    };
+
+    return setShowAsync;
+}
 
 export const volumeState = atom({
     key: 'volume',

@@ -2,7 +2,7 @@ import { ipcRenderer } from 'electron';
 
 export default {
     set(key: string, value: any) {
-        return ipcRenderer.invoke('store:set', { key, value });
+        return ipcRenderer.invoke('store:set', key, value);
     },
     async get(key: string) {
         const result = await ipcRenderer.invoke('store:get', key);

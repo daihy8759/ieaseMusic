@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useEvent } from 'react-use';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import {
     IPC_CONTEXTMENU,
     IPC_NAVIGATOR,
@@ -13,25 +13,25 @@ import {
 } from '../../../shared/ipc';
 import { useChannel, useIpc } from '/@/hooks';
 import ISong from '/@/interface/ISong';
-import { playingState, playListState, playModeState, toggleNextState, togglePlaySongState } from '/@/stores/controller';
-import { fetchFmListState, toggleFmNextState } from '/@/stores/fm';
-import { loginState, toggleLikeState } from '/@/stores/me';
+import { playingState, playListState, playModeState, useToggleNext, useToggleSong } from '/@/stores/controller';
+import { fetchFmListState, useToggleFmNext } from '/@/stores/fm';
+import { loginState, useToggleLike } from '/@/stores/me';
 import { playingShowState } from '/@/stores/playing';
-import { togglePreferenceShowState } from '/@/stores/preferences';
+import { useTogglePreference } from '/@/stores/preferences';
 
 const ipc = useIpc();
 const channel = useChannel();
 
 const ContextMenu = () => {
     const logined = useRecoilValue(loginState);
-    const togglePreferenceShow = useSetRecoilState(togglePreferenceShowState);
+    const togglePreferenceShow = useTogglePreference();
     const playing = useRecoilValue(playingState);
     const playMode = useRecoilValue(playModeState);
     const playList = useRecoilValue(playListState);
-    const togglePlaySong = useSetRecoilState(togglePlaySongState);
-    const toggleNext = useSetRecoilState(toggleNextState);
-    const toggleLike = useSetRecoilState(toggleLikeState);
-    const toggleFmNext = useSetRecoilState(toggleFmNextState);
+    const togglePlaySong = useToggleSong();
+    const toggleNext = useToggleNext();
+    const toggleLike = useToggleLike();
+    const toggleFmNext = useToggleFmNext();
     const playingShow = useRecoilValue(playingShowState);
     const fmList = useRecoilValue(fetchFmListState);
     const history = useHistory();
@@ -46,11 +46,11 @@ const ContextMenu = () => {
             if (history.location.pathname === '/search' || playingShow) {
                 return;
             }
-            togglePlaySong(null);
+            togglePlaySong();
         });
         channel.listen(IPC_PLAYER_PAUSE, () => {
             if (playing) {
-                togglePlaySong(null);
+                togglePlaySong();
             }
         });
         channel.listen(IPC_PLAYER_NEXT, () => {
@@ -58,10 +58,10 @@ const ContextMenu = () => {
             if (FMPlaying) {
                 toggleFmNext({} as ISong);
             } else {
-                toggleNext(true);
+                toggleNext();
             }
         });
-        channel.listen(IPC_SONG_LIKE, () => toggleLike(null));
+        channel.listen(IPC_SONG_LIKE, () => toggleLike());
         channel.listen(IPC_PREFERENCE, togglePreferences);
     }, []);
 

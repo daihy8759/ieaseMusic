@@ -8,7 +8,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
-import { keywordState, playlistQueryState } from '/@/stores/search';
+import { keywordState, loadingState, playlistQueryState } from '/@/stores/search';
 import helper from '/@/utils/helper';
 
 const a11yProps = (index: any) => {
@@ -41,6 +41,7 @@ const TabPanel = (props: TabPanelProps) => {
 };
 
 const Search = () => {
+    const loading = useRecoilValue(loadingState);
     const [keyword, setKeyword] = useRecoilState(keywordState);
     const playlists = useRecoilValue(playlistQueryState);
 
@@ -72,6 +73,9 @@ const Search = () => {
     const reset = () => {};
 
     const renderPlaylist = () => {
+        if (value !== 0) {
+            return null;
+        }
         if (playlists.length === 0) {
             return (
                 <div className={styles.placeholder}>
@@ -115,6 +119,9 @@ const Search = () => {
     };
 
     const renderAlbums = () => {
+        if (value !== 1) {
+            return null;
+        }
         const { albums } = search;
 
         if (albums.length === 0) {
@@ -149,6 +156,9 @@ const Search = () => {
     };
 
     const renderArtists = () => {
+        if (value !== 2) {
+            return null;
+        }
         const { artists } = search;
         const { follow } = artist;
 
@@ -207,6 +217,9 @@ const Search = () => {
     };
 
     const renderUsers = () => {
+        if (value !== 3) {
+            return null;
+        }
         const { users } = search;
 
         if (users.length === 0) {

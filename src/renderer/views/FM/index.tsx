@@ -12,16 +12,16 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import React, { FC } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Controller from '/@/components/Controller';
 import FadeImage from '/@/components/FadeImage';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
 import { fetchListState } from '/@/stores/comments';
-import { playingState, playListState, songState, toggleNextState } from '/@/stores/controller';
+import { playingState, playListState, songState, useToggleNext } from '/@/stores/controller';
 import { fetchFmListState } from '/@/stores/fm';
-import { likedState, loginState, toggleLikeState } from '/@/stores/me';
+import { likedState, loginState, useToggleLike } from '/@/stores/me';
 import helper from '/@/utils/helper';
 
 const useStyles = makeStyles({
@@ -46,8 +46,8 @@ const FM: FC<RouteComponentProps> = (props) => {
     const playList = useRecoilValue(playListState);
     const [playing, setPlaying] = useRecoilState(playingState);
     const comments = useRecoilValue(fetchListState(song.id));
-    const toggleLike = useSetRecoilState(toggleLikeState);
-    const toggleNext = useSetRecoilState(toggleNextState);
+    const toggleLike = useToggleLike();
+    const toggleNext = useToggleNext();
     const fmPlayList = useRecoilValue(fetchFmListState);
     const liked = useRecoilValue(likedState);
     const songs = fmPlayList.songs || [];

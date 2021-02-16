@@ -2,19 +2,33 @@ import { ArrowForwardTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import styles from '../index.module.less';
 import Status from './Status';
 import ProgressImage from '/@/components/ProgressImage';
+import { playListState, useTogglePlayList, useToggleSong } from '/@/stores/controller';
 import { HomeData } from '/@/stores/home';
 
 interface RecommendProps {
     recommend: HomeData;
     currentPlaylistId?: string;
-    play?: (playlist: HomeData) => void;
 }
 
 const Recommend: FC<RecommendProps> = (props) => {
-    const { recommend, currentPlaylistId, play } = props;
+    const { recommend, currentPlaylistId } = props;
+    const playList = useRecoilValue(playListState);
+    const togglePlaySong = useToggleSong();
+    const togglePlayList = useTogglePlayList();
+
+    const play = (playlist: any) => {
+        if (playList.id === playlist.id) {
+            togglePlaySong();
+        } else {
+            togglePlayList({
+                playList: playlist,
+            });
+        }
+    };
 
     return (
         <Link

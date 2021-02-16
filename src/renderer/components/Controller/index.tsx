@@ -13,9 +13,9 @@ import {
     ShuffleTwoTone,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { PlayMode } from '../../../shared/interface/controller';
 import styles from './index.module.less';
 import ProgressImage from '/@/components/ProgressImage';
@@ -26,10 +26,10 @@ import {
     playListState,
     playModeState,
     songState,
-    toggleNextState,
-    togglePrevState,
+    useToggleNext,
+    useTogglePrev,
 } from '/@/stores/controller';
-import { isLiked, loginState, toggleLikeState } from '/@/stores/me';
+import { isLiked, likedState, loginState, useToggleLike } from '/@/stores/me';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
@@ -50,11 +50,18 @@ const Controller = () => {
     const [playing, setPlaying] = useRecoilState(playingState);
     const playList = useRecoilValue(playListState);
     const logined = useRecoilValue(loginState);
-    const toggleNext = useSetRecoilState(toggleNextState);
-    const togglePrev = useSetRecoilState(togglePrevState);
-    const toggleLike = useSetRecoilState(toggleLikeState);
+    const toggleNext = useToggleNext();
+    const togglePrev = useTogglePrev();
+    const toggleLike = useToggleLike();
     const comments = useRecoilValue(fetchListState(song.id));
-    const liked = isLiked(song.id);
+    const [liked, setLiked] = useRecoilState(likedState);
+
+    const fetchLiked = async () => {
+        setLiked(await isLiked(song.id));
+    };
+    useEffect(() => {
+        fetchLiked();
+    }, [song.id]);
 
     const seek = (e: any) => {
         const percent = e.clientX / window.innerWidth;
@@ -222,6 +229,7 @@ const Controller = () => {
                             <IconButton
                                 onClick={() => {
                                     toggleLike({ id: song.id, like: !liked });
+                                    fetchLiked();
                                 }}>
                                 {logined && liked ? (
                                     <FavoriteTwoTone className={classes.liked} />

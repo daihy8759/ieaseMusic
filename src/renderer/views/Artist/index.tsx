@@ -6,7 +6,7 @@ import format from 'date-fns/format';
 import delegate from 'delegate';
 import React, { FC, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
@@ -18,9 +18,9 @@ import {
     playingState,
     playListState,
     songState,
-    togglePlayListState,
-    togglePlaySongState,
-    togglePlayState,
+    useTogglePlaying,
+    useTogglePlayList,
+    useToggleSong,
 } from '/@/stores/controller';
 import { loginState } from '/@/stores/me';
 import helper from '/@/utils/helper';
@@ -34,9 +34,9 @@ const Artist: FC<RouteComponentProps<MatchParams>> = (props) => {
     const playing = useRecoilValue(playingState);
     const song = useRecoilValue(songState);
     const hasLogin = useRecoilValue(loginState);
-    const togglePlayList = useSetRecoilState(togglePlayListState);
-    const togglePlay = useSetRecoilState(togglePlayState);
-    const togglePlaySong = useSetRecoilState(togglePlaySongState);
+    const togglePlayList = useTogglePlayList();
+    const togglePlay = useTogglePlaying();
+    const togglePlaySong = useToggleSong();
     const artist = useRecoilValue(fetchArtistState(parseInt(props.match.params.id)));
     const { profile } = artist;
     const size = profile.size || ({} as any);

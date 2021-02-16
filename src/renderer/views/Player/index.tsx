@@ -2,7 +2,7 @@ import { PauseSharp, PlayArrowSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import React, { FC, useRef } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { constSelector, useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Search from './Search';
 import Controller from '/@/components/Controller';
@@ -10,7 +10,7 @@ import FadeImage from '/@/components/FadeImage';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
 import IArtist from '/@/interface/IArtist';
-import { playingState, playListState, songState, togglePlayListState, togglePlaySongState } from '/@/stores/controller';
+import { playingState, playListState, songState, useTogglePlayList, useToggleSong } from '/@/stores/controller';
 import { loginState } from '/@/stores/me';
 import {
     fetchListDetailState,
@@ -39,16 +39,19 @@ const Player: FC<RouteComponentProps<MatchParams>> = (props) => {
     const { recommend, artists, users } = related;
     const [searching, setSearching] = useRecoilState(playerSearchState);
     const listDetail = useRecoilValue(fetchListDetailState({ id, type }));
-    const togglePlaylist = useSetRecoilState(togglePlayListState);
-    const togglePlaySong = useSetRecoilState(togglePlaySongState);
+    const togglePlaylist = useTogglePlayList();
+    const togglePlaySong = useToggleSong();
     const hasLogin = useRecoilValue(loginState);
     const { meta, songs } = listDetail;
     const [keywords, setKeywords] = useRecoilState(playerKeywordState);
     const filterSongs = useRecoilValue(
-        filterSongsState({
-            keywords,
-            songs,
-        })
+        searching
+            ? // @ts-ignore
+              filterSongsState({
+                  keywords,
+                  songs,
+              })
+            : constSelector(null)
     );
     const [playing, setPlaying] = useRecoilState(playingState);
     const playList = useRecoilValue(playListState);
@@ -140,7 +143,7 @@ const Player: FC<RouteComponentProps<MatchParams>> = (props) => {
         const sameToPlaylist = canToggle();
         const list = searching ? filterSongs : songs;
 
-        if (list.length === 0) {
+        if (!list || list.length === 0) {
             return (
                 <div
                     className={styles.nothing}

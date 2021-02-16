@@ -9,11 +9,10 @@ interface PlaylistProps {
     logined: boolean;
     list?: HomeData[];
     currentPlaylistId?: string;
-    play?: (playlist: HomeData) => void;
 }
 
 const Playlist: FC<PlaylistProps> = (props) => {
-    const { logined, list, currentPlaylistId, play } = props;
+    const { logined, list, currentPlaylistId } = props;
 
     if (!list || list.length === 0) {
         return <div className={styles.placeholder} />;
@@ -25,7 +24,7 @@ const Playlist: FC<PlaylistProps> = (props) => {
     return (
         <section className={styles.list}>
             {logined && <Favorite favorite={list[0]} currentPlaylistId={currentPlaylistId} />}
-            {hasRecommend && <Recommend recommend={list[1]} currentPlaylistId={currentPlaylistId} play={play} />}
+            {hasRecommend && <Recommend recommend={list[1]} currentPlaylistId={currentPlaylistId} />}
             {renderPlaylist({ list: playlist, currentPlaylistId })}
         </section>
     );

@@ -73,14 +73,14 @@ async function getDaily(cookie?: string) {
     list = [
         {
             id: uuidv4(),
-            name: '每日推荐歌曲',
+            name: '♥️ 每日推荐歌曲',
             size: dailySongs.length,
             songs: dailySongs.map((d: any) => {
                 const { al: album, ar: artists } = d;
                 return {
                     id: d.id,
                     name: d.name,
-                    duration: d.duration,
+                    duration: d.dt,
                     album: {
                         id: album.id,
                         name: album.name,

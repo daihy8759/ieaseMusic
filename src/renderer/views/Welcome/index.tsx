@@ -1,14 +1,15 @@
 import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffectOnce } from 'react-use';
+import { useRecoilValue } from 'recoil';
 import { PLAYLIST_FM } from '../../../shared/interface/playlist';
 import styles from './index.module.less';
 import Playlist from './Playlist';
 import Controller from '/@/components/Controller';
-import { playListState, togglePlayListState, togglePlaySongState } from '/@/stores/controller';
+import { playListState, useTogglePlayList } from '/@/stores/controller';
 import { homeListQuery } from '/@/stores/home';
 import { loginState, profileState } from '/@/stores/me';
 
@@ -39,23 +40,13 @@ const Welcome = () => {
     const playList = useRecoilValue(playListState);
     const profile = useRecoilValue(profileState);
     const homeData = useRecoilValue(homeListQuery);
-    const setPlaylist = useSetRecoilState(togglePlayListState);
-    const togglePlaySong = useSetRecoilState(togglePlaySongState);
-    const togglePlayList = useSetRecoilState(togglePlayListState);
+    const setPlaylist = useTogglePlayList();
 
     const classes = useStyles();
 
-    useEffect(() => {
+    useEffectOnce(() => {
         setPlaylist({ playList: preparePlaylist(homeData) });
-    }, [homeData]);
-
-    const play = (playlist: any) => {
-        if (playList.id === playlist.id) {
-            togglePlaySong(null);
-        } else {
-            togglePlayList(playlist);
-        }
-    };
+    });
 
     const renderProfile = () => {
         const link = `/user/${profile.userId}`;
@@ -111,7 +102,7 @@ const Welcome = () => {
                         </ListItemLink>
                     </List>
                 </aside>
-                <Playlist logined={logined} list={homeData?.list} currentPlaylistId={playList.id} play={play} />
+                <Playlist logined={logined} list={homeData?.list} currentPlaylistId={playList.id} />
             </main>
 
             <Controller />

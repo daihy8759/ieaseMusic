@@ -3,12 +3,12 @@ import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
-import { playingState, songState } from '/@/stores/controller';
-import { isLiked, toggleLikeState } from '/@/stores/me';
+import { playingState, songState, useToggleLike } from '/@/stores/controller';
+import { isLiked } from '/@/stores/me';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
 
@@ -16,7 +16,7 @@ const Singleton = () => {
     const history = useHistory();
     const song = useRecoilValue(songState);
     const playing = useRecoilValue(playingState);
-    const toggleLike = useSetRecoilState(toggleLikeState);
+    const toggleLike = useToggleLike();
     const liked = isLiked(song.id);
 
     if (!song.album?.cover) {

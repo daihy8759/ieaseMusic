@@ -1,10 +1,10 @@
 import throttle from 'lodash.throttle';
 import React, { useCallback, useState } from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IPC_PLAYER_VOLUME_DOWN, IPC_PLAYER_VOLUME_UP } from '../../../shared/ipc';
 import { useChannel } from '/@/hooks';
-import { playingState, songDetailState, toggleNextState } from '/@/stores/controller';
+import { playingState, songDetailState, useToggleNext } from '/@/stores/controller';
 import { fetchLyricState } from '/@/stores/lyrics';
 import { volumeState } from '/@/stores/preferences';
 import helper from '/@/utils/helper';
@@ -20,7 +20,7 @@ const AudioPlayer = () => {
     const lyric = useRecoilValue(fetchLyricState(song.id));
     const { list: lyrics } = lyric;
     const [volume, setVolume] = useRecoilState(volumeState);
-    const toggleNext = useSetRecoilState(toggleNextState);
+    const toggleNext = useToggleNext();
 
     const throttleProcess = useCallback(
         throttle((time, duration) => {
@@ -41,7 +41,9 @@ const AudioPlayer = () => {
     });
 
     useUpdateEffect(() => {
-        throttleProcess(state.time, duration);
+        if (duration) {
+            throttleProcess(state.time, duration);
+        }
         throttleLyrics(state.time);
     }, [state.time]);
 
@@ -153,7 +155,7 @@ const AudioPlayer = () => {
 
             audioRef.onended = () => {
                 resetProgress();
-                toggleNext(true);
+                toggleNext();
             };
 
             audioRef.onseeked = () => {

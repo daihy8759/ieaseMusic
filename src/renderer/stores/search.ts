@@ -3,6 +3,11 @@ import searchByType from '../api/search';
 
 const namespace = 'search';
 
+export const loadingState = atom({
+    key: `${namespace}:loading`,
+    default: false,
+});
+
 export const keywordState = atom({
     key: `${namespace}:keyword`,
     default: '',
