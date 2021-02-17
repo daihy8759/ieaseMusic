@@ -85,7 +85,7 @@ const preparePlaylist = (homeData: any) => {
     if (homeData.hasRecommend) {
         return homeData.list[1];
     }
-    return homeData[2];
+    return homeData.list[0];
 };
 
 export function useSetupHome() {
