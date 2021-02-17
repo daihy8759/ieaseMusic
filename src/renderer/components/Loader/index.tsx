@@ -1,13 +1,13 @@
 import classnames from 'classnames';
 import React, { FC } from 'react';
-import colors from '/@/utils/colors';
 import styles from './index.module.less';
+import colors from '/@/utils/colors';
 
-interface ILoaderProps {
+interface LoaderProps {
     show?: boolean;
 }
 
-const Loader: FC<ILoaderProps> = ({ show = false }) => {
+const Loader: FC<LoaderProps> = ({ show = false }) => {
     if (!show) {
         return null;
     }

@@ -1,4 +1,4 @@
-import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { atom, selector, useRecoilCallback } from 'recoil';
 import IPlayList from '../interface/IPlayList';
 import ISong from '../interface/ISong';
 import { playListState, songState } from './controller';
@@ -20,27 +20,23 @@ export const fmSongState = atom({
 
 // 下一首
 export function useToggleFmNext() {
-    const playList = useRecoilValue(fetchFmListState);
-    const setPlaylist = useSetRecoilState(playListState);
-    const [fmSong, setFmSong] = useRecoilState(fmSongState);
-    const setSong = useSetRecoilState(songState);
+    return useRecoilCallback(({ set, snapshot: { getPromise } }) => async () => {
+        const playList = await getPromise(fetchFmListState);
+        const fmSong = await getPromise(fmSongState);
 
-    const toggleFmNext = () => {
         const songs = playList.songs;
         if (songs) {
-            setPlaylist(playList);
+            set(playListState, playList);
             const index = songs.findIndex((d) => d.id === fmSong.id);
             if (index === songs.length - 1) {
-                setFmSong(songs[0]);
-                setSong(songs[0]);
+                set(fmSongState, songs[0]);
+                set(songState, songs[0]);
             } else {
-                setFmSong(songs[index + 1]);
-                setSong(songs[index + 1]);
+                set(fmSongState, songs[index + 1]);
+                set(songState, songs[index + 1]);
             }
         }
-    };
-
-    return toggleFmNext;
+    });
 }
 
 export const personFmState = selector({

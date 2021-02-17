@@ -1,6 +1,6 @@
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import dotenv from 'dotenv-flow';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { defineConfig } from 'vite';
 
 dotenv.config();
@@ -10,7 +10,10 @@ export default defineConfig({
     root,
     base: './',
     resolve: {
-        alias: { '/@': root, shared: join(__dirname, 'src/shared') },
+        alias: [
+            { find: '/@', replacement: root },
+            { find: 'shared', replacement: resolve(__dirname, 'src/shared') },
+        ],
     },
     build: {
         outDir: join('../../dist/renderer'),

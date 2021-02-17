@@ -1,24 +1,19 @@
 import { Zoom } from '@material-ui/core';
 import { FastForwardTwoTone, FastRewindTwoTone } from '@material-ui/icons';
-import React from 'react';
-import { useEffectOnce } from 'react-use';
+import React, { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
+import { PlayDirection, playDirectionState } from '/@/stores/controller';
 
-const PlayerNavigation: React.FC = () => {
-    const [direction, setDirection] = React.useState(true);
-    const [zoom, setZoom] = React.useState(false);
+const PlayerNavigation = () => {
+    const playDirection = useRecoilValue(playDirectionState);
+    const [zoom, setZoom] = useState(false);
 
-    useEffectOnce(() => {
-        // TODO ipc.on
-        // ipc.on('player-previous', () => {
-        //     setDirection(true);
-        //     zoomTimeout();
-        // });
-        // ipc.on('player-next', () => {
-        //     setDirection(false);
-        //     zoomTimeout();
-        // });
-    });
+    useEffect(() => {
+        if (playDirection === PlayDirection.PREV || playDirection === PlayDirection.NEXT) {
+            zoomTimeout();
+        }
+    }, [playDirection]);
 
     const zoomTimeout = () => {
         setZoom(true);
@@ -29,7 +24,9 @@ const PlayerNavigation: React.FC = () => {
 
     return (
         <Zoom in={zoom}>
-            <div className={styles.container}>{direction ? <FastRewindTwoTone /> : <FastForwardTwoTone />}</div>
+            <div className={styles.container}>
+                {playDirection === PlayDirection.PREV ? <FastRewindTwoTone /> : <FastForwardTwoTone />}
+            </div>
         </Zoom>
     );
 };

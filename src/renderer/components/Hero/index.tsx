@@ -1,26 +1,21 @@
 import { Button, IconButton } from '@material-ui/core';
 import { FavoriteBorderTwoTone, FavoriteTwoTone, ShareTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
-import React, { FC } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import AdapterLink from '../AdapterLink';
 import styles from './index.module.less';
 import Indicator from '/@/components/Indicator';
 import ProgressImage from '/@/components/ProgressImage';
-import IArtist from '/@/interface/IArtist';
 import { fetchListState } from '/@/stores/comments';
 import { songState } from '/@/stores/controller';
 import { isLiked, useToggleLike } from '/@/stores/me';
 import { shareShowState } from '/@/stores/share';
 import helper from '/@/utils/helper';
 
-interface IHeroProps {
-    location?: any;
-}
-
-const Hero: FC<IHeroProps> = (props) => {
-    const { location } = props;
+const Hero = () => {
+    const location = useLocation();
     const { pathname } = location;
     const song = useRecoilValue(songState);
     if (!song || !song.id) {
@@ -93,7 +88,7 @@ const Hero: FC<IHeroProps> = (props) => {
                 <h3>{song.name}</h3>
 
                 <p className={styles.author}>
-                    {song.artists?.map((e: IArtist, index: number) => {
+                    {song.artists?.map((e, index) => {
                         return (
                             <Link key={index} to={e.link}>
                                 {e.name}

@@ -75,6 +75,7 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
             )}>
             <img
                 alt=""
+                loading="lazy"
                 className={styles.main}
                 onError={handleError}
                 onLoad={handleLoad}

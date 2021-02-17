@@ -1,11 +1,23 @@
-import { CircularProgress, Theme, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Switch, Theme, Typography } from '@material-ui/core';
 import { FlashOnTwoTone, VerifiedUserTwoTone } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/styles';
+import classnames from 'classnames';
 import React, { useRef } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Modal from '/@/components/Modal';
-import { preferencesShowState } from '/@/stores/preferences';
+import {
+    alwaysOnTopState,
+    autoPlayState,
+    connectingState,
+    lastFmState,
+    preferencesShowState,
+    proxyEnableState,
+    proxyState,
+    revertTrayIconState,
+    showNotificationState,
+    showTrayState,
+} from '/@/stores/preferences';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -19,37 +31,35 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Preferences = () => {
-    const downloadRef = useRef<HTMLInputElement>(null);
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const classes = useStyles();
-
+    const connecting = useRecoilValue(connectingState);
+    const [autoPlay, setAutoPlay] = useRecoilState(autoPlayState);
     const [show, setShow] = useRecoilState(preferencesShowState);
+    const [lastFm, setLastFm] = useRecoilState(lastFmState);
+    const [alwaysOnTop, setAlwaysOnTop] = useRecoilState(alwaysOnTopState);
+    const [showTray, setShowTray] = useRecoilState(showTrayState);
+    const [showNotification, setShowNotification] = useRecoilState(showNotificationState);
+    const [proxy, setProxy] = useRecoilState(proxyState);
+    const [proxyEnable, setProxyEnable] = useRecoilState(proxyEnableState);
+    const [revertTrayIcon, setRevertTrayIcon] = useRecoilState(revertTrayIconState);
 
     const saveLastfm = () => {
-        preferences.setLastfm({
-            username: usernameRef.current.value,
-            password: passwordRef.current.value,
-            connected: preferences.lastFm.connected,
+        setLastFm({
+            username: usernameRef.current?.value || '',
+            password: passwordRef.current?.value || '',
+            connected: lastFm.connected,
         });
     };
 
-    const saveBackground = (index: number, background: any) => {
-        preferences.setBackground(index, background);
-    };
-
-    const choiceDownloadDir = (e: any) => {
-        e.preventDefault();
-        downloadRef.current.click();
-    };
-
-    const setEnginers = (value: any) => {
-        preferences.setEnginers(Object.assign({}, preferences.enginers, value));
-    };
-
     const isConnected = () => {
-        const { username, password, connected } = preferences.lastFm;
+        const { username, password, connected } = lastFm;
         return connected && `${username}:${password}` === connected;
+    };
+
+    const connect = () => {
+        //TODO connect fm
     };
 
     const close = () => {
@@ -57,7 +67,6 @@ const Preferences = () => {
     };
 
     const renderFm = () => {
-        const { connecting } = preferences;
         if (connecting) {
             return (
                 <>
@@ -85,7 +94,7 @@ const Preferences = () => {
     const renderOptions = () => {
         return (
             <div className={styles.container}>
-                {/* <section>
+                <section>
                     <article>
                         <label htmlFor="alwaysOnTop">
                             <div>
@@ -94,7 +103,7 @@ const Preferences = () => {
                             </div>
 
                             <Switch
-                                defaultChecked={alwaysOnTop}
+                                checked={alwaysOnTop}
                                 id="alwaysOnTop"
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAlwaysOnTop(e.target.checked)}
                             />
@@ -109,24 +118,9 @@ const Preferences = () => {
                             </div>
 
                             <Switch
-                                defaultChecked={showTray}
+                                checked={showTray}
                                 id="showTray"
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShowTray(e.target.checked)}
-                            />
-                        </label>
-
-                        <label htmlFor="showMenuBarOnLinux">
-                            <div>
-                                <h4>Show menu bar on Linux</h4>
-                                <p>Only work on Linux. Restart needed.</p>
-                            </div>
-
-                            <Switch
-                                defaultChecked={showMenuBarOnLinux}
-                                id="showMenuBarOnLinux"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setShowMenuBarOnLinux(e.target.checked)
-                                }
                             />
                         </label>
 
@@ -136,7 +130,7 @@ const Preferences = () => {
                             </div>
 
                             <Switch
-                                defaultChecked={revertTrayIcon}
+                                checked={revertTrayIcon}
                                 id="revertTrayIcon"
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setRevertTrayIcon(e.target.checked)
@@ -148,7 +142,7 @@ const Preferences = () => {
                             <h4>Auto play at started</h4>
 
                             <Switch
-                                defaultChecked={autoPlay}
+                                checked={autoPlay}
                                 id="autoPlay"
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAutoPlay(e.target.checked)}
                             />
@@ -158,7 +152,7 @@ const Preferences = () => {
                             <h4>Show desktop notifications</h4>
 
                             <Switch
-                                defaultChecked={showNotification}
+                                checked={showNotification}
                                 id="showNotification"
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setShowNotification(e.target.checked)
@@ -166,40 +160,6 @@ const Preferences = () => {
                             />
                         </label>
 
-                        <label htmlFor="highquality">
-                            <div>
-                                <h4>Only High Quality</h4>
-                                <p>Only the high quality track accepted, Usually you not need enable this option.</p>
-                            </div>
-
-                            <Switch
-                                defaultChecked={!!highquality}
-                                id="highquality"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHighquality(+e.target.checked)}
-                            />
-                        </label>
-
-                        <label htmlFor="autoupdate">
-                            <h4>Auto update</h4>
-
-                            <Switch
-                                defaultChecked={autoupdate}
-                                id="autoupdate"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAutoupdate(e.target.checked)}
-                            />
-                        </label>
-
-                        <label htmlFor="scrobble">
-                            <h4>Scrobble to NeteaseCloud Music</h4>
-
-                            <Switch
-                                defaultChecked={scrobble}
-                                id="scrobble"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    preferences.setScrobble(e.target.checked)
-                                }
-                            />
-                        </label>
                         <label
                             style={{
                                 display: 'block',
@@ -209,104 +169,14 @@ const Preferences = () => {
                                 <p>Need restart app.</p>
                             </div>
                             <div style={{ float: 'right' }}>
-                                <Switch
-                                    id="proxy"
-                                    defaultChecked={!disableProxy}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => enableProxy(e.target.checked)}
-                                />
+                                <Switch checked={proxyEnable} onChange={(e) => setProxyEnable(e.target.checked)} />
                             </div>
 
                             <input
                                 className={styles.textInput}
-                                defaultValue={proxy}
-                                onBlur={(ev) => setProxy(ev.target.value)}
+                                value={proxy}
+                                onChange={(ev) => setProxy(ev.target.value)}
                                 placeholder="http://your.proxy.com:port"
-                            />
-                        </label>
-
-                        <label className={styles.downloads}>
-                            <aside>
-                                <input
-                                    // directory=""
-                                    // webkitdirectory=""
-                                    onChange={(e) => setDownloads(e.target.files[0])}
-                                    ref={downloadRef}
-                                    type="file"
-                                />
-                                <h4>Downloads</h4>
-                                <p onClick={(e) => choiceDownloadDir(e)}>{downloads}</p>
-                            </aside>
-
-                            <Button onClick={(e) => choiceDownloadDir(e)}>Change</Button>
-                        </label>
-                    </article>
-
-                    <article>
-                        <h3>Music search enginers</h3>
-                        <label htmlFor="enginerOfQQ">
-                            <h4>QQ 音乐</h4>
-
-                            <Switch
-                                defaultChecked={enginers.QQ}
-                                id="enginerOfQQ"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setEnginers({ QQ: e.target.checked })
-                                }
-                            />
-                        </label>
-                        <label htmlFor="enginerOfMiGu">
-                            <h4>咪咕音乐</h4>
-
-                            <Switch
-                                defaultChecked={enginers.MiGu}
-                                id="enginerOfMiGu"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setEnginers({ MiGu: e.target.checked })
-                                }
-                            />
-                        </label>
-                        <label htmlFor="enginerOfXiami">
-                            <h4>虾米音乐</h4>
-
-                            <Switch
-                                defaultChecked={enginers.Xiami}
-                                id="enginerOfXiami"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setEnginers({ Xiami: e.target.checked })
-                                }
-                            />
-                        </label>
-                        <label htmlFor="enginerOfKugou">
-                            <h4>酷狗音乐</h4>
-
-                            <Switch
-                                defaultChecked={enginers.Kugou}
-                                id="enginerOfKugou"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setEnginers({ Kugou: e.target.checked })
-                                }
-                            />
-                        </label>
-                        <label htmlFor="enginerOfKuwo">
-                            <h4>酷我音乐</h4>
-
-                            <Switch
-                                defaultChecked={enginers.kuwo}
-                                id="enginerOfKuwo"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setEnginers({ Kuwo: e.target.checked })
-                                }
-                            />
-                        </label>
-                        <label htmlFor="enginerOfBaidu">
-                            <h4>百度音乐</h4>
-
-                            <Switch
-                                defaultChecked={enginers.Baidu}
-                                id="enginerOfBaidu"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setEnginers({ Baidu: e.target.checked })
-                                }
                             />
                         </label>
                     </article>
@@ -319,8 +189,8 @@ const Preferences = () => {
                         <span>Username</span>
                         <input
                             className={styles.textInput}
-                            defaultValue={lastFm.username}
-                            onBlur={() => saveLastfm()}
+                            value={lastFm.username}
+                            onChange={() => saveLastfm()}
                             placeholder="Your last.fm username"
                             ref={usernameRef}
                             type="text"
@@ -331,8 +201,8 @@ const Preferences = () => {
                         <span>Password</span>
                         <input
                             className={styles.textInput}
-                            defaultValue={lastFm.password}
-                            onBlur={() => saveLastfm()}
+                            value={lastFm.password}
+                            onChange={() => saveLastfm()}
                             placeholder="Your last.fm password"
                             ref={passwordRef}
                             type="password"
@@ -348,32 +218,7 @@ const Preferences = () => {
                         onClick={() => connect()}>
                         {renderFm()}
                     </Button>
-
-                    <article>
-                        <h3>Playlist Background ...</h3>
-                        {backgrounds &&
-                            backgrounds.map((e: any, index: number) => {
-                                return (
-                                    <div className={styles.field} key={e.type}>
-                                        <span>{e.type}</span>
-
-                                        <input
-                                            className={styles.textInput}
-                                            defaultValue={e.background}
-                                            onBlur={(ev) =>
-                                                saveBackground(index, {
-                                                    type: e.type,
-                                                    background: ev.target.value,
-                                                })
-                                            }
-                                            placeholder="Please entry the background address"
-                                            type="text"
-                                        />
-                                    </div>
-                                );
-                            })}
-                    </article>
-                </section> */}
+                </section>
             </div>
         );
     };

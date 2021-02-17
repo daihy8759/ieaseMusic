@@ -24,6 +24,10 @@ const electronApi = {
                 ipcRenderer.on(channel, (event, ...args) => func(...args));
             }
         },
+        // TODO
+        removeListener(channel: string, func: any) {
+            ipcRenderer.removeListener(channel, func);
+        },
     },
     dialog: {
         showCertificateTrustDialog(...options: any[]) {

@@ -12,7 +12,6 @@ const channel = useChannel();
 const VolumeUpDown = () => {
     const volume = useRecoilValue(volumeState);
     const isMuted = volume === 0;
-    const containerRef = React.useRef<HTMLDivElement>(null);
     const [direction, setDirection] = React.useState(true);
     const [zoom, setZoom] = React.useState(false);
 
@@ -46,7 +45,7 @@ const VolumeUpDown = () => {
 
     return (
         <Zoom in={zoom}>
-            <div className={styles.container} ref={containerRef}>
+            <div className={styles.container}>
                 <Zoom in={true}>{renderVolume()}</Zoom>
             </div>
         </Zoom>

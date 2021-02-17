@@ -1,4 +1,4 @@
-import { atom, selector, useRecoilCallback, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { atom, selector, useRecoilCallback } from 'recoil';
 import { PlayMode } from '../../shared/interface/controller';
 import helper from '../utils/helper';
 import { bufferTimeState } from './audio';
@@ -9,11 +9,22 @@ import ISong from '/@/interface/ISong';
 
 const namespace = 'controller';
 
+export enum PlayDirection {
+    DEFAULT,
+    PREV,
+    NEXT,
+}
+
 export const PLAY_MODES = [PlayMode.PLAYER_SHUFFLE, PlayMode.PLAYER_REPEAT, PlayMode.PLAYER_LOOP];
 
 export const songState = atom({
     key: `${namespace}:song`,
     default: {} as ISong,
+});
+
+export const playDirectionState = atom({
+    key: `${namespace}:direction`,
+    default: PlayDirection.DEFAULT,
 });
 
 export const songDetailState = selector({
@@ -62,11 +73,8 @@ interface TogglePlayListParam {
 
 // 切换播放列表
 export function useTogglePlayList() {
-    const [currentPlaylist, setPlaylist] = useRecoilState(playListState);
-    const setSong = useSetRecoilState(songState);
-    const setPlaying = useSetRecoilState(playingState);
-
-    const setPlaylistAsync = async (playListParam: TogglePlayListParam) => {
+    return useRecoilCallback(({ set, snapshot: { getPromise } }) => async (playListParam: TogglePlayListParam) => {
+        const currentPlaylist = await getPromise(playListState);
         const { playList, songId } = playListParam;
         if (!playList) {
             return;
@@ -74,7 +82,7 @@ export function useTogglePlayList() {
         if (currentPlaylist.id === playList.id) {
             return;
         }
-        setPlaylist(playList);
+        set(playListState, playList);
         if (playList.songs) {
             let playIndex = 0;
             if (songId) {
@@ -83,38 +91,35 @@ export function useTogglePlayList() {
                     playIndex = 0;
                 }
             }
-            setSong(playList.songs[playIndex]);
+            set(songState, playList.songs[playIndex]);
         }
-        setPlaying(true);
-    };
-
-    return setPlaylistAsync;
+        set(playingState, true);
+    });
 }
 
 // 上一首
 export function useTogglePrev() {
-    const playList = useRecoilValue(playListState);
-    const [song, setSong] = useRecoilState(songState);
-    const setPlaying = useSetRecoilState(playingState);
+    return useRecoilCallback(({ set, reset, snapshot: { getPromise } }) => async () => {
+        const playList = await getPromise(playListState);
+        const song = await getPromise(songState);
 
-    const setPrev = () => {
         const songs = playList.songs;
         if (songs) {
             let index = songs.findIndex((d) => d.id === song.id);
             if (index === 0) {
                 index = songs.length - 2;
             }
-            setSong(songs[index - 1]);
+            set(songState, songs[index - 1]);
         }
-        setPlaying(true);
-    };
-
-    return setPrev;
+        set(playingState, true);
+        reset(playDirectionState);
+        set(playDirectionState, PlayDirection.PREV);
+    });
 }
 
 // 下一首
 export function useToggleNext() {
-    return useRecoilCallback(({ set, snapshot: { getPromise } }) => async () => {
+    return useRecoilCallback(({ set, reset, snapshot: { getPromise } }) => async () => {
         const playList = await getPromise(playListState);
         const song = await getPromise(songState);
         const songs = playList.songs;
@@ -127,27 +132,24 @@ export function useToggleNext() {
             }
         }
         set(playingState, true);
+        reset(playDirectionState);
+        set(playDirectionState, PlayDirection.NEXT);
     });
 }
 
 // 切换歌曲
 export function useToggleSong() {
-    const playlist = useRecoilValue(playListState);
-    const setSong = useSetRecoilState(songState);
-    const setPlaying = useSetRecoilState(playingState);
-
-    const setSongAsync = (songId?: number) => {
+    return useRecoilCallback(({ set, snapshot: { getPromise } }) => async (songId?: number) => {
+        const playlist = await getPromise(playListState);
         const songs = playlist.songs;
         if (songs && songId) {
             const playIndex = songs.findIndex((d) => d.id === songId);
             if (playIndex > -1) {
-                setSong(songs[playIndex]);
+                set(songState, songs[playIndex]);
             }
         }
-        setPlaying(true);
-    };
-
-    return setSongAsync;
+        set(playingState, true);
+    });
 }
 
 // TODO Selectors don't propagate updates if their computed value hasn't changed

@@ -12,7 +12,6 @@ import {
     IPC_SONG_LIKE,
 } from '../../../shared/ipc';
 import { useChannel, useIpc } from '/@/hooks';
-import ISong from '/@/interface/ISong';
 import { playingState, playListState, playModeState, useToggleNext, useToggleSong } from '/@/stores/controller';
 import { fetchFmListState, useToggleFmNext } from '/@/stores/fm';
 import { loginState, useToggleLike } from '/@/stores/me';
@@ -35,9 +34,11 @@ const ContextMenu = () => {
     const playingShow = useRecoilValue(playingShowState);
     const fmList = useRecoilValue(fetchFmListState);
     const history = useHistory();
+    // const location = useLocation();
 
     useEffect(() => {
         channel.listen(IPC_NAVIGATOR, (...args: any) => {
+            //  && args[0] !== location.pathname
             if (args[0]) {
                 history.push(args[0]);
             }
@@ -56,7 +57,7 @@ const ContextMenu = () => {
         channel.listen(IPC_PLAYER_NEXT, () => {
             const FMPlaying = isFMPlaying();
             if (FMPlaying) {
-                toggleFmNext({} as ISong);
+                toggleFmNext();
             } else {
                 toggleNext();
             }

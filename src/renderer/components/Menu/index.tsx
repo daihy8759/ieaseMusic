@@ -1,17 +1,18 @@
 import { IconButton, SvgIcon } from '@material-ui/core';
 import classnames from 'classnames';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import FadeImage from '/@/components/FadeImage';
 import { useShell } from '/@/hooks';
-import { loginState, profileState } from '/@/stores/me';
+import { loginState, logout, profileState } from '/@/stores/me';
 import { menuShowState } from '/@/stores/menu';
 
 const shell = useShell();
 
 const Menu = () => {
+    const history = useHistory();
     const hasLogin = useRecoilValue(loginState);
     const profile = useRecoilValue(profileState);
     const [show, setShow] = useRecoilState(menuShowState);
@@ -19,9 +20,9 @@ const Menu = () => {
         return null;
     }
     const doLogout = () => {
-        // TODO logout
-        // remote.getCurrentWindow().webContents.session.clearStorageData();
-        // me.logout();
+        logout().then(() => {
+            history.go(0);
+        });
     };
 
     const close = () => {
@@ -66,7 +67,7 @@ const Menu = () => {
             // Press ESC close menu
             onKeyUp={(e) => e.keyCode === 27 && close()}>
             <div className={styles.overlay} onClick={close} />
-            <section className={classnames('pl-2', styles.body)}>
+            <section className={classnames('pl-4', styles.body)}>
                 <div>
                     {renderMe()}
 

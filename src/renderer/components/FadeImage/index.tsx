@@ -30,6 +30,7 @@ const FadeImage: FC<FadeImageProps> = (props) => {
         <img
             src={src}
             alt=""
+            loading="lazy"
             className={classnames(
                 {
                     'animate-pulse': fade,
