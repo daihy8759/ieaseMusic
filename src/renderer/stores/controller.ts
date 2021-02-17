@@ -49,11 +49,10 @@ export const playListState = atom({
 
 //  切换播放状态
 export function useTogglePlaying() {
-    const [playing, setPlaying] = useRecoilState(playingState);
-
-    return () => {
-        setPlaying(!playing);
-    };
+    return useRecoilCallback(({ set, snapshot: { getPromise } }) => async () => {
+        const playing = await getPromise(playingState);
+        set(playingState, !playing);
+    });
 }
 
 interface TogglePlayListParam {

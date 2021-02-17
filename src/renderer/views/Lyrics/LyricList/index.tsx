@@ -30,7 +30,7 @@ const LyricList = () => {
         }
         return times.map((e: string) => {
             return (
-                <p data-times={e} key={e} className={classnames({ 'text-green-500': scrollTimeKey === e })}>
+                <p data-times={e} key={e} className={classnames({ 'text-green-500 font-bold': scrollTimeKey === e })}>
                     <span>{lyrics[e]}</span>
                 </p>
             );

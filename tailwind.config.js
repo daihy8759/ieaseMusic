@@ -3,6 +3,7 @@ module.exports = {
     darkMode: false,
     theme: {
         extend: {
+            textIndent: (theme) => theme('spacing'),
             animation: {
                 'spin-slow': 'spin 72s linear infinite',
             },
@@ -11,5 +12,5 @@ module.exports = {
     variants: {
         extend: {},
     },
-    plugins: [],
+    plugins: [require('tailwindcss-text-indent')()],
 };

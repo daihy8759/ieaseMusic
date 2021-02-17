@@ -1,4 +1,4 @@
-import throttle from 'lodash.throttle';
+import { throttle } from 'lodash-es';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import styles from './index.module.less';
 import closePng from '/@/assets/close.png';

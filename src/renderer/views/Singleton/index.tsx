@@ -1,5 +1,3 @@
-import { IconButton } from '@material-ui/core';
-import { FavoriteSharp } from '@material-ui/icons';
 import classnames from 'classnames';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -8,16 +6,12 @@ import styles from './index.module.less';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
 import { playingState, songState } from '/@/stores/controller';
-import { isLiked, useToggleLike } from '/@/stores/me';
 import colors from '/@/utils/colors';
-import helper from '/@/utils/helper';
 
 const Singleton = () => {
     const history = useHistory();
     const song = useRecoilValue(songState);
     const playing = useRecoilValue(playingState);
-    const toggleLike = useToggleLike();
-    const liked = isLiked(song.id);
 
     if (!song.album?.cover) {
         history.push('/');
@@ -32,24 +26,6 @@ const Singleton = () => {
                     showBack: true,
                 }}
             />
-
-            <summary className="pt-6 pl-4">
-                <IconButton
-                    className={classnames({
-                        [styles.liked]: liked,
-                    })}
-                    style={{
-                        cursor: 'pointer',
-                        display: 'table',
-                    }}
-                    onClick={() => {
-                        toggleLike({ id: song.id, like: !liked });
-                    }}>
-                    <FavoriteSharp />
-                </IconButton>
-
-                <span className={styles.highquality}>{helper.getRate(song)}</span>
-            </summary>
 
             <main>
                 <div

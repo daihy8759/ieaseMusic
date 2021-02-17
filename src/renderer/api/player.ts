@@ -79,16 +79,17 @@ async function getAlbumBySong(id: number, cookie?: string) {
     return [];
 }
 
-async function getRecommend(songid: number, artistid: number, cookie?: string) {
-    const [users, artists, playlists1, playlists2] = await Promise.all([
-        getRecentUser(songid, cookie),
-        getSimilar(artistid, cookie),
-        getAlbumBySong(songid),
-        getSimilarPlaylist(songid),
-    ]);
+async function getSimilarUsers(songid: number, artistid: number, cookie?: string) {
+    const [users, artists] = await Promise.all([getRecentUser(songid, cookie), getSimilar(artistid, cookie || '')]);
     return {
         users,
         artists,
+    };
+}
+
+async function getRecommendPlaylist(songid: number) {
+    const [playlists1, playlists2] = await Promise.all([getAlbumBySong(songid), getSimilarPlaylist(songid)]);
+    return {
         playlists: [...playlists1, ...playlists2],
     };
 }
@@ -155,4 +156,4 @@ async function getPlayListDetail(type: string, id: number, cookie?: string) {
     return resData;
 }
 
-export { getSongUrl, getPlayListDetail, getRecommend };
+export { getSongUrl, getPlayListDetail, getSimilarUsers, getRecommendPlaylist };

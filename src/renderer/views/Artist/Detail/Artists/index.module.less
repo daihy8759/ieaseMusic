@@ -1,0 +1,33 @@
+.artists {
+    margin: 0 32px;
+    margin-top: 20px;
+    text-align: center;
+
+    & > div {
+        margin-bottom: 20px;
+        width: calc(99.99% * 1 / 5 - (30px - 30px * 1 / 5));
+
+        &:nth-child(n) {
+            float: left;
+            clear: none;
+            margin-right: 30px;
+        }
+
+        &:nth-child(5n + 1) {
+            clear: left;
+        }
+
+        &:nth-child(5n) {
+            float: right;
+            margin-right: 0;
+        }
+        figure {
+            border-radius: 64px;
+            transition: 0.4s;
+        }
+    }
+
+    figure:hover {
+        box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.5);
+    }
+}

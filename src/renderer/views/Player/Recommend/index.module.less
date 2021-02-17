@@ -1,0 +1,31 @@
+.recommend {
+    position: absolute;
+    left: 260px;
+    top: 0;
+    height: 260px;
+    width: 275px;
+    box-sizing: border-box;
+    z-index: 99;
+
+    img:first-of-type {
+        filter: grayscale(100%);
+        transition: 0.3s ease-in-out;
+    }
+
+    :global {
+        .clearfix {
+            display: inline-block;
+        }
+    }
+
+    a {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        margin-top: -2px;
+    }
+
+    a:hover img:first-of-type {
+        filter: grayscale(0);
+    }
+}

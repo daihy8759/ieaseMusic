@@ -18,7 +18,6 @@ export const fetchLyricState = selectorFamily({
                 list: [],
             };
         }
-        console.log('load lyric:', id);
         const data = await getLyric(id);
         return {
             list: data,

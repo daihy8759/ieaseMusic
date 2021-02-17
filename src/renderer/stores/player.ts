@@ -1,6 +1,6 @@
 import { atom, selectorFamily } from 'recoil';
 import pinyin from 'tiny-pinyin';
-import { getPlayListDetail, getRecommend } from '/@/api/player';
+import { getPlayListDetail, getRecommendPlaylist, getSimilarUsers } from '/@/api/player';
 import ISong from '/@/interface/ISong';
 import { profileState } from '/@/stores/me';
 
@@ -29,22 +29,36 @@ export const fetchListDetailState = selectorFamily({
     },
 });
 
-export const fetchRelatedState = selectorFamily({
-    key: `${namespace}:getRelated`,
+// 获取相似用户或艺术家
+export const fetchSimilarState = selectorFamily({
+    key: `${namespace}:getSimilar`,
     get: ({ songId, artistId }: { songId?: number; artistId?: number }) => async ({ get }) => {
         if (!songId || !artistId) {
             return {
-                recommend: [],
                 users: [],
                 artists: [],
             };
         }
         const profile = get(profileState);
-        const data = await getRecommend(songId, artistId, profile.cookie);
+        const data = await getSimilarUsers(songId, artistId, profile.cookie);
         return {
-            recommend: data.playlists as [],
             users: data.users as [],
             artists: data.artists as [],
+        };
+    },
+});
+
+export const fetchRecommendState = selectorFamily({
+    key: `${namespace}:getRecommend`,
+    get: (songId?: number) => async () => {
+        if (!songId) {
+            return {
+                recommend: [],
+            };
+        }
+        const data = await getRecommendPlaylist(songId);
+        return {
+            recommend: data.playlists as [],
         };
     },
 });

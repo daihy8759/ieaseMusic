@@ -1,4 +1,4 @@
-import throttle from 'lodash.throttle';
+import { throttle } from 'lodash-es';
 import React, { useCallback } from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
