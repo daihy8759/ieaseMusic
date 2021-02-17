@@ -49,12 +49,12 @@ module.exports = (env = 'production') => {
                 sourcemap: false,
             },
             plugins: [
-                pluginEsbuild(),
-                commonjs(),
-                json(),
                 nodeResolve({
                     browser: false,
                 }),
+                commonjs(),
+                json(),
+                pluginEsbuild(),
             ],
             external,
         },

@@ -1,16 +1,18 @@
-import {
-    IPC_NAVIGATOR,
-    IPC_PLAYER_TOGGLE,
-    IPC_PLAYER_NEXT,
-    IPC_PLAYER_PREV,
-    IPC_PLAYER_VOLUME_UP,
-    IPC_PLAYER_VOLUME_DOWN,
-    IPC_SONG_LIKE,
-} from './../shared/ipc/index';
+import dotenv from 'dotenv-flow';
 import { app, BrowserWindow, Menu, shell } from 'electron';
 import installer, { ExtensionReference, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import windowStateKeeper from 'electron-window-state';
 import { join } from 'path';
+import isDev from 'electron-is-dev';
+import {
+    IPC_NAVIGATOR,
+    IPC_PLAYER_NEXT,
+    IPC_PLAYER_PREV,
+    IPC_PLAYER_TOGGLE,
+    IPC_PLAYER_VOLUME_DOWN,
+    IPC_PLAYER_VOLUME_UP,
+    IPC_SONG_LIKE,
+} from './../shared/ipc/index';
 import setupIPC from './ipc';
 
 const _PLATFORM = process.platform;
@@ -324,7 +326,7 @@ const createWindow = async () => {
     mainWindowState.manage(win);
     setupIPC(win);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (isDev) {
         win.loadURL(`http://localhost:${process.env.PORT}`);
     } else {
         win.loadURL(`file://${join(__dirname, '../../dist/renderer/index.html')}`);
@@ -341,14 +343,14 @@ const createWindow = async () => {
         } catch (ex) {}
     });
     // open devTools
-    if (process.env.NODE_ENV !== 'production') {
+    if (isDev) {
         win.webContents.on('did-frame-finish-load', () => {
             win.webContents.once('devtools-opened', () => {
                 win.focus();
             });
             win.webContents.openDevTools();
         });
-        await installExtensions();
+        installExtensions();
     }
 };
 

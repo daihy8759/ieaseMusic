@@ -6,7 +6,7 @@ module.exports = () => {
         exclude: /node_modules/,
         sourceMap: false,
         minify: process.env.NODE_ENV === 'production',
-        target: 'es2017',
+        target: 'esnext',
         jsxFactory: 'React.createElement',
         jsxFragment: 'React.Fragment',
         define: {

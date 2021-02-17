@@ -1,4 +1,3 @@
-import md5 from 'md5';
 import { useMusicApi } from '../hooks';
 import IAlbum from '/@/interface/IAlbum';
 import IArtist from '/@/interface/IArtist';

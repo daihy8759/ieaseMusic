@@ -27,6 +27,20 @@ const watchFunc = function () {
     });
 };
 
+function build(opt) {
+    rollup
+        .rollup(opt)
+        .then((build) => {
+            spinner.stop();
+            console.log(TAG, chalk.green('Electron build successed.'));
+            build.write(opt.output);
+        })
+        .catch((error) => {
+            spinner.stop();
+            console.log(`\n${TAG} ${chalk.red('构建报错')}\n`, error, '\n');
+        });
+}
+
 const resource = `http://localhost:${process.env.PORT}/index.html`;
 
 if (argv.watch) {
@@ -52,15 +66,12 @@ if (argv.watch) {
     );
 } else {
     spinner.start();
-    rollup
-        .rollup(opt)
-        .then((build) => {
-            spinner.stop();
-            console.log(TAG, chalk.green('Electron build successed.'));
-            build.write(opt.output);
-        })
-        .catch((error) => {
-            spinner.stop();
-            console.log(`\n${TAG} ${chalk.red('构建报错')}\n`, error, '\n');
+    // javascript api input must object
+    if (Array.isArray(opt)) {
+        opt.forEach((option) => {
+            build(option);
         });
+    } else {
+        build(opt);
+    }
 }
