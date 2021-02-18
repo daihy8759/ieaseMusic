@@ -1,3 +1,4 @@
+@import '/@/theme.less';
 .recommend {
     position: absolute;
     left: 260px;
@@ -27,5 +28,26 @@
 
     a:hover img:first-of-type {
         filter: grayscale(0);
+    }
+}
+
+.play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 44px;
+    width: 44px;
+    margin-top: -22px;
+    margin-left: -22px;
+    line-height: 44px;
+    border-radius: 44px;
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+        color: @randomColor;
     }
 }
