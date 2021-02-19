@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useUpdateEffect } from 'react-use';
 import styles from './index.module.less';
 
@@ -32,8 +32,8 @@ const ProgressImage: React.FC<ProgressImageProps> = ({
         thumbNew = `${src.replace(/\?.*$/, '')}?param=20y20`;
     }
 
-    const containerRef = React.useRef<HTMLElement>();
-    const thumbRef = React.useRef<HTMLDivElement>();
+    const containerRef = useRef<HTMLElement>(null);
+    const thumbRef = useRef<HTMLDivElement>(null);
 
     const handleError = (e: any) => {
         e.target.src = fallback;

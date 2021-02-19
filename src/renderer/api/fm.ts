@@ -1,4 +1,4 @@
-import { PLAYLIST_FM } from '../../shared/interface/Playlist';
+import { PLAYLIST_FM } from '../../shared/interface/playlist';
 import { useMusicApi } from '../hooks';
 import IArtist from '/@/interface/IArtist';
 import ISong from '/@/interface/ISong';

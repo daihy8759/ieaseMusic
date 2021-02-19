@@ -269,13 +269,13 @@ const mainMenu = [
             {
                 label: 'Bug report 🐛',
                 click() {
-                    shell.openExternal('https://github.com/trazyn/ieaseMusic/issues');
+                    shell.openExternal('https://github.com/daihy8759/ieaseMusic/issues');
                 },
             },
             {
                 label: 'Fork me on Github 🚀',
                 click() {
-                    shell.openExternal('https://github.com/trazyn/ieaseMusic');
+                    shell.openExternal('https://github.com/daihy8759/ieaseMusic');
                 },
             },
             {

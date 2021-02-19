@@ -73,7 +73,7 @@ const Welcome = () => {
                         </Link>
                     )}
 
-                    <List component="nav" className={styles.menu}>
+                    <List component="nav" className={styles.menu} id="menu">
                         <ListItemLink href="#/search">
                             <ListItemText primary="Search" />
                         </ListItemLink>

@@ -8,7 +8,7 @@ import AdapterLink from '../AdapterLink';
 import styles from './index.module.less';
 import Indicator from '/@/components/Indicator';
 import ProgressImage from '/@/components/ProgressImage';
-import { fetchListState } from '/@/stores/comments';
+import { totalCommentState } from '/@/stores/comments';
 import { songState } from '/@/stores/controller';
 import { isLiked, useToggleLike } from '/@/stores/me';
 import { shareShowState } from '/@/stores/share';
@@ -21,8 +21,7 @@ const Hero = () => {
     if (!song || !song.id) {
         return null;
     }
-    const comments = useRecoilValue(fetchListState(song.id));
-    const { total: commentsTotal } = comments;
+    const totalComment = useRecoilValue(totalCommentState(song.id));
     const setShow = useSetRecoilState(shareShowState);
     const toggleLike = useToggleLike();
     const liked = isLiked(song.id);
@@ -58,7 +57,7 @@ const Hero = () => {
                 <span className={styles.badge}>{helper.getRate(song)}</span>
 
                 <span className={styles.badge}>
-                    {pathname === '/comments' ? `${helper.humanNumber(commentsTotal)} Comments` : 'Lyrics'}
+                    {pathname === '/comments' ? `${helper.humanNumber(totalComment)} Comments` : 'Lyrics'}
                 </span>
             </summary>
 
@@ -68,7 +67,7 @@ const Hero = () => {
                         [styles.active]: pathname === '/lyrics',
                     })}>
                     <Link to={`/${pathname === '/comments' ? 'lyrics' : 'comments'}`}>
-                        {pathname === '/comments' ? 'Lyrics' : `${helper.humanNumber(commentsTotal)} Comments`}
+                        {pathname === '/comments' ? 'Lyrics' : `${helper.humanNumber(totalComment)} Comments`}
                     </Link>
                 </article>
 

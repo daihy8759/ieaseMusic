@@ -1,10 +1,26 @@
 import { useMusicApi } from '../hooks';
 
 interface MusicCommentResponse {
-    newestList?: [];
-    hotList?: [];
+    newestList: MusicComment[];
+    hotList: MusicComment[];
     total?: number;
-    nextOffset?: number;
+    nextOffset: number;
+}
+
+interface CommentUser {
+    userId: number;
+    nickname: string;
+    avatarUrl: string;
+}
+
+export interface MusicComment {
+    commentId: number;
+    content: string;
+    beReplied: [];
+    liked: boolean;
+    likedCount: number;
+    time: number;
+    user: CommentUser;
 }
 
 const musicApi = useMusicApi();
@@ -19,26 +35,20 @@ async function getMusicComments(songId: number, offset = 0): Promise<MusicCommen
             throw body;
         }
         return {
-            // @ts-ignore
             newestList: body.comments,
-            // @ts-ignore
             hotList: body.hotComments,
-            // @ts-ignore
             total: body.total,
             nextOffset: body.more ? offset + 30 : 0,
         };
     } catch (e) {
         console.error(e);
     }
-    return {};
+    return {
+        newestList: [],
+        hotList: [],
+        total: 0,
+        nextOffset: 0,
+    };
 }
 
-async function getCommentLike() {
-    // try {
-    //     const res = await commentLike();
-    // } catch (e) {
-    //     console.error(e);
-    // }
-}
-
-export { getMusicComments, getCommentLike };
+export { getMusicComments };

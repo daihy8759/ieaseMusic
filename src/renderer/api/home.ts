@@ -68,8 +68,7 @@ async function getDaily(cookie?: string) {
     if (body.code !== 200) {
         throw body;
     }
-    // @ts-ignore
-    const dailySongs: any = body.data.dailySongs;
+    const { dailySongs } = body.data;
     list = [
         {
             id: uuidv4(),

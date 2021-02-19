@@ -6,7 +6,7 @@ import styles from './index.module.less';
 import FadeImage from '/@/components/FadeImage';
 import Header from '/@/components/Header';
 import ProgressImage from '/@/components/ProgressImage';
-import { fetchListState } from '/@/stores/comments';
+import { totalCommentState } from '/@/stores/comments';
 import { playListState, songState, useTogglePlayList } from '/@/stores/controller';
 import { fetchFmListState } from '/@/stores/fm';
 import { loginState } from '/@/stores/me';
@@ -20,7 +20,7 @@ const FM = () => {
     const fmPlayList = useRecoilValue(fetchFmListState);
     const songs = fmPlayList.songs || [];
     const song = useRecoilValue(songState);
-    const comments = useRecoilValue(fetchListState(song.id));
+    const totalComment = useRecoilValue(totalCommentState(song.id));
 
     useEffect(() => {
         if (!hasLogin) {
@@ -119,7 +119,7 @@ const FM = () => {
                         <p className={styles.comments}>
                             <span>
                                 <Link title={song.album?.name} to="/comments">
-                                    {helper.humanNumber(comments.total)} Comments
+                                    {helper.humanNumber(totalComment)} Comments
                                 </Link>
                             </span>
                         </p>

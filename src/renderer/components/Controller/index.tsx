@@ -10,7 +10,7 @@ import PlayModeButton from './PlayModeButton';
 import Progress from './Progress';
 import ProgressImage from '/@/components/ProgressImage';
 import IArtist from '/@/interface/IArtist';
-import { fetchListState } from '/@/stores/comments';
+import { totalCommentState } from '/@/stores/comments';
 import { playListState, songState, useToggleNext, useTogglePrev } from '/@/stores/controller';
 import colors from '/@/utils/colors';
 import helper from '/@/utils/helper';
@@ -20,7 +20,7 @@ const Controller = () => {
     const playList = useRecoilValue(playListState);
     const toggleNext = useToggleNext();
     const togglePrev = useTogglePrev();
-    const comments = useRecoilValue(fetchListState(song.id));
+    const totalComment = useRecoilValue(totalCommentState(song.id));
 
     const getPlayerLink = () => {
         return playList.link || '/';
@@ -137,7 +137,7 @@ const Controller = () => {
                             LRC
                         </Link>
                         <Link className={styles.text} to="/comments">
-                            {helper.humanNumber(comments.total)} Comments
+                            {helper.humanNumber(totalComment)} Comments
                         </Link>
                         <div className={styles.controls}>
                             <LikeButton />

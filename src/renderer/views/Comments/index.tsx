@@ -1,51 +1,56 @@
 import { ThumbUpAltTwoTone } from '@material-ui/icons';
 import classnames from 'classnames';
 import formatDistance from 'date-fns/formatDistance';
-import React, { FC } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
+import { MusicComment } from '/@/api/comments';
 import Header from '/@/components/Header';
 import Hero from '/@/components/Hero';
 import ProgressImage from '/@/components/ProgressImage';
-import { fetchListState } from '/@/stores/comments';
+import { hotCommentsState, newestCommentsState, useFetchMoreComments, useLikeComment } from '/@/stores/comments';
 import { songState } from '/@/stores/controller';
 import helper from '/@/utils/helper';
 
-const Comments: FC<RouteComponentProps> = (props) => {
+const Comments = () => {
+    const history = useHistory();
     const controllerSong = useRecoilValue(songState);
-    if (!controllerSong || !controllerSong.id) {
-        props.history.replace('/');
-    }
-    const comments = useRecoilValue(fetchListState(controllerSong.id));
-    const { hotList, newestList } = comments;
-    const listRef = React.useRef<HTMLElement>(null);
+    const hotList = useRecoilValue(hotCommentsState);
+    const newestList = useRecoilValue(newestCommentsState);
+    const fetchMoreComments = useFetchMoreComments();
+    const likeComment = useLikeComment();
+    const listRef = useRef<HTMLElement>(null);
 
-    const loadmore = async () => {
+    useEffect(() => {
+        if (!controllerSong || !controllerSong.id) {
+            history.replace('/');
+        } else {
+            fetchMoreComments(controllerSong.id);
+        }
+    }, []);
+
+    const loadMoreComments = async () => {
         const container = listRef.current;
-
         if (container) {
-            // Drop the duplicate invoke
-            if (container.classList.contains(styles.loadmore)) {
+            if (container.classList.contains(styles.loadMore)) {
                 return;
             }
-
             if (container.scrollTop + container.offsetHeight + 100 > container.scrollHeight) {
-                // Mark as loading
-                container.classList.add(styles.loadmore);
-                await loadMore(song.id);
-                container.classList.remove(styles.loadmore);
+                container.classList.add(styles.loadMore);
+                await fetchMoreComments(controllerSong.id);
+                container.classList.remove(styles.loadMore);
             }
         }
     };
 
-    const renderNestest = (list: any) => {
+    const renderNewest = (list: any) => {
         if (!list.length) {
             return false;
         }
 
         return (
-            <ul className={styles.nestest}>
+            <ul className={styles.newest}>
                 {list.map((e: any, index: number) => {
                     return (
                         <li key={index}>
@@ -57,7 +62,10 @@ const Comments: FC<RouteComponentProps> = (props) => {
         );
     };
 
-    const renderComment = (key: any, item: any) => {
+    const renderComment = (key: any, item: MusicComment) => {
+        if (!item) {
+            return null;
+        }
         return (
             <div key={key} className={styles.comment}>
                 <Link className="tooltip" data-text={item.user.nickname} to={`/user/${item.user.userId}`}>
@@ -79,27 +87,27 @@ const Comments: FC<RouteComponentProps> = (props) => {
                                 [styles.liked]: item.liked,
                             })}
                             data-text={`${helper.humanNumber(item.likedCount)} liked`}
-                            onClick={() => like(item.commentId, !item.liked)}>
+                            onClick={() => likeComment(item.commentId, !item.liked)}>
                             <ThumbUpAltTwoTone />
                         </span>
 
                         {formatDistance(item.time, new Date())}
                     </div>
 
-                    {renderNestest(item.beReplied)}
+                    {renderNewest(item.beReplied)}
                 </aside>
             </div>
         );
     };
 
     const renderHotList = () => {
-        return hotList.map((e: any, index: number) => {
+        return hotList.map((e, index: number) => {
             return renderComment(index, e);
         });
     };
 
     const renderNewestList = () => {
-        return newestList.map((e: any, index: number) => {
+        return newestList.map((e, index: number) => {
             return renderComment(index, e);
         });
     };
@@ -108,10 +116,10 @@ const Comments: FC<RouteComponentProps> = (props) => {
         <div className={styles.container}>
             <Header transparent showBack />
 
-            <Hero location={props.location} />
+            <Hero />
 
-            <aside ref={listRef} className={styles.list} onScroll={loadmore}>
-                <div className={styles.scroller}>
+            <aside ref={listRef} className={styles.list} onScroll={loadMoreComments}>
+                <div className={styles.scroll}>
                     <div className={styles.hotList}>
                         <h3>Hot Comments</h3>
                         {renderHotList()}

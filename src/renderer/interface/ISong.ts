@@ -10,7 +10,7 @@ export default interface ISong {
     name: string;
     waiting?: boolean;
     duration?: number;
-    album?: IAlbum;
-    artists?: IArtist[];
+    album: IAlbum;
+    artists: IArtist[];
     data?: ISongData;
 }

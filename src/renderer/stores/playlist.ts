@@ -1,4 +1,4 @@
-import { selectorFamily } from 'recoil';
+import { atom, selector } from 'recoil';
 import getPlayList from '/@/api/playlist';
 
 const namespace = 'playlist';
@@ -262,9 +262,15 @@ export const types = [
     },
 ];
 
-export const fetchListState = selectorFamily({
+export const typeState = atom({
+    key: `${namespace}:type`,
+    default: '全部',
+});
+
+export const fetchListState = selector({
     key: `${namespace}:getList`,
-    get: ({ type }: any) => async () => {
+    get: async ({ get }) => {
+        const type = get(typeState);
         const data = await getPlayList(type);
         return data;
     },

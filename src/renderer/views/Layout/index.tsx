@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import React, { FC, Suspense } from 'react';
-import { useEffectOnce, useNetwork, useWindowSize } from 'react-use';
+import { useNetwork, useWindowSize } from 'react-use';
 import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import AudioPlayer from '/@/components/AudioPlayer';
@@ -17,11 +17,7 @@ import Share from '/@/components/Share';
 import UpNext from '/@/components/UpNext';
 import { songState } from '/@/stores/controller';
 
-interface IBackgroundProps {
-    controller?: any;
-}
-
-const Background: FC<IBackgroundProps> = () => {
+const Background = () => {
     const { width } = useWindowSize();
     const song = useRecoilValue(songState);
 
@@ -44,16 +40,6 @@ const Background: FC<IBackgroundProps> = () => {
 
 const Layout: FC = (props) => {
     const { children } = props;
-
-    useEffectOnce(() => {
-        const init = async () => {
-            // await preferences.init();
-            // await me.init();
-            // const { username, password } = preferences.lastFm;
-            // await lastfm.initialize(username, password);
-        };
-        init();
-    });
 
     const networkState = useNetwork();
     if (!networkState.online) {
