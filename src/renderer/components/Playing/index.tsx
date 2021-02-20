@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import FadeImage from '/@/components/FadeImage';
 import Indicator from '/@/components/Indicator';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import { playListState, songState } from '/@/stores/controller';
 import { filteredSongsState, playingShowState } from '/@/stores/playing';
 import colors from '/@/utils/colors';
@@ -116,7 +116,7 @@ const Playing = () => {
                         <aside>
                             <p className={styles.title}>{e.name}</p>
                             <p className={styles.author}>
-                                {e.artists.map((d: IArtist) => {
+                                {e.artists.map((d: Artist) => {
                                     return (
                                         <Link key={d.link} to={d.link}>
                                             {d.name}

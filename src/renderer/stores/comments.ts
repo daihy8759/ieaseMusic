@@ -12,19 +12,19 @@ const offsetState = atom<number>({
     default: 0,
 });
 
-export const hotCommentsState = atom({
+export const hotCommentsState = atom<MusicComment[]>({
     key: `${namespace}:hotComments`,
-    default: [] as MusicComment[],
+    default: [],
 });
 
-export const newestCommentsState = atom({
+export const newestCommentsState = atom<MusicComment[]>({
     key: `${namespace}:newestComments`,
-    default: [] as MusicComment[],
+    default: [],
 });
 
-export const totalCommentState = selectorFamily({
+export const totalCommentState = selectorFamily<number, number>({
     key: `${namespace}:totalComment`,
-    get: (id: number) => async () => {
+    get: (id) => async () => {
         if (!id) {
             return 0;
         }

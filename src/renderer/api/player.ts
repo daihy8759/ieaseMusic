@@ -1,5 +1,4 @@
 import { useMusicApi } from '../hooks';
-import { getSimilar } from './artist';
 
 const musicApi = useMusicApi();
 

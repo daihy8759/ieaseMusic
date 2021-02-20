@@ -7,7 +7,7 @@ import socialFacebook from '/@/assets/social-facebook.png';
 import socialTwitter from '/@/assets/social-twitter.png';
 import Modal from '/@/components/Modal';
 import { useShell } from '/@/hooks';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import { songState } from '/@/stores/controller';
 import { shareShowState } from '/@/stores/share';
 
@@ -26,7 +26,7 @@ const Share = () => {
 
     const renderContent = () => {
         const url = `https://music.163.com/#/song?id=${song.id}`;
-        const text = `${song.name} - ${song.artists?.map((e: IArtist) => e.name).join()}`;
+        const text = `${song.name} - ${song.artists?.map((e: Artist) => e.name).join()}`;
 
         return (
             <div className={styles.container}>

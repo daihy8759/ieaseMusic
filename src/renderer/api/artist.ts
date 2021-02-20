@@ -1,74 +1,22 @@
 import { useMusicApi } from '../hooks';
-import IAlbum from '/@/interface/IAlbum';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 
 const musicApi = useMusicApi();
 
-async function getDesc(id: number) {
-    try {
-        const { body } = await musicApi.artist_desc({ id });
-        if (body.code !== 200) {
-            throw body;
-        }
-        const { briefDesc, introduction } = body;
-        return {
-            briefDesc,
-            introduction,
-        };
-    } catch (e) {
-        console.error(e);
+async function getSimilar(id: number) {
+    const { body } = await musicApi.simi_artist({ id });
+    if (body.code === 200) {
+        const artists: any = body.artists;
+        return artists.map((e: any) => {
+            return {
+                id: e.id,
+                name: e.name,
+                avatar: `${e.picUrl}?param=50y50`,
+                publishTime: e.publishTime,
+                link: e.id ? `/artist/${e.id}` : '#',
+            };
+        });
     }
-    return {
-        briefDesc: '',
-        introduction: [],
-    };
-}
-
-async function getAlbums(id: number) {
-    try {
-        const { body } = await musicApi.artist_album({ id });
-        if (body.code !== 200) {
-            throw body;
-        }
-        const { hotAlbums } = body;
-        // @ts-ignore
-        return hotAlbums.map((e: IAlbum) => ({
-            id: e.id,
-            name: e.name,
-            cover: e.picUrl,
-            link: `/player/1/${e.id}`,
-            publishTime: e.publishTime,
-        }));
-    } catch (e) {
-        console.error(e);
-    }
-    return [];
-}
-
-/**
- * 获取相似歌手
- * ⚠️该接口需要登录
- */
-async function getSimilar(id: number, cookie: string) {
-    try {
-        const { body } = await musicApi.simi_artist({ id, cookie });
-        if (body.code === 200) {
-            const artists: any = body.artists;
-            return artists.map((e: any) => {
-                return {
-                    id: e.id,
-                    name: e.name,
-                    avatar: `${e.picUrl}?param=50y50`,
-                    publishTime: e.publishTime,
-                    // Broken link
-                    link: e.id ? `/artist/${e.id}` : '',
-                };
-            });
-        }
-    } catch (e) {
-        console.error(e);
-    }
-    return [];
 }
 
 async function getArtist(id: number) {
@@ -90,14 +38,13 @@ async function getArtist(id: number) {
                     cover: `${al.picUrl}?param=640y300`,
                     link: `/player/1/${al.id}`,
                 },
-                artists: ar.map((d: IArtist) => ({
+                artists: ar.map((d: Artist) => ({
                     id: d.id,
                     name: d.name,
                     link: d.id ? `/artist/${d.id}` : '',
                 })),
             };
         });
-        const [desc, albums, similar] = await Promise.all([getDesc(id), getAlbums(id), getSimilar(id)]);
         return {
             profile: {
                 id: artist.id,
@@ -111,9 +58,6 @@ async function getArtist(id: number) {
                     album: artist.albumSize,
                 },
             },
-            desc,
-            albums,
-            similar,
             playlist: {
                 id: artist.id,
                 name: `TOP 50 - ${artist.name}`,

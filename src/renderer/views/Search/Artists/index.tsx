@@ -7,11 +7,11 @@ import { useRecoilValueLoadable } from 'recoil';
 import styles from '../index.module.less';
 import Loader from '/@/components/Loader';
 import ProgressImage from '/@/components/ProgressImage';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import { artistsQueryState } from '/@/stores/search';
 
 interface ArtistsProps {
-    artists: IArtist[];
+    artists: Artist[];
 }
 
 const Artists: FC<ArtistsProps> = (props) => {

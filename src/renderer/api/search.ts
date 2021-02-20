@@ -1,6 +1,6 @@
 import { useMusicApi } from '../hooks';
 import IAlbum from '/@/interface/IAlbum';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import IPlayList from '/@/interface/IPlayList';
 import IUserProfile from '/@/interface/IUserProfile';
 
@@ -8,7 +8,7 @@ const musicApi = useMusicApi();
 interface SearchResult {
     playlists?: IPlayList[];
     albums?: IAlbum[];
-    artists?: IArtist[];
+    artists?: Artist[];
     users?: IUserProfile[];
     nextOffset: number;
 }

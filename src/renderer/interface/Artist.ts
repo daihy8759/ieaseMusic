@@ -1,4 +1,4 @@
-export default interface IArtist {
+export default interface Artist {
     id?: number;
     name: string;
     picUrl?: string;

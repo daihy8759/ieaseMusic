@@ -9,7 +9,7 @@ import PlayingButton from './PlayingButton';
 import PlayModeButton from './PlayModeButton';
 import Progress from './Progress';
 import ProgressImage from '/@/components/ProgressImage';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import { totalCommentState } from '/@/stores/comments';
 import { playListState, songState, useToggleNext, useTogglePrev } from '/@/stores/controller';
 import colors from '/@/utils/colors';
@@ -114,7 +114,7 @@ const Controller = () => {
 
                         <p className={styles.author}>
                             {song.artists &&
-                                song.artists.map((e: IArtist, index: number) => {
+                                song.artists.map((e: Artist, index: number) => {
                                     // Show the artist
                                     return (
                                         <Link key={index} to={e.link} title={e.name}>

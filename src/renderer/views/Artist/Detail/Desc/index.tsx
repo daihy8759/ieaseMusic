@@ -1,12 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { fetchArtistState } from '/@/stores/artist';
+import { fetchArtistDescState } from '/@/stores/artist';
 
 const Desc = () => {
     const { id }: { id: string } = useParams();
-    const artist = useRecoilValue(fetchArtistState(parseInt(id)));
-    const { desc } = artist;
+    const desc = useRecoilValue(fetchArtistDescState(parseInt(id)));
     const { briefDesc } = desc as any;
 
     if (!briefDesc) {

@@ -1,6 +1,6 @@
 import { PLAYLIST_FM } from '../../shared/interface/playlist';
 import { useMusicApi } from '../hooks';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import ISong from '/@/interface/ISong';
 
 const musicApi = useMusicApi();
@@ -45,7 +45,7 @@ async function getPlaylist(): Promise<PlaylistResponse> {
                     cover: album.picUrl,
                     link: `/player/1/${album.id}`,
                 },
-                artists: artists.map((ar: IArtist) => ({
+                artists: artists.map((ar: Artist) => ({
                     id: ar.id,
                     name: ar.name,
                     link: ar.id ? `/artist/${ar.id}` : '',

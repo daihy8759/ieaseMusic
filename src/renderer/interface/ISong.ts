@@ -1,5 +1,5 @@
 import IAlbum from '/@/interface/IAlbum';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 
 interface ISongData {
     src: string;
@@ -11,6 +11,6 @@ export default interface ISong {
     waiting?: boolean;
     duration?: number;
     album: IAlbum;
-    artists: IArtist[];
+    artists: Artist[];
     data?: ISongData;
 }

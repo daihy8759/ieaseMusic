@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Modal from '/@/components/Modal';
 import ProgressImage from '/@/components/ProgressImage';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import { upNextShowState, upNextSongState } from '/@/stores/upnext';
 
 const UpNext = () => {
@@ -20,7 +20,7 @@ const UpNext = () => {
         return (
             <div className={styles.container}>
                 <p>
-                    {song.name} - {song.artists?.map((e: IArtist) => e.name).join()}
+                    {song.name} - {song.artists?.map((e: Artist) => e.name).join()}
                 </p>
 
                 <figure className={styles.circle} data-percent="75">

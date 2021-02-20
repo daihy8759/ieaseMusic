@@ -1,4 +1,4 @@
-import IArtist from './IArtist';
+import Artist from './Artist';
 
 export default interface IAlbum {
     id?: number;
@@ -7,5 +7,5 @@ export default interface IAlbum {
     picUrl?: string;
     cover?: string;
     publishTime?: any;
-    artist?: IArtist;
+    artist?: Artist;
 }

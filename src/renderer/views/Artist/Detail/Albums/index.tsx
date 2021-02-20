@@ -1,19 +1,18 @@
+import classnames from 'classnames';
+import { format } from 'date-fns';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import IAlbum from '/@/interface/IAlbum';
-import { fetchArtistState } from '/@/stores/artist';
 import styles from './index.module.less';
-import classnames from 'classnames';
-import { playListState } from '/@/stores/controller';
 import ProgressImage from '/@/components/ProgressImage';
-import { format } from 'date-fns';
+import IAlbum from '/@/interface/IAlbum';
+import { fetchArtistAlbumsState } from '/@/stores/artist';
+import { playListState } from '/@/stores/controller';
 
 const Albums = () => {
     const playList = useRecoilValue(playListState);
     const { id }: { id: string } = useParams();
-    const artist = useRecoilValue(fetchArtistState(parseInt(id)));
-    const { albums } = artist;
+    const albums = useRecoilValue(fetchArtistAlbumsState(parseInt(id)));
 
     const highlightAlbum = (id?: number) => {
         if (!id) {

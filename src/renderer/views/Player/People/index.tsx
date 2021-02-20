@@ -4,7 +4,7 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
 import styles from '../index.module.less';
 import FadeImage from '/@/components/FadeImage';
 import Loader from '/@/components/Loader';
-import IArtist from '/@/interface/IArtist';
+import Artist from '/@/interface/Artist';
 import IUserProfile from '/@/interface/IUserProfile';
 import { songState } from '/@/stores/controller';
 import { loginState } from '/@/stores/me';
@@ -13,7 +13,7 @@ import { fetchSimilarState } from '/@/stores/player';
 interface PeopleProps {
     hasLogin: boolean;
     users: IUserProfile[];
-    artists: IArtist[];
+    artists: Artist[];
 }
 
 const People: FC<PeopleProps> = (props) => {
@@ -40,7 +40,7 @@ const People: FC<PeopleProps> = (props) => {
 
             <div className={styles.artists} key="artists">
                 <h3>Similar artist</h3>
-                {artists.slice(0, users.length ? 5 : 10).map((e: IArtist, index: number) => {
+                {artists.slice(0, users.length ? 5 : 10).map((e: Artist, index: number) => {
                     return (
                         <Link className="clearfix tooltip" data-text={e.name} key={e.name + index} to={e.link}>
                             <FadeImage src={e.avatar} title={e.name} />
