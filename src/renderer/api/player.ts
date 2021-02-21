@@ -1,4 +1,5 @@
 import { useMusicApi } from '../hooks';
+import { getSimilar } from './artist';
 
 const musicApi = useMusicApi();
 
@@ -79,7 +80,7 @@ async function getAlbumBySong(id: number, cookie?: string) {
 }
 
 async function getSimilarUsers(songid: number, artistid: number, cookie?: string) {
-    const [users, artists] = await Promise.all([getRecentUser(songid, cookie), getSimilar(artistid, cookie || '')]);
+    const [users, artists] = await Promise.all([getRecentUser(songid, cookie), getSimilar(artistid)]);
     return {
         users,
         artists,
