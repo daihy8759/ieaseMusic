@@ -12,8 +12,8 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { playingState, playListState, songState, useToggleNext } from '/@/stores/controller';
-import { fetchFmListState } from '/@/stores/fm';
+import { playingState, playListState, songState } from '/@/stores/controller';
+import { fetchFmListState, useFmTrash, useToggleFmNext } from '/@/stores/fm';
 import { likedState, useToggleLike } from '/@/stores/me';
 
 const useStyles = makeStyles({
@@ -28,7 +28,8 @@ const Controller = () => {
     const song = useRecoilValue(songState);
     const liked = useRecoilValue(likedState);
     const toggleLike = useToggleLike();
-    const toggleNext = useToggleNext();
+    const toggleFmNext = useToggleFmNext();
+    const fmTrash = useFmTrash();
     const [playing, setPlaying] = useRecoilState(playingState);
     const playList = useRecoilValue(playListState);
     const fmPlayList = useRecoilValue(fetchFmListState);
@@ -45,7 +46,11 @@ const Controller = () => {
                 }}>
                 {liked ? <FavoriteTwoTone className={classes.liked} /> : <FavoriteBorderTwoTone />}
             </IconButton>
-            <IconButton onClick={() => ban(song.id)}>
+            <IconButton
+                onClick={() => {
+                    fmTrash(song.id);
+                    toggleFmNext();
+                }}>
                 <DeleteForeverTwoTone />
             </IconButton>
             <IconButton>
@@ -54,7 +59,7 @@ const Controller = () => {
             <IconButton onClick={() => setPlaying(!playing)}>
                 {isPlaying() ? <PauseCircleOutlineTwoTone /> : <PlayCircleOutlineTwoTone />}
             </IconButton>
-            <IconButton onClick={toggleNext}>
+            <IconButton onClick={toggleFmNext}>
                 <FastForwardTwoTone />
             </IconButton>
         </div>

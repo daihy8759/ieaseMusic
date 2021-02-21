@@ -6,10 +6,10 @@ export const upNextShowState = atom({
     default: false,
 });
 
-export const upNextSongState = atom({
+export const upNextSongState = atom<ISong>({
     key: 'upNextSong',
     default: {
         album: {},
         artists: [],
-    } as ISong,
+    },
 });

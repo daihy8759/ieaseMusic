@@ -113,7 +113,7 @@ export function useToggleLike() {
             liked = likeParam.like;
         }
         const res = await musicApi.like({ id: songId, like: liked, cookie: profile.cookie });
-        if (res.body.code === 200) {
+        if (res.body && res.body.code === 200) {
             let likes = (await storage.get('likes')) || [];
             if (liked) {
                 likes.push(songId);
