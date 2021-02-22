@@ -1,6 +1,6 @@
 import classnames from 'classnames';
-import React, { FC, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import Controller from '/@/components/Controller';
@@ -11,17 +11,14 @@ import { profileState } from '/@/stores/me';
 import { userDetailQueryState } from '/@/stores/user';
 import helper from '/@/utils/helper';
 
-interface MatchParams {
-    id: string;
-}
-
-const User: FC<RouteComponentProps<MatchParams>> = (props) => {
+const User = () => {
+    const { id }: { id: string } = useParams();
     const song = useRecoilValue(songState);
     const playing = useRecoilValue(playingState);
     const playList = useRecoilValue(playListState);
     const profile = useRecoilValue(profileState);
 
-    const user = useRecoilValue(userDetailQueryState(parseInt(props.match.params.id)));
+    const user = useRecoilValue(userDetailQueryState(parseInt(id)));
     const { followed } = profile;
     const [hovered, setHovered] = useState();
 

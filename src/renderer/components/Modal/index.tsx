@@ -1,13 +1,9 @@
-import Dialog from '@material-ui/core/Dialog';
+import { Dialog, IconButton, Typography, Zoom } from '@material-ui/core';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import React, { FC } from 'react';
-import { TransitionProps } from 'react-transition-group/Transition';
-import { Zoom } from '@material-ui/core';
+import React, { FC, forwardRef } from 'react';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -23,14 +19,14 @@ const styles = (theme: Theme) =>
         },
     });
 
-const Transition = React.forwardRef<unknown, TransitionProps>(function Transition(props, ref) {
+const Transition = forwardRef(function Transition(props, ref) {
     return <Zoom ref={ref} {...props} />;
 });
 
 export interface DialogTitleProps extends WithStyles<typeof styles> {
     id: string;
     children: React.ReactNode;
-    onCancel: () => void;
+    onCancel?: () => void;
 }
 
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {

@@ -1,9 +1,8 @@
 import { Avatar, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import classnames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
 import { useRecoilValue } from 'recoil';
 import { PLAYLIST_FM } from '../../../shared/interface/playlist';
 import styles from './index.module.less';
@@ -34,9 +33,9 @@ const Welcome = () => {
 
     const classes = useStyles();
 
-    useEffectOnce(() => {
+    useEffect(() => {
         setupHome();
-    });
+    }, []);
 
     const renderProfile = () => {
         const link = `/user/${profile.userId}`;

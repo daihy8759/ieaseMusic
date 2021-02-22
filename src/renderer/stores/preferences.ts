@@ -61,12 +61,3 @@ export const revertTrayIconState = atom({
     key: `${namespace}:revertTrayIcon`,
     default: false,
 });
-
-export const lastFmState = atom({
-    key: `${namespace}:lastFm`,
-    default: {
-        username: '',
-        password: '',
-        connected: '',
-    },
-});
