@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styles from './index.module.less';
 import LyricList from './LyricList';
@@ -8,16 +8,17 @@ import Hero from '/@/components/Hero';
 import ProgressImage from '/@/components/ProgressImage';
 import { songState } from '/@/stores/controller';
 
-const Lyrics: FC<RouteComponentProps> = (props) => {
+const Lyrics: FC<RouteComponentProps> = () => {
     const song = useRecoilValue(songState);
+    const history = useHistory();
     if (!song || !song.id) {
-        props.history.replace('/');
+        history.replace('/');
     }
     return (
         <div className={styles.container}>
             <Header transparent showBack />
 
-            <Hero location={props.location} />
+            <Hero />
 
             <aside id="lyrics" className={styles.lyrics}>
                 <ProgressImage

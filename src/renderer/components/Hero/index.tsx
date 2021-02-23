@@ -9,7 +9,7 @@ import styles from './index.module.less';
 import Indicator from '/@/components/Indicator';
 import ProgressImage from '/@/components/ProgressImage';
 import { totalCommentState } from '/@/stores/comments';
-import { songState } from '/@/stores/controller';
+import { songDetailState } from '/@/stores/controller';
 import { isLiked, useToggleLike } from '/@/stores/me';
 import { shareShowState } from '/@/stores/share';
 import helper from '/@/utils/helper';
@@ -17,7 +17,7 @@ import helper from '/@/utils/helper';
 const Hero = () => {
     const location = useLocation();
     const { pathname } = location;
-    const song = useRecoilValue(songState);
+    const song = useRecoilValue(songDetailState);
     if (!song || !song.id) {
         return null;
     }
