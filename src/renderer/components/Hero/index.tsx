@@ -10,7 +10,7 @@ import Indicator from '/@/components/Indicator';
 import ProgressImage from '/@/components/ProgressImage';
 import { totalCommentState } from '/@/stores/comments';
 import { songDetailState } from '/@/stores/controller';
-import { isLiked, useToggleLike } from '/@/stores/me';
+import { likedState, useToggleLike } from '/@/stores/me';
 import { shareShowState } from '/@/stores/share';
 import helper from '/@/utils/helper';
 
@@ -23,8 +23,8 @@ const Hero = () => {
     }
     const totalComment = useRecoilValue(totalCommentState(song.id));
     const setShow = useSetRecoilState(shareShowState);
+    const liked = useRecoilValue(likedState);
     const toggleLike = useToggleLike();
-    const liked = isLiked(song.id);
 
     return (
         <div className={styles.container}>
