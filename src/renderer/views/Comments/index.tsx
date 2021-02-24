@@ -54,7 +54,7 @@ const Comments = () => {
                 {list.map((e: any, index: number) => {
                     return (
                         <li key={index}>
-                            <Link to={`/user/${e.user.userId}`}>{e.user.nickname}</Link>：<span>{e.content}</span>
+                            <Link to={`/user/${e.user.userId}`}>{e.user.nickname}</Link>：<div>{e.content}</div>
                         </li>
                     );
                 })}

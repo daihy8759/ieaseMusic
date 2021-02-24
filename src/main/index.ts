@@ -312,8 +312,10 @@ const createWindow = async () => {
         x: mainWindowState.x,
         y: mainWindowState.y,
         show: false,
+        minWidth: 800,
         width: 800,
         height: 520,
+        minHeight: 520,
         backgroundColor: 'none',
         titleBarStyle: 'hiddenInset',
         webPreferences: {
