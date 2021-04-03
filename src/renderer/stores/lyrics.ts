@@ -27,6 +27,7 @@ export const fetchLyricState = selectorFamily({
 
 // TODO Selectors don't propagate updates if their computed value hasn't changed
 // see https://github.com/facebookexperimental/Recoil/pull/749
+// see https://github.com/facebookexperimental/Recoil/issues/314
 export const lyricScrollTimeState = selectorFamily({
     key: `${namespace}:scrollTime`,
     get: (lyrics) => ({ get }) => {
