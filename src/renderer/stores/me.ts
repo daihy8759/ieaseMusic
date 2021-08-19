@@ -77,9 +77,12 @@ export const profileState = atom({
                 profile = {};
             } else {
                 try {
-                    await musicApi.login_refresh({
+                    const res = await musicApi.login_refresh({
                         cookie: profile.cookie,
                     });
+                    if (res.cookie?.length == 0) {
+                        await storage.delete('profile');
+                    }
                 } catch (e) {
                     profile = {};
                     await storage.delete('profile');

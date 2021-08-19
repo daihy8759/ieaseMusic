@@ -17,7 +17,7 @@ const Share = () => {
     const song = useRecoilValue(songState);
     const [show, setShow] = useRecoilState(shareShowState);
 
-    if (!song.id) {
+    if (!song || !song.id) {
         return null;
     }
     const close = () => {

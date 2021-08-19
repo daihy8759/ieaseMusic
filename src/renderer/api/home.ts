@@ -6,6 +6,9 @@ const musicApi = useMusicApi();
 async function getSongs(id: number, cookie?: string) {
     try {
         const res = await musicApi.playlist_detail({ id, cookie });
+        if (!res) {
+            return [];
+        }
         const { body } = res;
         if (body.code !== 200) {
             throw body;
@@ -33,7 +36,7 @@ async function getSongs(id: number, cookie?: string) {
     } catch (e) {
         console.error(e);
     }
-    return {};
+    return [];
 }
 
 async function getPersonalized(cookie?: string) {
