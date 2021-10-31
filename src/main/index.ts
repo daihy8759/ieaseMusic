@@ -1,9 +1,8 @@
-import dotenv from 'dotenv-flow';
 import { app, BrowserWindow, Menu, shell } from 'electron';
-import installer, { ExtensionReference, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+import installer, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+import isDev from 'electron-is-dev';
 import windowStateKeeper from 'electron-window-state';
 import { join } from 'path';
-import isDev from 'electron-is-dev';
 import {
     IPC_NAVIGATOR,
     IPC_PLAYER_NEXT,
@@ -23,13 +22,8 @@ let win: BrowserWindow;
 let menu;
 
 const installExtensions = async () => {
-    const RECOILIZE_TOOLS = {
-        id: 'jhfmmdhbinleghabnblahfjfalfgidik',
-        electron: '>8.0.0',
-    };
-    const extensions = [REACT_DEVELOPER_TOOLS, RECOILIZE_TOOLS];
-
-    return Promise.all(extensions.map((name: ExtensionReference) => installer(name, false)));
+    const extensions = [REACT_DEVELOPER_TOOLS];
+    return Promise.all(extensions.map((name) => installer(name, false)));
 };
 
 const mainMenu = [
@@ -352,7 +346,9 @@ const createWindow = async () => {
             });
             win.webContents.openDevTools();
         });
-        installExtensions();
+        app.whenReady().then(() => {
+            installExtensions();
+        });
     }
 };
 
