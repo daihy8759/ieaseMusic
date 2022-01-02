@@ -1,4 +1,4 @@
-const esbuild = require('rollup-plugin-esbuild');
+const esbuild = require('rollup-plugin-esbuild').default;
 
 module.exports = () => {
     return esbuild({
