@@ -44,10 +44,10 @@ export function useToggleFmNext() {
             const index = songs.findIndex((d) => d.id === fmSong.id);
             if (index === songs.length - 1) {
                 set(fmSongState, songs[0]);
-                set(songState, songs[0]);
+                set(songState, songs[0] || {});
             } else {
-                set(fmSongState, songs[index + 1]);
-                set(songState, songs[index + 1]);
+                set(fmSongState, songs[index + 1] || {});
+                set(songState, songs[index + 1] || {});
             }
         }
         reset(fetchFmListState);

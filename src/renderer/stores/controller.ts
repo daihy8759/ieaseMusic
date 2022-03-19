@@ -32,7 +32,7 @@ export const songDetailState = selector({
     get: async ({ get }) => {
         const song = get(songState);
         const profile = get(profileState);
-        if (song.id) {
+        if (song && song.id) {
             const data = await getSongUrl(song.id, profile.cookie);
             return {
                 ...song,
@@ -91,7 +91,7 @@ export function useTogglePlayList() {
                     playIndex = 0;
                 }
             }
-            set(songState, playList.songs[playIndex]);
+            set(songState, playList.songs[playIndex] || {});
         }
         set(playingState, true);
     });
@@ -109,7 +109,7 @@ export function useTogglePrev() {
             if (index === 0) {
                 index = songs.length - 2;
             }
-            set(songState, songs[index - 1]);
+            set(songState, songs[index - 1] || {});
         }
         set(playingState, true);
         reset(playDirectionState);
@@ -126,9 +126,9 @@ export function useToggleNext() {
         if (songs) {
             const index = songs.findIndex((d) => d.id === song.id);
             if (index === songs.length - 1) {
-                set(songState, songs[0]);
+                set(songState, songs[0] || {});
             } else {
-                set(songState, songs[index + 1]);
+                set(songState, songs[index + 1] || {});
             }
         }
         set(playingState, true);
@@ -145,7 +145,7 @@ export function useToggleSong() {
         if (songs && songId) {
             const playIndex = songs.findIndex((d) => d.id === songId);
             if (playIndex > -1) {
-                set(songState, songs[playIndex]);
+                set(songState, songs[playIndex] || {});
             }
         }
         set(playingState, true);

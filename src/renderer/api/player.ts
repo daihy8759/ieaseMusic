@@ -19,7 +19,7 @@ async function getSongUrl(id: number, cookie?: string) {
 // 相似歌手
 async function getRecentUser(id: number, cookie?: string) {
     try {
-        const { body } = await musicApi.simi_user({ id, cookie });
+        const { body } = (await musicApi.simi_user({ id, cookie })) || { body: {} };
         if (body.code === 200) {
             const userProfiles: any = body.userprofiles;
             return userProfiles.map((e: any) => {

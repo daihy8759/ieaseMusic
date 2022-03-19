@@ -14,7 +14,6 @@ const AudioPlayer = () => {
     const toggleNext = useToggleNext();
     const song = useRecoilValue(songDetailState);
     const setBufferTime = useSetRecoilState(bufferTimeState);
-    const { duration } = song;
     const playing = useRecoilValue(playingState);
     const [volume, setVolume] = useRecoilState(volumeState);
 
@@ -26,12 +25,12 @@ const AudioPlayer = () => {
     );
 
     const [audio, state, controls, ref] = useAudio({
-        src: song.data ? song.data.src : '',
+        src: song && song.data ? song.data.src : '',
         autoPlay: true,
     });
 
     useUpdateEffect(() => {
-        if (duration) {
+        if (song && song.duration) {
             throttleProcess(state.time);
         }
     }, [state.time]);

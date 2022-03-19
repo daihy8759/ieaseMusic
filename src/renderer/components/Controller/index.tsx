@@ -20,7 +20,7 @@ const Controller = () => {
     const playList = useRecoilValue(playListState);
     const toggleNext = useToggleNext();
     const togglePrev = useTogglePrev();
-    const totalComment = useRecoilValue(totalCommentState(song.id));
+    const totalComment = useRecoilValue(totalCommentState(song && song.id));
 
     if (!song || !song.id) {
         return null;
@@ -33,7 +33,6 @@ const Controller = () => {
     const getPlaylistName = () => {
         return `🎉 ${playList.name}`;
     };
-
 
     return (
         <div
