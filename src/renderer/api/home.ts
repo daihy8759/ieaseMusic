@@ -110,7 +110,7 @@ async function getLiked(uid: number, cookie?: string) {
         } else {
             // @ts-ignore
             const [liked] = body.playlist;
-            const songs = await getSongs(liked.id);
+            const songs = await getSongs(liked.id, cookie);
             return [
                 {
                     id: liked.id,
@@ -194,7 +194,7 @@ async function getHomeData(id?: number, cookie?: string) {
     }
     const list = await getPersonalized(cookie);
     if (list.length > 0) {
-        list[0].songs = await getSongs(list[0].id);
+        list[0].songs = await getSongs(list[0].id, cookie);
     }
     return list;
 }
