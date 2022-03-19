@@ -1,5 +1,5 @@
 import { throttle } from 'lodash-es';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useAudio, useEffectOnce, useUpdateEffect } from 'react-use';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IPC_PLAYER_VOLUME_DOWN, IPC_PLAYER_VOLUME_UP } from '../../../shared/ipc';
@@ -12,7 +12,7 @@ const channel = useChannel();
 
 const AudioPlayer = () => {
     const toggleNext = useToggleNext();
-    const song = useRecoilValue(songDetailState);
+    const song = useRecoilValue(songDetailState) || {};
     const setBufferTime = useSetRecoilState(bufferTimeState);
     const playing = useRecoilValue(playingState);
     const [volume, setVolume] = useRecoilState(volumeState);
@@ -25,11 +25,11 @@ const AudioPlayer = () => {
     );
 
     const [audio, state, controls, ref] = useAudio({
-        src: song && song.data ? song.data.src : '',
+        src: song.data ? song.data.src : '',
         autoPlay: true,
     });
 
-    useUpdateEffect(() => {
+    useEffect(() => {
         if (song && song.duration) {
             throttleProcess(state.time);
         }

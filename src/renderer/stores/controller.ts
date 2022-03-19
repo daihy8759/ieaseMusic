@@ -152,8 +152,6 @@ export function useToggleSong() {
     });
 }
 
-// TODO Selectors don't propagate updates if their computed value hasn't changed
-// see https://github.com/facebookexperimental/Recoil/pull/749
 export const progressBufferTimeState = selector({
     key: `${namespace}:progressBufferTime`,
     get: ({ get }) => {
