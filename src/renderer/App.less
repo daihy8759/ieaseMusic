@@ -1,0 +1,99 @@
+@import '/@/theme.less';
+// @import (css) url('https://fonts.loli.net/css?family=@{google-font}');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: none;
+    overflow: hidden;
+}
+
+body {
+    position: relative;
+    height: 100vh;
+    color: #fff;
+    overflow-y: hidden;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica', @google-font, 'Segoe UI', 'Oxygen', 'Ubuntu',
+        'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-app-region: drag;
+}
+
+.scroll-horizontal {
+    overflow: initial !important;
+}
+.clearfix {
+    display: inline-block;
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: '';
+    clear: both;
+    height: 0;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+    text-decoration: none;
+}
+
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    padding: 0 8px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 12px;
+    font-family: @google-font;
+    background: #000;
+    color: #fff;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-24px);
+    transition: 0.2s;
+}
+
+.tooltip:hover::after {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(-36px);
+}
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
+.nothing {
+    display: flex;
+    height: 100%;
+    justify-content: space-around;
+    align-items: center;
+    font-family: @primary-font;
+    font-size: 24px;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    color: #000;
+}
